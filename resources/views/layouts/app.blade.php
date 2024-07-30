@@ -7,6 +7,10 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    <link href="{{ asset('leaflet/leaflet.css') }}" rel="stylesheet">
+    <style>
+        /* Elimina el estilo del mapa aquí para que no se muestre globalmente */
+    </style>
 </head>
 <body class="font-sans antialiased">
     <div x-data="{ sidebarOpen: false }" class="flex h-screen bg-gray-100">
@@ -20,14 +24,18 @@
             </div>
             <nav class="mt-10">
                 @if(Auth::check())
-                    @if(Auth::user()->isAdmin())
+                     @if(Auth::user()->isAdmin())
                         <a class="flex items-center mt-4 py-2 px-6 text-gray-500 hover:bg-gray-700 hover:text-white" href="{{ route('dashboard') }}">
                             <span class="mx-3">Dashboard</span>
                         </a>
                         <a class="flex items-center mt-4 py-2 px-6 text-gray-500 hover:bg-gray-700 hover:text-white" href="{{ route('users.index') }}">
                             <span class="mx-3">Usuarios</span>
                         </a>
+                        <a class="flex items-center mt-4 py-2 px-6 text-gray-500 hover:bg-gray-700 hover:text-white" href="{{ route('store.index') }}">
+                            <span class="mx-3">Tiendas</span>
+                        </a>
                     @endif
+
                     @if(Auth::user()->isCliente())
                         <a class="flex items-center mt-4 py-2 px-6 text-gray-500 hover:bg-gray-700 hover:text-white" href="{{ route('users.index') }}">
                             <span class="mx-3">Usuarios</span>
@@ -54,7 +62,6 @@
                     </button>
                     <div x-show="open" class="absolute right-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10">
                         <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Perfil</a>
-                        <!-- Contenedor del enlace para cerrar sesión -->
                         <div class="relative">
                             <form method="POST" action="{{ route('logout') }}" class="inline">
                                 @csrf
@@ -67,22 +74,21 @@
                 </div>
             </header>
 
+            <!-- Breadcrumbs -->
+            <div class="container mx-auto px-6 py-4">
+                @yield('breadcrumb')
+            </div>
+
             <!-- Main Content -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
                 <div class="container mx-auto px-6 py-8">
-                    <!-- Breadcrumb -->
-                    @yield('breadcrumb')
-
-                    <!-- Main Content -->
                     @yield('content')
                 </div>
             </main>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     @livewireScripts
+    @stack('scripts') <!-- Esto permite agregar scripts adicionales desde las vistas -->
 </body>
 </html>
