@@ -19,16 +19,25 @@
                 </div>
             </div>
             <nav class="mt-10">
-                <a class="flex items-center mt-4 py-2 px-6 text-gray-500 hover:bg-gray-700 hover:text-white" href="{{ route('dashboard') }}">
-                    <span class="mx-3">Dashboard</span>
-                </a>
-                <a class="flex items-center mt-4 py-2 px-6 text-gray-500 hover:bg-gray-700 hover:text-white" href="{{ route('users.index') }}">
-                    <span class="mx-3">Usuarios</span>
-                </a>
+                @if(Auth::check())
+                    @if(Auth::user()->isAdmin())
+                        <a class="flex items-center mt-4 py-2 px-6 text-gray-500 hover:bg-gray-700 hover:text-white" href="{{ route('dashboard') }}">
+                            <span class="mx-3">Dashboard</span>
+                        </a>
+                        <a class="flex items-center mt-4 py-2 px-6 text-gray-500 hover:bg-gray-700 hover:text-white" href="{{ route('users.index') }}">
+                            <span class="mx-3">Usuarios</span>
+                        </a>
+                    @endif
+                    @if(Auth::user()->isCliente())
+                        <a class="flex items-center mt-4 py-2 px-6 text-gray-500 hover:bg-gray-700 hover:text-white" href="{{ route('users.index') }}">
+                            <span class="mx-3">Usuarios</span>
+                        </a>
+                    @endif
+                @endif
                 <!-- Add more links as needed -->
             </nav>
         </div>
-        
+
         <div class="flex-1 flex flex-col overflow-hidden">
             <!-- Navbar -->
             <header class="flex justify-between items-center py-4 px-6 bg-white border-b-4 border-indigo-600">
@@ -39,17 +48,20 @@
                         </svg>
                     </button>
                 </div>
-                <div class="flex items-center">
-                    <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open" class="flex items-center space-x-2 text-gray-600 focus:outline-none">
-                            <span>{{ Auth::user()->name }}</span>
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                            </svg>
-                        </button>
-                        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10">
-                            <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Perfil</a>
-                            <!-- Añade otros enlaces si es necesario -->
+                <div x-data="{ open: false }" @click.away="open = false" class="relative">
+                    <button @click="open = !open" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
+                        {{ Auth::user()->name }}
+                    </button>
+                    <div x-show="open" class="absolute right-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10">
+                        <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Perfil</a>
+                        <!-- Contenedor del enlace para cerrar sesión -->
+                        <div class="relative">
+                            <form method="POST" action="{{ route('logout') }}" class="inline">
+                                @csrf
+                                <button type="submit" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 w-full text-left">
+                                    Cerrar Sesión
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -60,12 +72,14 @@
                 <div class="container mx-auto px-6 py-8">
                     <!-- Breadcrumb -->
                     @yield('breadcrumb')
-                    
+
+                    <!-- Main Content -->
                     @yield('content')
                 </div>
             </main>
         </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

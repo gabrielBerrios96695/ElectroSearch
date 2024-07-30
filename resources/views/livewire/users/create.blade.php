@@ -42,6 +42,16 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="role">Rol</label>
+                    <select name="role" id="role" class="form-control" required>
+                        <option value="">Selecciona un rol</option>
+                        <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Administrador</option>
+                        <option value="vendedor" {{ old('role') === 'vendedor' ? 'selected' : '' }}>Vendedor</option>
+                        <option value="cliente" {{ old('role') === 'cliente' ? 'selected' : '' }}>Cliente</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label for="email">Correo Electrónico</label>
                     <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
                 </div>

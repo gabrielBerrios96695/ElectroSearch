@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 @section('breadcrumb')
     @php
         $breadcrumbs = [
@@ -9,14 +10,16 @@
     @endphp
     @include('components.breadcrumb', ['breadcrumbs' => $breadcrumbs])
 @endsection
+
 @section('content')
 <div class="container">
     
     <div class="d-flex justify-content-between align-items-center my-4">
-        <h1 class="h3">Registrar Nuevo Usuario</h1>
+        <h1 class="h3">Editar Usuario</h1>
         <a href="{{ route('users.index') }}" class="btn btn-secondary">Volver</a>
     </div>
-   <div class="card">
+    
+    <div class="card">
         <div class="card-header">
             Formulario de Edición de Usuario
         </div>
@@ -31,21 +34,33 @@
                 </div>
             @endif
 
-            <form action="{{ route('users.update', $user->id) }}" method="POST"">
+            <form action="{{ route('users.update', $user->id) }}" method="POST">
                 @csrf
                 @method('PUT')
+
                 <div class="form-group">
                     <label for="name">Nombre</label>
-                    <input type="text" name="name" value="{{ $user->name }}" class="form-control" required>
+                    <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" class="form-control" required>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Correo Electrónico</label>
-                    <input type="email" name="email" value="{{ $user->email }}" class="form-control" required>
+                    <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" class="form-control" required>
                 </div>
 
-                
-                <button type="submit" class="btn btn-success">Actualizar</button>
+                <div class="form-group">
+                    <label for="role">Rol</label>
+                    <select name="role" id="role" class="form-control" required>
+                        <option value="">Selecciona un rol</option>
+                        @foreach(['admin', 'vendedor', 'cliente'] as $role)
+                            <option value="{{ $role }}" {{ old('role', $user->role) === $role ? 'selected' : '' }}>
+                                {{ ucfirst($role) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-success mt-4">Actualizar</button>
             </form>
         </div>
     </div>

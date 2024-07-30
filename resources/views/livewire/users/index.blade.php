@@ -28,6 +28,7 @@
                         <th scope="col">#</th>
                         <th scope="col">Nombre</th>
                         <th scope="col">Correo Electrónico</th>
+                        <th scope="col">Rol</th> <!-- Corregido a "Rol" -->
                         <th scope="col">Acciones</th>
                     </tr>
                 </thead>
@@ -37,6 +38,15 @@
                             <th scope="row">{{ $user->id }}</th>
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
+                            <td>
+                                @if ($user->role == 'vendedor')
+                                    Vendedor
+                                @elseif ($user->role == 'cliente')
+                                    Cliente
+                                @else
+                                    {{ ucfirst($user->role) }} <!-- Mostrar el rol aquí -->
+                                @endif
+                            </td>
                             <td>
                                 <a href="{{ route('users.edit', $user->id) }}" class="btn btn-secondary">Editar</a>
                                 <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline">
