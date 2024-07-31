@@ -1,14 +1,7 @@
 @extends('layouts.app')
 
-@section('breadcrumb')
-    @php
-        $breadcrumbs = [
-            ['name' => 'Inicio', 'url' => route('dashboard')],
-            ['name' => 'Tiendas', 'url' => route('store.index')],
-            ['name' => 'Editar Tienda', 'url' => route('store.edit', $store->id)],
-        ];
-    @endphp
-    @include('components.breadcrumb', ['breadcrumbs' => $breadcrumbs])
+@section('breadcrumbs')
+    <a href="{{ route('store.index') }}" >Tiendas</a> / <a>Editar</a>
 @endsection
 
 @section('content')

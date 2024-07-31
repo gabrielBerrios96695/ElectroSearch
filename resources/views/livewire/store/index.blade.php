@@ -1,13 +1,7 @@
 @extends('layouts.app')
 
-@section('breadcrumb')
-    @php
-        $breadcrumbs = [
-            ['name' => 'Inicio', 'url' => route('dashboard')],
-            ['name' => 'Tiendas', 'url' => route('store.index')],
-        ];
-    @endphp
-    @include('components.breadcrumb', ['breadcrumbs' => $breadcrumbs])
+@section('breadcrumbs')
+    Tiendas/
 @endsection
 
 @section('content')

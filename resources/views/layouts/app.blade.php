@@ -49,6 +49,9 @@
         <div class="flex-1 flex flex-col overflow-hidden">
             <!-- Navbar -->
             <header class="flex justify-between items-center py-4 px-6 bg-white border-b-4 border-indigo-600">
+                <div class="breadcrumbs">
+                        <a href="{{ route('dashboard') }}" class="text-blue">Home</a> <span>/</span> @yield('breadcrumbs')
+                    </div>
                 <div class="flex items-center">
                     <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 focus:outline-none lg:hidden">
                         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -56,7 +59,9 @@
                         </svg>
                     </button>
                 </div>
+                
                 <div x-data="{ open: false }" @click.away="open = false" class="relative">
+                    
                     <button @click="open = !open" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
                         {{ Auth::user()->name }}
                     </button>
