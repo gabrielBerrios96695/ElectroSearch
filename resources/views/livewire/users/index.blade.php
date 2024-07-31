@@ -1,15 +1,8 @@
 @extends('layouts.app')
 
-@section('breadcrumb')
-    @php
-        $breadcrumbs = [
-            ['name' => 'Inicio', 'url' => route('dashboard')],
-            ['name' => 'Usuarios', 'url' => route('users.index')],
-        ];
-    @endphp
-    @include('components.breadcrumb', ['breadcrumbs' => $breadcrumbs])
+@section('breadcrumbs')
+    Usuarios/
 @endsection
-
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between align-items-center my-4">

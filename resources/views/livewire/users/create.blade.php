@@ -1,14 +1,7 @@
 @extends('layouts.app')
 
-@section('breadcrumb')
-    @php
-        $breadcrumbs = [
-            ['name' => 'Inicio', 'url' => route('dashboard')],
-            ['name' => 'Usuarios', 'url' => route('users.index')],
-            ['name' => 'Crear', 'url' => '#'],
-        ];
-    @endphp
-    @include('components.breadcrumb', ['breadcrumbs' => $breadcrumbs])
+@section('breadcrumbs')
+    <a href="{{ route('users.index') }}">Usuarios</a> / <a href="#">Crear</a>
 @endsection
 
 @section('content')
