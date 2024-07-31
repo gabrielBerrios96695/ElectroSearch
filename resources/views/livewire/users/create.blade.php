@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('breadcrumbs')
+    <a href="{{ route('users.index') }}">Usuarios</a> / <a href="#">Crear</a>
+@endsection
+
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between align-items-center my-4">
@@ -28,6 +32,16 @@
                 <div class="form-group">
                     <label for="name">Nombre</label>
                     <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Rol</label>
+                    <select name="role" id="role" class="form-control" required>
+                        <option value="">Selecciona un rol</option>
+                        <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Administrador</option>
+                        <option value="vendedor" {{ old('role') === 'vendedor' ? 'selected' : '' }}>Vendedor</option>
+                        <option value="cliente" {{ old('role') === 'cliente' ? 'selected' : '' }}>Cliente</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
