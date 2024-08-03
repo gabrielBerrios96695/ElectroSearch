@@ -8,15 +8,17 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center my-4">
         <h1 class="h3">Lista de Tiendas</h1>
-        <a href="{{ route('store.create') }}" class="btn btn-primary">Registrar Nueva Tienda</a>
+        <a href="{{ route('store.create') }}" class="btn btn-primary">
+            <i class="fas fa-store"></i> Registrar Nueva Tienda
+        </a>
     </div>
 
     <div class="card">
         <div class="card-header">
-            Tiendas
+            <i class="fas fa-store-alt"></i> Tiendas
         </div>
         <div class="card-body">
-            <table class="table">
+            <table class="table table-dark table-striped">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
@@ -34,9 +36,11 @@
                             <td>{{ $store->latitude }}</td>
                             <td>{{ $store->longitude }}</td>
                             <td>
-                                <a href="{{ route('store.edit', $store->id) }}" class="btn btn-secondary">Editar</a>
+                                <a href="{{ route('store.edit', $store->id) }}" class="btn btn-secondary">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-store-id="{{ $store->id }}">
-                                    Eliminar
+                                    <i class="fas fa-trash-alt"></i> Eliminar
                                 </button>
                             </td>
                         </tr>

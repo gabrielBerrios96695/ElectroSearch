@@ -1,3 +1,162 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    background-color: #1a1a1a;
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    background-color: #2a2a2a;
+    color: #c1c7d0;
+    width: 250px;
+    transition: all 0.3s;
+}
+
+.sidebar .nav-link {
+    color: #c1c7d0;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #3a3a3a;
+    color: #fff;
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+}
+
+.sidebar .nav-item .collapse .nav-link {
+    padding-left: 30px;
+}
+
+.sidebar .nav-item .collapse .nav-link:hover {
+    background-color: #3a3a3a;
+}
+.header {
+    background-color: #2a2a2a;
+    color: #c1c7d0;
+    padding: 10px 15px;
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: #2a2a2a;
+    border-bottom: 2px solid #3a3a3a;
+    color: #c1c7d0;
+    padding: 10px 15px;
+}
+
+.navbar .nav-link {
+    color: #c1c7d0;
+    text-decoration: none;
+}
+
+.navbar .nav-link:hover {
+    color: #fff;
+}
+
+.navbar .dropdown-menu {
+    background-color: #2a2a2a;
+    border: none;
+}
+
+.navbar .dropdown-menu .dropdown-item {
+    color: #c1c7d0;
+}
+
+.navbar .dropdown-menu .dropdown-item:hover {
+    background-color: #3a3a3a;
+    color: #fff;
+}
+
+/* Card Styles */
+.card {
+    background-color: #2a2a2a;
+    border: none;
+    margin-bottom: 20px;
+}
+
+.card .card-body {
+    position: relative;
+    padding: 20px;
+}
+
+.card .card-body-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    opacity: 0.2;
+    font-size: 70px;
+}
+
+.card .text-success {
+    color: #28a745 !important;
+}
+
+.card .text-danger {
+    color: #dc3545 !important;
+}
+
+/* List Group Styles */
+.list-group-item {
+    background-color: #2a2a2a;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+}
+
+.list-group-item:hover {
+    background-color: #3a3a3a;
+}
+
+/* Badge Styles */
+.badge {
+    padding: 0.5em 1em;
+    font-size: 0.75em;
+}
+
+/* Breadcrumb Styles */
+.breadcrumbs {
+    background-color: #2a2a2a;
+    color: #ffffff;
+}
+
+.breadcrumbs a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+/* Main Content */
+.main-content {
+    padding: 20px;
+    background-color: #1a1a1a;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #2a2a2a;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+    border: 3px solid #2a2a2a;
+}
+
