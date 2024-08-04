@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('breadcrumbs')
-    Usuarios/
+    / Usuarios
 @endsection
 
 @section('content')
@@ -45,13 +45,13 @@
                             </td>
                             <td>
                                 <a href="{{ route('users.edit', $user->id) }}" class="btn btn-secondary">
-                                    <i class="fas fa-edit"></i> Editar
+                                    <i class="fas fa-edit"></i> 
                                 </a>
                                 <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>
                             </td>

@@ -4,26 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Laravel') }}</title>
-    
-    <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
-    <!-- Leaflet CSS -->
     <link href="{{ asset('leaflet/leaflet.css') }}" rel="stylesheet">
-    
-    <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-
-    <!-- Vite Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <!-- Livewire Styles -->
     @livewireStyles
-    
-    <!-- Font Awesome Kit -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body class="font-sans antialiased">
@@ -35,6 +21,7 @@
                 <div class="flex items-center">
                     <span class="text-white text-2xl mx-2 font-semibold">ElectroSearch</span>
                 </div>
+
             </div>
             <nav class="mt-10">
                 <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('dashboard') }}">
@@ -83,10 +70,10 @@
                         {{ Auth::user()->name }}
                     </button>
                     <div x-show="open" class="absolute right-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10">
-                        <a class="block px-4 py-2 text-sm hover:bg-gray-200">Perfil</a>
+                        <a class="block px-4 py-2 text-sm hover:bg-gray-200 text-black">Perfil</a>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="block px-4 py-2 text-sm hover:bg-gray-200 w-full text-left">
+                            <button type="submit" class="block px-4 py-2 text-sm hover:bg-gray-200 w-full text-left text-black">
                                 Cerrar Sesión
                             </button>
                         </form>

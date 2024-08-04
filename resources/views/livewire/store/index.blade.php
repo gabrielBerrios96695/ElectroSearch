@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('breadcrumbs')
-    Tiendas/
+    / Tiendas
 @endsection
 
 @section('content')

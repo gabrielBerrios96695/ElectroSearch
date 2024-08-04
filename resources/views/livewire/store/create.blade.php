@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('breadcrumbs')
-    <a href="{{ route('store.index') }}">Tiendas</a> / Crear
+    <a href="{{ route('store.index') }}">/ Tiendas</a> / Crear
 @endsection
 
 @section('content')
