@@ -18,7 +18,7 @@
             <i class="fas fa-users"></i> Usuarios
         </div>
         <div class="card-body">
-            <table class="table table-dark table-striped">
+            <table class="table table-custom">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
@@ -45,15 +45,11 @@
                             </td>
                             <td>
                                 <a href="{{ route('users.edit', $user->id) }}" class="btn btn-secondary">
-                                    <i class="fas fa-edit"></i> 
+                                    <i class="fas fa-edit"></i> Editar
                                 </a>
-                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
                             </td>
                         </tr>
                     @endforeach
@@ -62,4 +58,47 @@
         </div>
     </div>
 </div>
+
+<!-- Modal de Confirmación -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-custom">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar al usuario <strong id="userName"></strong>? Esta acción no se puede deshacer.
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" action="" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget; // Button that triggered the modal
+            var storeId = button.getAttribute('data-store-id'); // Extract info from data-* attributes
+            var storeName = button.getAttribute('data-store-name'); // Extract store name
+            var form = deleteModal.querySelector('#deleteForm');
+            form.action = '/stores/' + storeId; // Set the form action to the correct route
+
+            // Set the store name in the modal body
+            var storeNameElement = document.getElementById('storeName');
+            storeNameElement.textContent = storeName;
+        });
+    });
+</script>
+@endpush
 @endsection

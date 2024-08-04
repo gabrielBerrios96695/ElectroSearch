@@ -33,6 +33,10 @@
                         <input type="text" id="longitude" name="longitude" class="form-control" value="{{ $store->longitude }}" readonly>
                     </div>
                 </div>
+                
+                <!-- Map Container -->
+                <div id="map" style="height: 400px; margin-top: 20px;"></div>
+
                 <button type="submit" class="btn btn-primary mt-3">
                     <i class="fas fa-save"></i> Actualizar Tienda
                 </button>

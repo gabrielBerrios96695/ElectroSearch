@@ -45,7 +45,12 @@
                                     <i class="fas fa-store"></i>
                                     <span class="mx-3">Tiendas</span>
                                 </a>
+                                <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('products.index') }}">
+                                    <i class="fas fa-users"></i>
+                                    <span class="mx-3">Productos</span>
+                                </a>
                             </div>
+                            
                         </div>
                     @endif
                 @endif

@@ -209,26 +209,36 @@ body {
 }
 
 /* Table Styles */
-.table {
+.table-custom {
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 3px solid #990D35; /* Borde externo grueso */
+    width: 100%;
     background-color: #FFF;
     color: #000;
     border-radius: 10px;
     overflow: hidden;
 }
 
-.table th, .table td {
+.table-custom th,
+.table-custom td {
+    border: 1px solid #FCD581; /* Bordes internos delgados */
     padding: 15px;
     text-align: left;
-    border-top: 1px solid #FCD581;
 }
 
-.table th {
+.table-custom th {
     background-color: #FCD581;
     color: #000;
-    border-bottom: 2px solid #D52941;
+    border-bottom: 2px solid #D52941; /* Borde inferior grueso para la cabecera */
 }
 
-.table tr:hover {
+.table-custom tr:hover {
+    background-color: #FFF8E8;
+}
+
+/* Estilos alternados para filas impares */
+.table-custom tr:nth-child(odd) {
     background-color: #FFF8E8;
 }
 
@@ -285,7 +295,19 @@ body {
 }
 
 .modal-header {
-    border-bottom: 1px solid #FCD581;
+    border-radius: 10px;
+    background-color: #990D35;
+    color: #FFF8E8;
+    border-bottom: 1px solid #FCD581; /* Color de fondo del encabezado del modal */
+}
+.modal-body {
+    background-color: #ffffff;
+}
+.modal-footer {
+    background-color: #ffffff;
+}
+.modal-header .btn-close {
+    color: #FFF8E8; /* Color del botón de cerrar */
 }
 
 .modal-footer {
@@ -313,18 +335,28 @@ body {
     color: #000;
 }
 
-.custom-text-primary {
+.custom-bg-dark {
+    background-color: #2b0cda;
+    color: #FFF8E8;
+}
+
+/* Misc Styles */
+.shadow-custom {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.border-custom {
+    border: 1px solid #FCD581;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.text-custom {
     color: #990D35;
 }
-
-.custom-text-secondary {
-    color: #D52941;
-}
-
-.custom-text-tertiary {
-    color: #FCD581;
-}
-
-.custom-text-light {
-    color: #FFF8E8;
+.product-image {
+    width: 100px; /* Ajusta el tamaño de la imagen según tu necesidad */
+    height: auto;
+    display: block;
+    margin: 0 auto; /* Centra la imagen horizontalmente */
 }
