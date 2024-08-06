@@ -29,7 +29,7 @@
                     <span class="mx-3">Dashboard</span>
                 </a>
                 @if(Auth::check())
-                    @if(Auth::user()->isAdmin() || Auth::user()->isCliente())
+                    @if(Auth::user()->isAdmin())
                         <div x-data="{ open: false }">
                             <a @click="open = !open" class="nav-link flex items-center mt-4 py-2 px-6" href="#">
                                 <i class="fas fa-cogs"></i>
@@ -46,11 +46,24 @@
                                     <span class="mx-3">Tiendas</span>
                                 </a>
                                 <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('products.index') }}">
-                                    <i class="fas fa-users"></i>
+                                    <i class="fas fa-tags"></i>
                                     <span class="mx-3">Productos</span>
                                 </a>
+
                             </div>
                             
+                        </div>
+                    @endif
+                    @if(Auth::user()->isVendedor())
+                        <div x-show="open" class="pl-6">
+                                    <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('products.index') }}">
+                                        <i class="fas fa-users"></i>
+                                        <span class="mx-3">Productos</span>
+                                    </a>
+                                    <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('store.index') }}">
+                                    <i class="fas fa-store"></i>
+                                    <span class="mx-3">Tiendas</span>
+                                </a>
                         </div>
                     @endif
                 @endif

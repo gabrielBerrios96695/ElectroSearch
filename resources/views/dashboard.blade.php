@@ -7,16 +7,16 @@
 @section('content')
 <div class="container-fluid">
     <div class="row">
-        <!-- Cards -->
+        
         <div class="col-xl-3 col-sm-6 mb-3">
             <div class="card bg-dark text-white h-100">
                 <div class="card-body">
-                    <div class="card-body-icon">
-                        <i class="fas fa-chart-line"></i>
+                     <div class="card-body-icon">
+                        <i class="fas fa-store"></i> <!-- El ícono puede ser más representativo para tiendas -->
                     </div>
-                    <div class="mr-5">Potential growth</div>
-                    <div class="display-4">$12.34</div>
-                    <div class="text-success">+3.5%</div>
+                    <div class="mr-5">Tiendas Registradas</div>
+                    <div class="display-4">{{ $storeCount }}</div>
+           
                 </div>
             </div>
         </div>
@@ -24,38 +24,43 @@
             <div class="card bg-dark text-white h-100">
                 <div class="card-body">
                     <div class="card-body-icon">
-                        <i class="fas fa-dollar-sign"></i>
+                        <i class="fas fa-store-slash"></i>
                     </div>
-                    <div class="mr-5">Revenue current</div>
-                    <div class="display-4">$17.34</div>
-                    <div class="text-success">+11%</div>
+                    <div class="mr-5">Tiendas Deshabilitadas</div>
+                    <div class="display-4">{{ $storeCount1 }}</div>
+                    <div class="text-success"></div>
                 </div>
             </div>
         </div>
+
+
         <div class="col-xl-3 col-sm-6 mb-3">
             <div class="card bg-dark text-white h-100">
                 <div class="card-body">
                     <div class="card-body-icon">
-                        <i class="fas fa-coins"></i>
+                        <i class="fas fa-user-tie"></i> <!-- Ícono para Vendedores -->
                     </div>
-                    <div class="mr-5">Daily Income</div>
-                    <div class="display-4">$12.34</div>
-                    <div class="text-danger">-2.4%</div>
+                    <div class="mr-5">Vendedores</div>
+                    <div class="display-4">{{ $sellersCount }}</div>
+                    <div class="text-success"></div>
                 </div>
             </div>
         </div>
+
         <div class="col-xl-3 col-sm-6 mb-3">
             <div class="card bg-dark text-white h-100">
                 <div class="card-body">
                     <div class="card-body-icon">
-                        <i class="fas fa-wallet"></i>
+                        <i class="fas fa-users"></i> <!-- Ícono para Usuarios -->
                     </div>
-                    <div class="mr-5">Expense current</div>
-                    <div class="display-4">$31.53</div>
-                    <div class="text-success">+3.5%</div>
+                    <div class="mr-5">Clientes</div>
+                    <div class="display-4">{{ $clientsCount }}</div>
+                    <div class="text-danger"></div>
                 </div>
             </div>
         </div>
+
+        
     </div>
 
     <!-- Transaction History and Open Projects -->

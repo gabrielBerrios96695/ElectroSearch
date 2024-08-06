@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Products;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 
 class Edit extends Component
 {
@@ -39,17 +40,26 @@ class Edit extends Component
         $this->validate();
 
         if ($this->imagen) {
+            // Elimina la imagen antigua si existe
+            if ($this->product->imagen) {
+                Storage::delete('public/images/' . $this->product->imagen);
+            }
+
+            // Guarda la nueva imagen
             $imageName = $this->imagen->store('images', 'public');
             $this->product->imagen = $imageName;
         }
 
+        // Actualiza el producto
         $this->product->update([
             'nombre' => $this->nombre,
             'descripcion' => $this->descripcion,
             'precio' => $this->precio,
             'categoria' => $this->categoria,
+            'imagen' => $this->product->imagen ?? null, // Mantener la imagen existente si no se sube una nueva
         ]);
 
+        // Redirige a la lista de productos
         return redirect()->route('products.index');
     }
 
@@ -58,4 +68,5 @@ class Edit extends Component
         return view('livewire.products.edit');
     }
 }
+
 

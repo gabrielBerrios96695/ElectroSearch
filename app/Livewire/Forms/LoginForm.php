@@ -30,11 +30,24 @@ class LoginForm extends Form
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only(['email', 'password']), $this->remember)) {
+        $credentials = $this->only(['email', 'password']);
+        if (! Auth::attempt($credentials, $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'form.email' => trans('auth.failed'),
+            ]);
+        }
+
+        $user = Auth::user();
+
+        // Verifica si el usuario está deshabilitado
+        if ($user->status === 0) {
+            Auth::logout(); // Cierra la sesión del usuario
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'form.email' => 'Su cuenta ha sido deshabilitada.',
             ]);
         }
 

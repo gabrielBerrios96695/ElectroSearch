@@ -39,6 +39,15 @@
                     <label for="categoria" class="form-label">Categoría</label>
                     <input type="text" id="categoria" name="categoria" class="form-control" required>
                 </div>
+                <div class="mb-3">
+                    <label for="store_id" class="form-label">Tienda</label>
+                    <select id="store_id" name="store_id" class="form-control" required>
+                        <option value="">Seleccione una tienda</option>
+                        @foreach(App\Models\Store::all() as $store)
+                            <option value="{{ $store->id }}">{{ $store->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i> Registrar Producto
                 </button>

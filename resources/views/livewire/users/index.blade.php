@@ -18,64 +18,70 @@
             <i class="fas fa-users"></i> Usuarios
         </div>
         <div class="card-body">
-            <table class="table table-custom">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Correo Electrónico</th>
-                        <th scope="col">Rol</th>
-                        <th scope="col">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($users as $user)
+            <div class="table-responsive"> <!-- Contenedor con scroll horizontal -->
+                <table class="table table-custom">
+                    <thead>
                         <tr>
-                            <th scope="row">{{ $user->id }}</th>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td>
-                                @if ($user->role == 'vendedor')
-                                    Vendedor
-                                @elseif ($user->role == 'cliente')
-                                    Cliente
-                                @else
-                                    {{ ucfirst($user->role) }}
-                                @endif
-                            </td>
-                            <td>
-                                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-secondary">
-                                    <i class="fas fa-edit"></i> Editar
-                                </a>
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
-                                </button>
-                            </td>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Correo Electrónico</th>
+                            <th scope="col">Rol</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Acciones</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($users as $user)
+                            <tr>
+                                <th scope="row">{{ $user->id }}</th>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>
+                                    @if ($user->role == 'vendedor')
+                                        Vendedor
+                                    @elseif ($user->role == 'cliente')
+                                        Cliente
+                                    @else
+                                        {{ ucfirst($user->role) }}
+                                    @endif
+                                </td>
+                                <td>
+                                    {{ $user->status ? 'Habilitado' : 'Deshabilitado' }}
+                                </td>
+                                <td>
+                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-secondary">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
+                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#toggleStatusModal" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" data-user-status="{{ $user->status }}">
+                                        <i class="fas fa-toggle-on"></i> {{ $user->status ? 'Deshabilitar' : 'Habilitar' }}
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Modal de Confirmación -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<!-- Modal de Cambio de Estado -->
+<div class="modal fade" id="toggleStatusModal" tabindex="-1" aria-labelledby="toggleStatusModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header modal-header-custom">
-                <h5 class="modal-title" id="deleteModalLabel">Confirmar Eliminación</h5>
+                <h5 class="modal-title" id="toggleStatusModalLabel">Confirmar Cambio de Estado</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas eliminar al usuario <strong id="userName"></strong>? Esta acción no se puede deshacer.
+                ¿Estás seguro de que deseas <strong id="toggleStatusAction"></strong> al usuario <strong id="userName"></strong>? Esta acción cambiará el estado del usuario.
             </div>
             <div class="modal-footer">
-                <form id="deleteForm" action="" method="POST">
+                <form id="toggleStatusForm" action="" method="POST">
                     @csrf
-                    @method('DELETE')
+                    @method('PATCH')
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <button type="submit" class="btn btn-warning">Confirmar</button>
                 </form>
             </div>
         </div>
@@ -86,17 +92,23 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var deleteModal = document.getElementById('deleteModal');
-        deleteModal.addEventListener('show.bs.modal', function (event) {
+        var toggleStatusModal = document.getElementById('toggleStatusModal');
+        toggleStatusModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget; // Button that triggered the modal
-            var storeId = button.getAttribute('data-store-id'); // Extract info from data-* attributes
-            var storeName = button.getAttribute('data-store-name'); // Extract store name
-            var form = deleteModal.querySelector('#deleteForm');
-            form.action = '/stores/' + storeId; // Set the form action to the correct route
+            var userId = button.getAttribute('data-user-id'); // Extract info from data-* attributes
+            var userName = button.getAttribute('data-user-name'); // Extract user name
+            var userStatus = button.getAttribute('data-user-status'); // Extract user status
+            var form = toggleStatusModal.querySelector('#toggleStatusForm');
+            form.action = '/users/' + userId + '/toggleStatus'; // Set the form action to the correct route
 
-            // Set the store name in the modal body
-            var storeNameElement = document.getElementById('storeName');
-            storeNameElement.textContent = storeName;
+            // Set the action in the modal body
+            var actionText = userStatus == 1 ? 'deshabilitar' : 'habilitar';
+            var toggleStatusActionElement = document.getElementById('toggleStatusAction');
+            toggleStatusActionElement.textContent = actionText;
+
+            // Set the user name in the modal body
+            var userNameElement = document.getElementById('userName');
+            userNameElement.textContent = userName;
         });
     });
 </script>

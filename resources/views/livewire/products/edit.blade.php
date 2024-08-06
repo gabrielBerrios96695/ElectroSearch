@@ -35,6 +35,9 @@
                 <div class="mb-3">
                     <label for="imagen" class="form-label">Imagen</label>
                     <input type="file" id="imagen" name="imagen" class="form-control">
+                    @if ($product->imagen)
+                        <img src="{{ asset('storage/images/' . $product->imagen) }}" alt="{{ $product->nombre }}" class="img-thumbnail mt-2" style="max-width: 200px;">
+                    @endif
                 </div>
                 <div class="mb-3">
                     <label for="categoria" class="form-label">Categoría</label>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StoreController extends Controller
 {
@@ -12,19 +13,23 @@ class StoreController extends Controller
         $sortField = $request->input('sort_field', 'id');
         $sortDirection = $request->input('sort_direction', 'asc');
 
-        $stores = Store::orderBy($sortField, $sortDirection)->get();
+        if (Auth::user()->isAdmin()) {
+            $stores = Store::orderBy($sortField, $sortDirection)->get();
+        } else {
+            $stores = Store::where('status', 1)->orderBy($sortField, $sortDirection)->get();
+        }
 
-        return view('livewire/store.index', compact('stores', 'sortField', 'sortDirection'));
+        return view('livewire.store.index', compact('stores', 'sortField', 'sortDirection'));
     }
 
     public function create()
     {
-        return view('livewire/store.create');
+        return view('livewire.store.create');
     }
 
     public function edit(Store $store)
     {
-        return view('livewire/store.edit', compact('store'));
+        return view('livewire.store.edit', compact('store'));
     }
 
     public function update(Request $request, Store $store)
@@ -46,8 +51,7 @@ class StoreController extends Controller
 
     public function destroy(Store $store)
     {
-        $store->delete();
-        return redirect()->route('store.index')->with('success', 'Tienda eliminada correctamente');
+        
     }
 
     public function store(Request $request)
@@ -65,5 +69,13 @@ class StoreController extends Controller
         ]);
 
         return redirect()->route('store.index')->with('success', 'Tienda creada exitosamente.');
+    }
+
+    public function toggleStatus(Store $store)
+    {
+        $store->status = !$store->status;
+        $store->save();
+
+        return redirect()->route('store.index')->with('success', 'Estado de la tienda actualizado correctamente');
     }
 }

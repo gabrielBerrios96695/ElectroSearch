@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('breadcrumbs')
@@ -40,14 +39,18 @@
                             <td>{{ $product->descripcion }}</td>
                             <td>{{ $product->precio }}</td>
                             <td class="text-center">
-                                <img src="{{ asset('storage/' . $product->imagen) }}" alt="{{ $product->nombre }}" class="product-image">
+                                @if($product->imagen)
+                                    <img src="{{ asset('storage/images/' . $product->imagen) }}" alt="{{ $product->nombre }}" class="product-image" style="max-width: 150px;">
+                                @else
+                                    <span>No Image</span>
+                                @endif
                             </td>
                             <td>{{ $product->categoria }}</td>
                             <td>
                                 <a href="{{ route('products.edit', $product->id) }}" class="btn btn-secondary">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
-                                <button wire:click="delete({{ $product->id }})" class="btn btn-danger">
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-product-id="{{ $product->id }}">
                                     <i class="fas fa-trash-alt"></i> Eliminar
                                 </button>
                             </td>
@@ -58,5 +61,40 @@
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Eliminar Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este producto?
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" action="" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var productId = button.getAttribute('data-product-id');
+            var form = document.getElementById('deleteForm');
+            form.action = '/products/' + productId;
+        });
+    });
+</script>
 
 @endsection

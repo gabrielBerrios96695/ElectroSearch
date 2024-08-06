@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('precio', 10, 2);
             $table->string('imagen');
             $table->string('categoria');
+            $table->tinyInteger('store_id');
             $table->timestamps();
         });
     }

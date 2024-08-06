@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
@@ -13,7 +12,8 @@ class UserController extends Controller
     {
         $sortField = $request->input('sort_field', 'id');
         $sortDirection = $request->input('sort_direction', 'asc');
-
+        
+        // Recuperar todos los usuarios, incluyendo los deshabilitados
         $users = User::orderBy($sortField, $sortDirection)->get();
 
         return view('livewire/users.index', compact('users', 'sortField', 'sortDirection'));
@@ -46,8 +46,11 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        $user->delete();
-        return redirect()->route('users.index')->with('success', 'Usuario eliminado correctamente');
+        // Eliminar lógicamente el usuario
+        $user->status = 0;
+        $user->save();
+
+        return redirect()->route('users.index')->with('success', 'Usuario deshabilitado correctamente');
     }
 
     public function store(Request $request)
@@ -67,5 +70,14 @@ class UserController extends Controller
         ]);
 
         return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
+    }
+
+    public function toggleStatus($id)
+    {
+        $user = User::findOrFail($id);
+        $user->status = !$user->status; // Alternar el estado
+        $user->save();
+
+        return redirect()->route('users.index')->with('success', 'Estado del usuario actualizado.');
     }
 }
