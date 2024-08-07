@@ -16,6 +16,7 @@ class Store extends Model
         'latitude', 
         'longitude', 
         'status',
+        
     ];
 
     public function scopeEnabled($query)

@@ -27,6 +27,7 @@
                         <th scope="col">Longitud</th>
                         @if (Auth::user()->isAdmin())
                             <th scope="col">Estado</th>
+                            <th scope="col">Registrado/Actualizado</th>
                         @endif
                         <th scope="col">Acciones</th>
                     </tr>
@@ -40,6 +41,7 @@
                             <td>{{ $store->longitude }}</td>
                             @if (Auth::user()->isAdmin())
                                 <td>{{ $store->status ? 'Habilitado' : 'Deshabilitado' }}</td>
+                                <td>{{ $store->created_by }}</td>
                             @endif
                             <td>
                                 <a href="{{ route('store.edit', $store->id) }}" class="btn btn-secondary">

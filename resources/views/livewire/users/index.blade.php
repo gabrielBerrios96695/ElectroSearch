@@ -5,6 +5,10 @@
 @endsection
 
 @section('content')
+@php
+    use App\Models\User;
+@endphp
+
 <div class="container">
     <div class="d-flex justify-content-between align-items-center my-4">
         <h1 class="h3">Lista de Usuarios</h1>
@@ -27,6 +31,7 @@
                             <th scope="col">Correo Electrónico</th>
                             <th scope="col">Rol</th>
                             <th scope="col">Estado</th>
+                            <th scope="col">ID Usuario</th>
                             <th scope="col">Acciones</th>
                         </tr>
                     </thead>
@@ -47,6 +52,9 @@
                                 </td>
                                 <td>
                                     {{ $user->status ? 'Habilitado' : 'Deshabilitado' }}
+                                </td>
+                                <td>
+                                    {{ optional(User::find($user->userid))->name }} <!-- Muestra el nombre del usuario asociado al userId -->
                                 </td>
                                 <td>
                                     <a href="{{ route('users.edit', $user->id) }}" class="btn btn-secondary">

@@ -22,12 +22,35 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required',
-            'descripcion' => 'required',
-            'precio' => 'required|numeric',
+            'nombre' => [
+                'required',
+                'regex:/^[a-zA-Z0-9\s]+$/'
+            ],
+            'descripcion' => [
+                'required',
+                'regex:/^[a-zA-Z0-9\s]+$/'
+            ],
+            'precio' => 'required|numeric|min:0',
             'imagen' => 'required|image',
-            'categoria' => 'required',
+            'categoria' => [
+                'required',
+                'regex:/^[a-zA-Z0-9\s]+$/'
+            ],
             'store_id' => 'required|exists:stores,id',
+        ], [
+            'nombre.required' => 'El nombre es obligatorio.',
+            'nombre.regex' => 'El nombre solo puede contener letras, números y espacios.',
+            'descripcion.required' => 'La descripción es obligatoria.',
+            'descripcion.regex' => 'La descripción solo puede contener letras, números y espacios.',
+            'precio.required' => 'El precio es obligatorio.',
+            'precio.numeric' => 'El precio debe ser un número.',
+            'precio.min' => 'El precio debe ser mayor o igual a 0.',
+            'imagen.required' => 'La imagen es obligatoria.',
+            'imagen.image' => 'El archivo debe ser una imagen.',
+            'categoria.required' => 'La categoría es obligatoria.',
+            'categoria.regex' => 'La categoría solo puede contener letras, números y espacios.',
+            'store_id.required' => 'El ID de la tienda es obligatorio.',
+            'store_id.exists' => 'El ID de la tienda debe existir en la base de datos.',
         ]);
 
         $productCount = Product::where('store_id', $request->store_id)->count() + 1;
@@ -47,7 +70,7 @@ class ProductController extends Controller
             'store_id' => $request->store_id,
         ]);
 
-        return redirect()->route('products.index');
+        return redirect()->route('products.index')->with('success', 'Producto creado exitosamente.');
     }
 
     public function edit(Product $product)
@@ -58,12 +81,35 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $request->validate([
-            'nombre' => 'required',
-            'descripcion' => 'required',
-            'precio' => 'required|numeric',
+            'nombre' => [
+                'required',
+                'regex:/^[a-zA-Z0-9\s]+$/'
+            ],
+            'descripcion' => [
+                'required',
+                'regex:/^[a-zA-Z0-9\s]+$/'
+            ],
+            'precio' => 'required|numeric|min:0',
             'imagen' => 'nullable|image',
-            'categoria' => 'required',
+            'categoria' => [
+                'required',
+                'regex:/^[a-zA-Z0-9\s]+$/'
+            ],
             'store_id' => 'required|exists:stores,id',
+        ], [
+            'nombre.required' => 'El nombre es obligatorio.',
+            'nombre.regex' => 'El nombre solo puede contener letras, números y espacios.',
+            'descripcion.required' => 'La descripción es obligatoria.',
+            'descripcion.regex' => 'La descripción solo puede contener letras, números y espacios.',
+            'precio.required' => 'El precio es obligatorio.',
+            'precio.numeric' => 'El precio debe ser un número.',
+            'precio.min' => 'El precio debe ser mayor o igual a 0.',
+            'imagen.nullable' => 'La imagen es opcional.',
+            'imagen.image' => 'El archivo debe ser una imagen.',
+            'categoria.required' => 'La categoría es obligatoria.',
+            'categoria.regex' => 'La categoría solo puede contener letras, números y espacios.',
+            'store_id.required' => 'El ID de la tienda es obligatorio.',
+            'store_id.exists' => 'El ID de la tienda debe existir en la base de datos.',
         ]);
 
         if ($request->hasFile('imagen')) {
@@ -86,7 +132,7 @@ class ProductController extends Controller
             'store_id' => $request->store_id,
         ]);
 
-        return redirect()->route('products.index');
+        return redirect()->route('products.index')->with('success', 'Producto actualizado correctamente.');
     }
 
     public function destroy(Product $product)
@@ -97,6 +143,6 @@ class ProductController extends Controller
 
         $product->delete();
 
-        return redirect()->route('products.index');
+        return redirect()->route('products.index')->with('success', 'Producto eliminado correctamente.');
     }
 }

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
             $table->tinyInteger('status')->default(1);
+            $table->tinyInteger('userid')->default(1);
             $table->timestamps();
             
         });

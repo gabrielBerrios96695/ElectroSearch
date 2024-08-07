@@ -20,17 +20,26 @@
                 @method('PUT')
                 <div class="mb-3">
                     <label for="name" class="form-label">Nombre de la tienda</label>
-                    <input type="text" id="name" name="name" class="form-control" value="{{ $store->name }}" required>
+                    <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $store->name) }}" required>
+                    @error('name')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
                 
                 <div class="row mt-3">
                     <div class="col-md-6 mb-2">
                         <label for="latitude" class="form-label">Latitud</label>
-                        <input type="text" id="latitude" name="latitude" class="form-control" value="{{ $store->latitude }}" readonly>
+                        <input type="text" id="latitude" name="latitude" class="form-control" value="{{ old('latitude', $store->latitude) }}" readonly>
+                        @error('latitude')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="col-md-6 mb-2">
                         <label for="longitude" class="form-label">Longitud</label>
-                        <input type="text" id="longitude" name="longitude" class="form-control" value="{{ $store->longitude }}" readonly>
+                        <input type="text" id="longitude" name="longitude" class="form-control" value="{{ old('longitude', $store->longitude) }}" readonly>
+                        @error('longitude')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
                 
@@ -52,6 +61,9 @@
 <style>
     .form-label {
         color: #000;
+    }
+    .text-danger {
+        font-size: 0.875em;
     }
 </style>
 @endpush

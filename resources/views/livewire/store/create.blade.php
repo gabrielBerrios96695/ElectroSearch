@@ -23,21 +23,28 @@
 
                 <div class="form-group mb-3">
                     <label for="name" class="form-label">Nombre de la Tienda</label>
-                    <input type="text" id="name" name="name" class="form-control" required>
+                    <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required>
+                    @error('name')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div id="map" style="height: 300px; width: 100%; margin-top: 20px;"></div>
                 <div class="form-group row">
                     <div class="col-md-6 mb-3">
                         <label for="latitude" class="form-label">Latitud</label>
-                        <input type="text" id="latitude" name="latitude" class="form-control" value="-17.4136" readonly>
+                        <input type="text" id="latitude" name="latitude" class="form-control" value="{{ old('latitude', '-17.4136') }}" readonly>
+                        @error('latitude')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="longitude" class="form-label">Longitud</label>
-                        <input type="text" id="longitude" name="longitude" class="form-control" value="-66.1652" readonly>
+                        <input type="text" id="longitude" name="longitude" class="form-control" value="{{ old('longitude', '-66.1652') }}" readonly>
+                        @error('longitude')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
-
-                
 
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i> Guardar Tienda
