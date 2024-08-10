@@ -11,24 +11,25 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stores', function (Blueprint $table) {
-           
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->decimal('latitude', 10, 7);
-            $table->decimal('longitude', 10, 7);
+            $table->string('nombre');
+            $table->string('descripcion');
+            $table->decimal('precio', 10, 2);
+            $table->string('imagen');
+            $table->string('categoria');
             $table->tinyInteger('status')->default(1);
-            $table->tinyInteger('userid')->default(1);
+            $table->foreignId('store_id')->constrained('stores')->onDelete('cascade');
             $table->timestamps();
-            
         });
     }
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('stores');
+        Schema::dropIfExists('products');
     }
 };

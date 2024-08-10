@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('breadcrumbs')
-    <a href="{{ route('store.index') }}" >Tiendas</a> / <a>Editar</a>
+    <a href="{{ route('store.index') }}">/ Tiendas</a> / Editar
 @endsection
 
 @section('content')
@@ -12,7 +12,7 @@
 
     <div class="card">
         <div class="card-header">
-            Editar Tienda
+            <i class="fas fa-edit"></i> Editar Tienda
         </div>
         <div class="card-body">
             <form action="{{ route('store.update', $store->id) }}" method="POST">
@@ -20,30 +20,55 @@
                 @method('PUT')
                 <div class="mb-3">
                     <label for="name" class="form-label">Nombre de la tienda</label>
-                    <input type="text" id="name" name="name" class="form-control" value="{{ $store->name }}" required>
+                    <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $store->name) }}" required>
+                    @error('name')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
-                <div class="mb-3">
-                    <label for="latitude" class="form-label">Latitud</label>
-                    <input type="text" id="latitude" name="latitude" class="form-control" value="{{ $store->latitude }}" readonly>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6 mb-2">
+                        <label for="latitude" class="form-label">Latitud</label>
+                        <input type="text" id="latitude" name="latitude" class="form-control" value="{{ old('latitude', $store->latitude) }}" readonly>
+                        @error('latitude')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label for="longitude" class="form-label">Longitud</label>
+                        <input type="text" id="longitude" name="longitude" class="form-control" value="{{ old('longitude', $store->longitude) }}" readonly>
+                        @error('longitude')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="longitude" class="form-label">Longitud</label>
-                    <input type="text" id="longitude" name="longitude" class="form-control" value="{{ $store->longitude }}" readonly>
-                </div>
-                <button type="submit" class="btn btn-primary">Actualizar Tienda</button>
+                
+                <!-- Map Container -->
+                <div id="map" style="height: 400px; margin-top: 20px;"></div>
+
+                <button type="submit" class="btn btn-primary mt-3">
+                    <i class="fas fa-save"></i> Actualizar Tienda
+                </button>
             </form>
-            <div id="map" style="height: 500px; width: 100%; margin-top: 20px;"></div>
         </div>
     </div>
 </div>
 
 @push('styles')
-<!-- Include Leaflet CSS -->
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<style>
+    .form-label {
+        color: #000;
+    }
+    .text-danger {
+        font-size: 0.875em;
+    }
+</style>
 @endpush
 
 @push('scripts')
-<!-- Include Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {

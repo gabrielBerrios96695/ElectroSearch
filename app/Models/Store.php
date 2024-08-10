@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,6 +14,21 @@ class Store extends Model
     protected $fillable = [
         'name', 
         'latitude', 
-        'longitude'
+        'longitude', 
+        'status',
+        
     ];
+
+    public function scopeEnabled($query)
+    {
+        return $query->where('status', 1);
+    }
+
+        public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
 }
+
+

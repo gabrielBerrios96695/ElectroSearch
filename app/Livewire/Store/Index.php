@@ -8,10 +8,9 @@ use App\Models\Store;
 class Index extends Component
 {
     public $stores;
-
     public function mount()
     {
-        // Carga todas las tiendas al iniciar el componente
+
         $this->stores = Store::all();
     }
 
