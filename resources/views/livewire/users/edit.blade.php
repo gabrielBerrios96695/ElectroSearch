@@ -44,12 +44,10 @@
                 <div class="form-group">
                     <label for="role">Rol</label>
                     <select name="role" id="role" class="form-control" required>
-                        <option value="">Selecciona un rol</option>
-                        @foreach(['admin', 'vendedor', 'cliente'] as $role)
-                            <option value="{{ $role }}" {{ old('role', $user->role) === $role ? 'selected' : '' }}>
-                                {{ ucfirst($role) }}
-                            </option>
-                        @endforeach
+                    <option value="">Selecciona un rol</option>
+                        <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Administrador</option>
+                        <option value="vendedor" {{ old('role') === 'vendedor' ? 'selected' : '' }}>Vendedor</option>
+                        
                     </select>
                 </div>
 

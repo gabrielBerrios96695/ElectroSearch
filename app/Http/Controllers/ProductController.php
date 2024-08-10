@@ -57,7 +57,7 @@ class ProductController extends Controller
 
         if ($request->hasFile('imagen')) {
             $extension = $request->imagen->extension();
-            $imageName = 'tienda' . $request->store_id . '-producto' . $productCount . '.' . $extension;
+            $imageName = 't' . $request->store_id . '-p' . $productCount . '.' . $extension;
             $path = $request->imagen->storeAs('public/images', $imageName);
         }
 
@@ -118,7 +118,7 @@ class ProductController extends Controller
             }
 
             $extension = $request->imagen->extension();
-            $imageName = 'tienda' . $request->store_id . '-producto' . $product->id . '.' . $extension;
+            $imageName = 't' . $request->store_id . '-p' . $product->id . '.' . $extension;
             $path = $request->imagen->storeAs('public/images', $imageName);
             $product->imagen = $imageName;
         }
@@ -137,12 +137,17 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        if ($product->imagen) {
-            Storage::delete('public/images/' . $product->imagen);
-        }
-
-        $product->delete();
-
-        return redirect()->route('products.index')->with('success', 'Producto eliminado correctamente.');
+        
+            try {
+                if ($product->imagen) {
+                    Storage::delete('public/images/' . $product->imagen);
+                }
+        
+                $product->delete();
+                return redirect()->route('products.index')->with('success', 'Producto eliminado correctamente.');
+            } catch (\Exception $e) {
+                return redirect()->route('products.index')->with('error', 'Ocurrió un error al intentar eliminar el producto.');
+            }
+        
     }
 }

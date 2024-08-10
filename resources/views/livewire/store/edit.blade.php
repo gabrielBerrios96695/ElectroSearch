@@ -55,9 +55,9 @@
 </div>
 
 @push('styles')
-<!-- Include Leaflet CSS -->
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<!-- Custom CSS for text visibility -->
+
 <style>
     .form-label {
         color: #000;
@@ -69,7 +69,6 @@
 @endpush
 
 @push('scripts')
-<!-- Include Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {

@@ -21,6 +21,7 @@
                 @csrf
                 @method('PUT')
 
+                <!-- Nombre del Producto -->
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre del Producto</label>
                     <input type="text" id="nombre" name="nombre" class="form-control" value="{{ old('nombre', $product->nombre) }}" required>
@@ -29,6 +30,7 @@
                     @enderror
                 </div>
 
+                <!-- Descripción -->
                 <div class="mb-3">
                     <label for="descripcion" class="form-label">Descripción</label>
                     <textarea id="descripcion" name="descripcion" class="form-control" required>{{ old('descripcion', $product->descripcion) }}</textarea>
@@ -37,6 +39,7 @@
                     @enderror
                 </div>
 
+                <!-- Precio -->
                 <div class="mb-3">
                     <label for="precio" class="form-label">Precio</label>
                     <input type="number" id="precio" name="precio" class="form-control" value="{{ old('precio', $product->precio) }}" step="0.01" required>
@@ -45,6 +48,7 @@
                     @enderror
                 </div>
 
+                <!-- Imagen -->
                 <div class="mb-3">
                     <label for="imagen" class="form-label">Imagen</label>
                     <input type="file" id="imagen" name="imagen" class="form-control">
@@ -56,10 +60,20 @@
                     @enderror
                 </div>
 
+                <!-- Categoría -->
                 <div class="mb-3">
                     <label for="categoria" class="form-label">Categoría</label>
                     <input type="text" id="categoria" name="categoria" class="form-control" value="{{ old('categoria', $product->categoria) }}" required>
                     @error('categoria')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Store ID -->
+                <div class="mb-3">
+                    <label for="store_id" class="form-label">ID de la Tienda</label>
+                    <input type="number" id="store_id" name="store_id" class="form-control" value="{{ old('store_id', $product->store_id) }}" required>
+                    @error('store_id')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>

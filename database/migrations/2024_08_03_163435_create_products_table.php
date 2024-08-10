@@ -18,10 +18,12 @@ return new class extends Migration
             $table->decimal('precio', 10, 2);
             $table->string('imagen');
             $table->string('categoria');
-            $table->tinyInteger('store_id');
+            $table->tinyInteger('status')->default(1);
+            $table->foreignId('store_id')->constrained('stores')->onDelete('cascade');
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

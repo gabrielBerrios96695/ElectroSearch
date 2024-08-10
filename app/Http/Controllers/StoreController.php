@@ -44,7 +44,7 @@ class StoreController extends Controller
                 'required',
                 'string',
                 'max:50',
-                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'
+                'regex:/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/'
             ],
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
@@ -75,7 +75,7 @@ class StoreController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'
+                'regex:/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/'
             ],
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',

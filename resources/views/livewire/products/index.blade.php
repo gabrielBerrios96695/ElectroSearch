@@ -28,6 +28,7 @@
                         <th scope="col">Precio</th>
                         <th scope="col">Imagen</th>
                         <th scope="col">Categoría</th>
+                        <th scope="col">Tienda</th>
                         <th scope="col">Acciones</th>
                     </tr>
                 </thead>
@@ -37,7 +38,7 @@
                             <th scope="row">{{ $product->id }}</th>
                             <td>{{ $product->nombre }}</td>
                             <td>{{ $product->descripcion }}</td>
-                            <td>{{ $product->precio }}</td>
+                            <td>{{ $product->precio }} Bs.</td>
                             <td class="text-center">
                                 @if($product->imagen)
                                     <img src="{{ asset('storage/images/' . $product->imagen) }}" alt="{{ $product->nombre }}" class="product-image" style="max-width: 150px;">
@@ -46,6 +47,7 @@
                                 @endif
                             </td>
                             <td>{{ $product->categoria }}</td>
+                            <td>{{ $product->store_id }}</td>
                             <td>
                                 <a href="{{ route('products.edit', $product->id) }}" class="btn btn-secondary">
                                     <i class="fas fa-edit"></i> Editar
