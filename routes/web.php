@@ -9,23 +9,20 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 
-// Ruta para enviar un correo de prueba (solo para desarrollo)
-Route::get('/send-test-email', function () {
-    Mail::raw('Este es un correo de prueba', function ($message) {
-        $message->to('destinatario@example.com')
-                ->subject('Correo de Prueba');
-    });
 
-    return 'Correo enviado!';
-});
 
-// Ruta para la página de bienvenida
+
 Route::view('/', 'welcome');
 
 // Ruta para el dashboard, protegida por autenticación y verificación de email
+
 Route::get('dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::post('dashboard/update-password', [DashboardController::class, 'updatePassword'])
+    ->middleware(['auth', 'verified'])
+    ->name('password.update');
 
 // Ruta para el cierre de sesión
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

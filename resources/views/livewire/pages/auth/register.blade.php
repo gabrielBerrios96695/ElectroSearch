@@ -30,9 +30,9 @@ new #[Layout('layouts.guest')] class extends Component
         
         // Check if there are any users in the database
         if (User::count() === 0) {
-            $validated['role'] = 'admin'; // Assign the admin role to the first user
+            $validated['role'] = '1'; // Assign the admin role to the first user
         } else {
-            $validated['role'] = 'cliente'; // Default role for other users
+            $validated['role'] = '3'; // Default role for other users
         }
 
         event(new Registered($user = User::create($validated)));

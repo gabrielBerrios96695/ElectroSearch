@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('breadcrumbs')
-    <a href="{{ route('users.index') }}">/ Usuarios</a> / <a href="#">Editar</a>
+    <a href="{{ route('users.index') }}">/ Usuarios</a> / <a>Editar</a>
 @endsection
 
 @section('content')
@@ -27,7 +27,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('users.update', $user->id) }}" method="POST">
+            <form id="userForm" action="{{ route('users.update', $user->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 
@@ -43,17 +43,70 @@
 
                 <div class="form-group">
                     <label for="role">Rol</label>
-                    <select name="role" id="role" class="form-control" required>
-                    <option value="">Selecciona un rol</option>
-                        <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Administrador</option>
-                        <option value="vendedor" {{ old('role') === 'vendedor' ? 'selected' : '' }}>Vendedor</option>
-                        
+                    <select name="role" id="role" class="form-control" required style="height: 45px;">
+                        <option value="">Selecciona un rol</option>
+                        <option value="1" {{ old('role', $user->role) == 1 ? 'selected' : '' }}>Administrador</option>
+                        <option value="2" {{ old('role', $user->role) == 2 ? 'selected' : '' }}>Vendedor</option>
+                        <option value="3" {{ old('role', $user->role) == 3 ? 'selected' : '' }}>Cliente</option>
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-success mt-4">Actualizar</button>
+                <button type="button" class="btn btn-success mt-4" data-toggle="modal" data-target="#confirmModal">
+                    Actualizar
+                </button>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Modal de Confirmación -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmar Actualización</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Estás a punto de actualizar los datos del usuario con los siguientes detalles:</p>
+                <ul>
+                    <li><strong>Nombre:</strong> <span id="modalName"></span></li>
+                    <li><strong>Correo Electrónico:</strong> <span id="modalEmail"></span></li>
+                    <li><strong>Rol:</strong> <span id="modalRole"></span></li>
+                </ul>
+                <p>¿Estás seguro de que deseas continuar?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmButton">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Cargar datos en el modal cuando se hace clic en "Actualizar"
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const roleInput = document.getElementById('role');
+
+        const modalName = document.getElementById('modalName');
+        const modalEmail = document.getElementById('modalEmail');
+        const modalRole = document.getElementById('modalRole');
+
+        document.querySelector('[data-target="#confirmModal"]').addEventListener('click', function() {
+            modalName.textContent = nameInput.value;
+            modalEmail.textContent = emailInput.value;
+            modalRole.textContent = roleInput.options[roleInput.selectedIndex].text;
+        });
+
+        // Enviar el formulario al confirmar
+        document.getElementById('confirmButton').addEventListener('click', function() {
+            document.getElementById('userForm').submit();
+        });
+    });
+</script>
 @endsection

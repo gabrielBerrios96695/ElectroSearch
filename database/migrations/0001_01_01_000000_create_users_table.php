@@ -15,14 +15,16 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->enum('role', ['admin', 'vendedor','cliente'])->default('cliente'); 
+            $table->tinyInteger('role')->default(3);
             $table->timestamp('email_verified_at')->nullable();
             $table->tinyInteger('userid')->default(1);
             $table->tinyInteger('status')->default(1);
             $table->string('password');
+            $table->boolean('passwordUpdate')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });
+        
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

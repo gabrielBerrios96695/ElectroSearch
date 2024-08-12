@@ -61,8 +61,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="store_id" class="form-label">Tienda</label>
-                    <select id="store_id" name="store_id" class="form-control" required>
+                    <label for="store_id" class="form-label" >Tienda</label>
+                    <select id="store_id" name="store_id" class="form-control" required style="height: 45px;>
                         <option value="">Seleccione una tienda</option>
                         @foreach(App\Models\Store::all() as $store)
                             <option value="{{ $store->id }}" {{ old('store_id') == $store->id ? 'selected' : '' }}>

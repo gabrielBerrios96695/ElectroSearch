@@ -4,16 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Laravel') }}</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-<link href="{{ asset('leaflet/leaflet.css') }}" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-@vite(['resources/css/app.css', 'resources/js/app.js'])
-@livewireStyles
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="{{ asset('leaflet/leaflet.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body class="font-sans antialiased">
     <div x-data="{ sidebarOpen: false }" class="flex h-screen bg-gray-100">
@@ -24,52 +23,61 @@
                 <div class="flex items-center">
                     <span class="text-white text-2xl mx-2 font-semibold">ElectroSearch</span>
                 </div>
-
             </div>
             <nav class="mt-10">
-                <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('dashboard') }}">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span class="mx-3">Dashboard</span>
-                </a>
                 @if(Auth::check())
-                    @if(Auth::user()->isAdmin())
-                    <div x-data="{ open: false }" class="relative">
-                        <!-- Botón para abrir/cerrar el menú -->
-                        <a @click="open = !open" class="nav-link flex items-center mt-4 py-2 px-6 cursor-pointer">
-                            <i class="fas fa-cogs"></i>
-                            <span class="mx-3">Administración</span>
-                            <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="ml-auto"></i>
+                    @if(Auth::user()->isVendedor() && Auth::user()->passwordUpdate == true)
+                        <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span class="mx-3">Dashboard</span>
                         </a>
-
-                        <!-- Menú desplegable -->
-                        <div x-show="open" class="pl-6">
-                            <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-100" href="{{ route('users.index') }}">
-                                <i class="fas fa-users"></i>
-                                <span class="mx-3">Usuarios</span>
+                    @else
+                        @if(Auth::user()->isAdmin())
+                            <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('dashboard') }}">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span class="mx-3">Dashboard</span>
                             </a>
-                            <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-100" href="{{ route('store.index') }}">
-                                <i class="fas fa-store"></i>
-                                <span class="mx-3">Tiendas</span>
-                            </a>
-                            <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-100" href="{{ route('products.index') }}">
-                                <i class="fas fa-tags"></i>
-                                <span class="mx-3">Productos</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    @endif
-                    @if(Auth::user()->isVendedor())
-                        <div x-show="open" class="pl-6">
-                                    <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('products.index') }}">
+                            <div x-data="{ open: false }" class="relative">
+                                <!-- Botón para abrir/cerrar el menú -->
+                                <a @click="open = !open" class="nav-link flex items-center mt-4 py-2 px-6 cursor-pointer">
+                                    <i class="fas fa-cogs"></i>
+                                    <span class="mx-3">Administración</span>
+                                    <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="ml-auto"></i>
+                                </a>
+                                <!-- Menú desplegable -->
+                                <div x-show="open" class="pl-6">
+                                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-100" href="{{ route('users.index') }}">
                                         <i class="fas fa-users"></i>
+                                        <span class="mx-3">Usuarios</span>
+                                    </a>
+                                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-100" href="{{ route('store.index') }}">
+                                        <i class="fas fa-store"></i>
+                                        <span class="mx-3">Tiendas</span>
+                                    </a>
+                                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-100" href="{{ route('products.index') }}">
+                                        <i class="fas fa-tags"></i>
                                         <span class="mx-3">Productos</span>
                                     </a>
-                                    <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('store.index') }}">
+                                </div>
+                            </div>
+                        @endif
+                        @if(Auth::user()->isVendedor())
+                        
+                            <div x-show="open" class="pl-6">
+                            <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('dashboard') }}">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span class="mx-3">Dashboard</span>
+                            </a>
+                                <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('products.index') }}">
+                                    <i class="fas fa-users"></i>
+                                    <span class="mx-3">Productos</span>
+                                </a>
+                                <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('store.index') }}">
                                     <i class="fas fa-store"></i>
                                     <span class="mx-3">Tiendas</span>
                                 </a>
-                        </div>
+                            </div>
+                        @endif
                     @endif
                 @endif
             </nav>

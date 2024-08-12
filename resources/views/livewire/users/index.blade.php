@@ -11,28 +11,28 @@
 
 <div class="container">
     <div class="d-flex justify-content-between align-items-center my-4">
-        <h1 class="h3">Lista de Usuarios</h1>
+        <h1 class="h3 text-primary"><i class="fas fa-users"></i> Lista de Usuarios</h1>
         <a href="{{ route('users.create') }}" class="btn btn-primary">
             <i class="fas fa-user-plus"></i> Registrar Nuevo Usuario
         </a>
     </div>
 
     <div class="card">
-        <div class="card-header">
+        <div class="card-header card-header-custom">
             <i class="fas fa-users"></i> Usuarios
         </div>
         <div class="card-body">
-            <div class="table-responsive"> <!-- Contenedor con scroll horizontal -->
+            <div class="table-responsive">
                 <table class="table table-custom">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Correo Electrónico</th>
-                            <th scope="col">Rol</th>
-                            <th scope="col">Estado</th>
-                            <th scope="col">ID Usuario</th>
-                            <th scope="col">Acciones</th>
+                            <th scope="col"><i class="fas fa-hashtag"></i> Nro.</th>
+                            <th scope="col"><i class="fas fa-user"></i> Nombre</th>
+                            <th scope="col"><i class="fas fa-envelope"></i> Correo Electrónico</th>
+                            <th scope="col"><i class="fas fa-user-tag"></i> Rol</th>
+                            <th scope="col"><i class="fas fa-cogs"></i> Estado</th>
+                            <th scope="col"><i class="fas fa-id-badge"></i> ID Usuario</th>
+                            <th scope="col"><i class="fas fa-cogs"></i> Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,26 +42,29 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>
-                                    @if ($user->role == 'vendedor')
-                                        Vendedor
-                                    @elseif ($user->role == 'cliente')
-                                        Cliente
-                                    @else
-                                        {{ ucfirst($user->role) }}
+                                    @if ($user->role == 1)
+                                        <i class="fas fa-user-shield"></i> Administrador
+                                    @elseif ($user->role == 2)
+                                        <i class="fas fa-user-tie"></i> Vendedor
+                                    @elseif ($user->role == 3)
+                                        <i class="fas fa-user"></i> Cliente
                                     @endif
                                 </td>
                                 <td>
-                                    {{ $user->status ? 'Habilitado' : 'Deshabilitado' }}
+                                    <span class="badge {{ $user->status == 1 ? 'bg-success' : 'bg-danger' }}">
+                                        {{ $user->status == 1 ? 'Habilitado' : 'Deshabilitado' }}
+                                    </span>
                                 </td>
+
                                 <td>
-                                    {{ optional(User::find($user->userid))->name }} <!-- Muestra el nombre del usuario asociado al userId -->
+                                    {{ optional(User::find($user->userid))->name }}
                                 </td>
                                 <td>
                                     <a href="{{ route('users.edit', $user->id) }}" class="btn btn-secondary">
                                         <i class="fas fa-edit"></i> Editar
                                     </a>
-                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#toggleStatusModal" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" data-user-status="{{ $user->status }}">
-                                        <i class="fas fa-toggle-on"></i> {{ $user->status ? 'Deshabilitar' : 'Habilitar' }}
+                                    <button type="button" class="btn {{ $user->status ? 'btn-danger' : 'btn-success' }}" data-bs-toggle="modal" data-bs-target="#toggleStatusModal" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" data-user-status="{{ $user->status }}">
+                                        <i class="fas {{ $user->status ? 'fa-toggle-off' : 'fa-toggle-on' }}"></i> {{ $user->status ? 'Deshabilitar' : 'Habilitar' }}
                                     </button>
                                 </td>
                             </tr>
@@ -78,7 +81,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header modal-header-custom">
-                <h5 class="modal-title" id="toggleStatusModalLabel">Confirmar Cambio de Estado</h5>
+                <h5 class="modal-title" id="toggleStatusModalLabel"><i class="fas fa-exclamation-triangle"></i> Confirmar Cambio de Estado</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -97,24 +100,21 @@
 </div>
 
 @push('scripts')
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var toggleStatusModal = document.getElementById('toggleStatusModal');
         toggleStatusModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget; // Button that triggered the modal
-            var userId = button.getAttribute('data-user-id'); // Extract info from data-* attributes
-            var userName = button.getAttribute('data-user-name'); // Extract user name
-            var userStatus = button.getAttribute('data-user-status'); // Extract user status
+            var button = event.relatedTarget; 
+            var userId = button.getAttribute('data-user-id'); 
+            var userName = button.getAttribute('data-user-name'); 
+            var userStatus = button.getAttribute('data-user-status'); 
             var form = toggleStatusModal.querySelector('#toggleStatusForm');
-            form.action = '/users/' + userId + '/toggleStatus'; // Set the form action to the correct route
+            form.action = '/users/' + userId + '/toggleStatus';
 
-            // Set the action in the modal body
             var actionText = userStatus == 1 ? 'deshabilitar' : 'habilitar';
             var toggleStatusActionElement = document.getElementById('toggleStatusAction');
             toggleStatusActionElement.textContent = actionText;
 
-            // Set the user name in the modal body
             var userNameElement = document.getElementById('userName');
             userNameElement.textContent = userName;
         });

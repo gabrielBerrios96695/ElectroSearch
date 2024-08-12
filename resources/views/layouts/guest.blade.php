@@ -13,26 +13,6 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <!-- Custom Styles -->
-    <style>
-        .bg-gradient {
-            background: linear-gradient(45deg, 
-                #4facfe, #00f2fe, #6a11cb, #2575fc,
-                #ff5f6d, #ffc371, #ff7e5f, #feb47b,
-                #12c2e9, #c471ed, #f64f59, #667eea);
-            background-size: 1600% 1600%;
-            animation: gradientAnimation 30s ease infinite;
-        }
-
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 100%; }
-            25% { background-position: 50% 50%; }
-            50% { background-position: 100% 0%; }
-            75% { background-position: 50% 50%; }
-            100% { background-position: 0% 100%; }
-        }
-    </style>
 </head>
 <body class="font-sans text-gray-900 antialiased">
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gradient">
@@ -42,8 +22,21 @@
             </a>
         </div>
 
-        <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-            {{ $slot }}
+        <div class="w-full sm:max-w-lg mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg text-center">
+            <!-- Botones para Login y Registro -->
+            <a href="{{ route('login') }}" class="inline-block w-full sm:w-auto mb-4">
+                <x-secondary-button class="w-full">
+                    {{ __('Formulario de Inicio') }}
+                </x-secondary-button>
+            </a>
+            <a href="{{ route('register') }}" class="inline-block w-full sm:w-auto">
+                <x-secondary-button class="w-full">
+                    {{ __('Registrarse') }}
+                </x-secondary-button>
+            </a>
+            <div class="w-full sm:max-w-lg mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+                {{ $slot }}
+            </div>
         </div>
     </div>
 </body>

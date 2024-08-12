@@ -12,12 +12,12 @@ class UserObserver
      */
     public function creating(User $user): void
 {
-    $user->userid = Auth::check() ? Auth::id() : 1; // Asigna 0 si no hay usuario autenticado
+    $user->userid = Auth::check() ? Auth::id() : 0; 
 }
 
 public function updating(User $user): void
 {
-    $user->userid = Auth::check() ? Auth::id() : 1; // Asigna 0 si no hay usuario autenticado
+    $user->userid = Auth::check() ? Auth::id() : 1; 
 }
 
 

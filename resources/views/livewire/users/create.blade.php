@@ -26,7 +26,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('users.store') }}" method="POST">
+            <form id="userForm" action="{{ route('users.store') }}" method="POST">
                 @csrf
 
                 <div class="form-group">
@@ -36,11 +36,11 @@
 
                 <div class="form-group">
                     <label for="role">Rol</label>
-                    <select name="role" id="role" class="form-control" required>
+                    <select name="role" id="role" class="form-control" required style="height: 45px;">
                         <option value="">Selecciona un rol</option>
-                        <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Administrador</option>
-                        <option value="vendedor" {{ old('role') === 'vendedor' ? 'selected' : '' }}>Vendedor</option>
-                        
+                        <option value="1" {{ old('role') == 1 ? 'selected' : '' }}>Administrador</option>
+                        <option value="2" {{ old('role') == 2 ? 'selected' : '' }}>Vendedor</option>
+                        <option value="3" {{ old('role') == 3 ? 'selected' : '' }}>Cliente</option>
                     </select>
                 </div>
 
@@ -59,9 +59,62 @@
                     <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Registrar</button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirmModal">
+                    Registrar
+                </button>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Modal de Confirmación -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmar Registro</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Estás a punto de registrar un nuevo usuario con los siguientes datos:</p>
+                <ul>
+                    <li><strong>Nombre:</strong> <span id="modalName"></span></li>
+                    <li><strong>Rol:</strong> <span id="modalRole"></span></li>
+                    <li><strong>Correo Electrónico:</strong> <span id="modalEmail"></span></li>
+                </ul>
+                <p>¿Estás seguro de que deseas continuar?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmButton">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Cargar datos en el modal cuando se hace clic en "Registrar"
+        const nameInput = document.getElementById('name');
+        const roleInput = document.getElementById('role');
+        const emailInput = document.getElementById('email');
+
+        const modalName = document.getElementById('modalName');
+        const modalRole = document.getElementById('modalRole');
+        const modalEmail = document.getElementById('modalEmail');
+
+        document.querySelector('[data-target="#confirmModal"]').addEventListener('click', function() {
+            modalName.textContent = nameInput.value;
+            modalRole.textContent = roleInput.options[roleInput.selectedIndex].text;
+            modalEmail.textContent = emailInput.value;
+        });
+
+        // Enviar el formulario al confirmar
+        document.getElementById('confirmButton').addEventListener('click', function() {
+            document.getElementById('userForm').submit();
+        });
+    });
+</script>
 @endsection
