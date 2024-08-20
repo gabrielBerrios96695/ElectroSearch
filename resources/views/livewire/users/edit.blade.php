@@ -37,8 +37,23 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="first_surname">Primer Apellido</label>
+                    <input type="text" name="first_surname" id="first_surname" value="{{ old('first_surname', $user->first_surname) }}" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="second_surname">Segundo Apellido</label>
+                    <input type="text" name="second_surname" id="second_surname" value="{{ old('second_surname', $user->second_surname) }}" class="form-control">
+                </div>
+
+                <div class="form-group">
                     <label for="email">Correo Electrónico</label>
                     <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Teléfono</label>
+                    <input type="text" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" class="form-control">
                 </div>
 
                 <div class="form-group">
@@ -73,7 +88,10 @@
                 <p>Estás a punto de actualizar los datos del usuario con los siguientes detalles:</p>
                 <ul>
                     <li><strong>Nombre:</strong> <span id="modalName"></span></li>
+                    <li><strong>Primer Apellido:</strong> <span id="modalFirstSurname"></span></li>
+                    <li><strong>Segundo Apellido:</strong> <span id="modalSecondSurname"></span></li>
                     <li><strong>Correo Electrónico:</strong> <span id="modalEmail"></span></li>
+                    <li><strong>Teléfono:</strong> <span id="modalPhone"></span></li>
                     <li><strong>Rol:</strong> <span id="modalRole"></span></li>
                 </ul>
                 <p>¿Estás seguro de que deseas continuar?</p>
@@ -90,16 +108,25 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Cargar datos en el modal cuando se hace clic en "Actualizar"
         const nameInput = document.getElementById('name');
+        const firstSurnameInput = document.getElementById('first_surname');
+        const secondSurnameInput = document.getElementById('second_surname');
         const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
         const roleInput = document.getElementById('role');
 
         const modalName = document.getElementById('modalName');
+        const modalFirstSurname = document.getElementById('modalFirstSurname');
+        const modalSecondSurname = document.getElementById('modalSecondSurname');
         const modalEmail = document.getElementById('modalEmail');
+        const modalPhone = document.getElementById('modalPhone');
         const modalRole = document.getElementById('modalRole');
 
         document.querySelector('[data-target="#confirmModal"]').addEventListener('click', function() {
             modalName.textContent = nameInput.value;
+            modalFirstSurname.textContent = firstSurnameInput.value;
+            modalSecondSurname.textContent = secondSurnameInput.value;
             modalEmail.textContent = emailInput.value;
+            modalPhone.textContent = phoneInput.value;
             modalRole.textContent = roleInput.options[roleInput.selectedIndex].text;
         });
 

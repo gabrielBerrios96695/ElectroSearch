@@ -18,7 +18,10 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $fillable = [
         'name',
+        'first_surname',
+        'second_surname',
         'email',
+        'phone',
         'password',
         'role',
         'userid'
@@ -52,12 +55,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role === 1;
     }
 
-    public function isVendedor()
+    public function isOrganizador()
     {
         return $this->role === 2;
     }
 
-    public function isCliente()
+    public function isUsuario()
     {
         return $this->role === 3;
     }

@@ -3,17 +3,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro Exitoso</title>
+    <title>Registro Exitoso - Eco Ruta</title>
     <style>
-         body {
+        body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #e9f5e1;
             color: #333;
             margin: 0;
             padding: 0;
         }
         .container {
-            width: 80%;
+            width: 90%;
+            max-width: 600px;
             margin: auto;
             padding: 20px;
             background-color: #ffffff;
@@ -21,7 +22,8 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         h1 {
-            color: #2c3e50;
+            color: #2c6f41;
+            text-align: center;
         }
         p {
             font-size: 16px;
@@ -32,26 +34,25 @@
             margin-top: 20px;
             font-size: 14px;
             color: #7f8c8d;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>¡Bienvenido a nuestra aplicación!</h1>
+        <h1>¡Bienvenido a Eco Ruta!</h1>
         <p>Hola {{ $user->name }},</p>
-        <p>Tu registro se ha completado con éxito.</p>
+        <p>Tu registro en Eco Ruta se ha completado con éxito.</p>
         
         <p><strong>Detalles de tu cuenta:</strong></p>
         <p><strong>Correo electrónico:</strong> {{ $user->email }}</p>
-        <p><strong>Contraseña:</strong> {{ $password }}</p>
 
         <p>Por favor, utiliza estos datos para iniciar sesión en nuestra aplicación.</p>
         <p><strong>Nota:</strong> Te recomendamos que cambies tu contraseña después de tu primer inicio de sesión por razones de seguridad.</p>
         
         <div class="footer">
             <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
-            <p>¡Gracias por ser parte de nuestra comunidad!</p>
-            <P></P>
+            <p>¡Gracias por ser parte de nuestra comunidad Eco Ruta!</p>
         </div>
     </div>
 </body>

@@ -26,12 +26,62 @@
                 <table class="table table-custom">
                     <thead>
                         <tr>
-                            <th scope="col"><i class="fas fa-hashtag"></i> Nro.</th>
-                            <th scope="col"><i class="fas fa-user"></i> Nombre</th>
-                            <th scope="col"><i class="fas fa-envelope"></i> Correo Electrónico</th>
-                            <th scope="col"><i class="fas fa-user-tag"></i> Rol</th>
-                            <th scope="col"><i class="fas fa-cogs"></i> Estado</th>
-                            <th scope="col"><i class="fas fa-id-badge"></i> ID Usuario</th>
+                            <th scope="col">
+                                <a href="{{ route('users.index', ['sort_field' => 'id', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}">
+                                    <i class="fas fa-hashtag"></i> Nro.
+                                    @if ($sortField == 'id')
+                                        <i class="fas fa-sort-{{ $sortDirection }}"></i>
+                                    @endif
+                                </a>
+                            </th>
+                            <th scope="col">
+                                <a href="{{ route('users.index', ['sort_field' => 'name', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}">
+                                    <i class="fas fa-user"></i> Nombre Completo
+                                    @if ($sortField == 'name')
+                                        <i class="fas fa-sort-{{ $sortDirection }}"></i>
+                                    @endif
+                                </a>
+                            </th>
+                            <th scope="col">
+                                <a href="{{ route('users.index', ['sort_field' => 'email', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}">
+                                    <i class="fas fa-envelope"></i> Correo Electrónico
+                                    @if ($sortField == 'email')
+                                        <i class="fas fa-sort-{{ $sortDirection }}"></i>
+                                    @endif
+                                </a>
+                            </th>
+                            <th scope="col">
+                                <a href="{{ route('users.index', ['sort_field' => 'role', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}">
+                                    <i class="fas fa-user-tag"></i> Rol
+                                    @if ($sortField == 'role')
+                                        <i class="fas fa-sort-{{ $sortDirection }}"></i>
+                                    @endif
+                                </a>
+                            </th>
+                            <th scope="col">
+                                <a href="{{ route('users.index', ['sort_field' => 'phone', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}">
+                                    <i class="fas fa-cogs"></i> Teléfono
+                                    @if ($sortField == 'phone')
+                                        <i class="fas fa-sort-{{ $sortDirection }}"></i>
+                                    @endif
+                                </a>
+                            </th>
+                            <th scope="col">
+                                <a href="{{ route('users.index', ['sort_field' => 'status', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}">
+                                    <i class="fas fa-cogs"></i> Estado
+                                    @if ($sortField == 'status')
+                                        <i class="fas fa-sort-{{ $sortDirection }}"></i>
+                                    @endif
+                                </a>
+                            </th>
+                            <th scope="col">
+                                <a href="{{ route('users.index', ['sort_field' => 'userid', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}">
+                                    <i class="fas fa-id-badge"></i> ID Usuario
+                                    @if ($sortField == 'userid')
+                                        <i class="fas fa-sort-{{ $sortDirection }}"></i>
+                                    @endif
+                                </a>
+                            </th>
                             <th scope="col"><i class="fas fa-cogs"></i> Acciones</th>
                         </tr>
                     </thead>
@@ -39,38 +89,43 @@
                         @foreach ($users as $user)
                             <tr>
                                 <th scope="row">{{ $user->id }}</th>
-                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->name }} {{ $user->first_surname }} {{ $user->second_surname }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>
                                     @if ($user->role == 1)
                                         <i class="fas fa-user-shield"></i> Administrador
                                     @elseif ($user->role == 2)
-                                        <i class="fas fa-user-tie"></i> Vendedor
+                                        <i class="fas fa-user-tie"></i> Organizador
                                     @elseif ($user->role == 3)
-                                        <i class="fas fa-user"></i> Cliente
+                                        <i class="fas fa-user"></i> Usuario
                                     @endif
                                 </td>
+                                <td>{{ $user->phone }}</td>
                                 <td>
                                     <span class="badge {{ $user->status == 1 ? 'bg-success' : 'bg-danger' }}">
                                         {{ $user->status == 1 ? 'Habilitado' : 'Deshabilitado' }}
                                     </span>
                                 </td>
-
                                 <td>
                                     {{ optional(User::find($user->userid))->name }}
                                 </td>
                                 <td>
                                     <a href="{{ route('users.edit', $user->id) }}" class="btn btn-secondary">
-                                        <i class="fas fa-edit"></i> Editar
+                                        <i class="fas fa-edit"></i>
                                     </a>
                                     <button type="button" class="btn {{ $user->status ? 'btn-danger' : 'btn-success' }}" data-bs-toggle="modal" data-bs-target="#toggleStatusModal" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" data-user-status="{{ $user->status }}">
-                                        <i class="fas {{ $user->status ? 'fa-toggle-off' : 'fa-toggle-on' }}"></i> {{ $user->status ? 'Deshabilitar' : 'Habilitar' }}
+                                        <i class="fas {{ $user->status ? 'fa-toggle-off' : 'fa-toggle-on' }}"></i> {{ $user->status ? '' : '' }}
                                     </button>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Paginación -->
+            <div class="d-flex justify-content-center mt-4">
+                {{ $users->appends(['sort_field' => $sortField, 'sort_direction' => $sortDirection])->links() }}
             </div>
         </div>
     </div>

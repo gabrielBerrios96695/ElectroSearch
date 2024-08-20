@@ -35,18 +35,32 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="role">Rol</label>
-                    <select name="role" id="role" class="form-control" required style="height: 45px;">
-                        <option value="">Selecciona un rol</option>
-                        <option value="1" {{ old('role') == 1 ? 'selected' : '' }}>Administrador</option>
-                        <option value="2" {{ old('role') == 2 ? 'selected' : '' }}>Vendedor</option>
-                        <option value="3" {{ old('role') == 3 ? 'selected' : '' }}>Cliente</option>
-                    </select>
+                    <label for="first_surname">Primer Apellido</label>
+                    <input type="text" name="first_surname" id="first_surname" class="form-control" value="{{ old('first_surname') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="second_surname">Segundo Apellido</label>
+                    <input type="text" name="second_surname" id="second_surname" class="form-control" value="{{ old('second_surname') }}">
                 </div>
 
                 <div class="form-group">
                     <label for="email">Correo Electrónico</label>
                     <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Teléfono</label>
+                    <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone') }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Rol</label>
+                    <select name="role" id="role" class="form-control" required style="height: 45px;">
+                        <option value="">Selecciona un rol</option>
+                        <option value="1" {{ old('role') == 1 ? 'selected' : '' }}>Administrador</option>
+                        <option value="2" {{ old('role') == 2 ? 'selected' : '' }}>Organizador</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -81,8 +95,11 @@
                 <p>Estás a punto de registrar un nuevo usuario con los siguientes datos:</p>
                 <ul>
                     <li><strong>Nombre:</strong> <span id="modalName"></span></li>
-                    <li><strong>Rol:</strong> <span id="modalRole"></span></li>
+                    <li><strong>Primer Apellido:</strong> <span id="modalFirstSurname"></span></li>
+                    <li><strong>Segundo Apellido:</strong> <span id="modalSecondSurname"></span></li>
                     <li><strong>Correo Electrónico:</strong> <span id="modalEmail"></span></li>
+                    <li><strong>Teléfono:</strong> <span id="modalPhone"></span></li>
+                    <li><strong>Rol:</strong> <span id="modalRole"></span></li>
                 </ul>
                 <p>¿Estás seguro de que deseas continuar?</p>
             </div>
@@ -98,17 +115,26 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Cargar datos en el modal cuando se hace clic en "Registrar"
         const nameInput = document.getElementById('name');
-        const roleInput = document.getElementById('role');
+        const firstSurnameInput = document.getElementById('first_surname');
+        const secondSurnameInput = document.getElementById('second_surname');
         const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+        const roleInput = document.getElementById('role');
 
         const modalName = document.getElementById('modalName');
-        const modalRole = document.getElementById('modalRole');
+        const modalFirstSurname = document.getElementById('modalFirstSurname');
+        const modalSecondSurname = document.getElementById('modalSecondSurname');
         const modalEmail = document.getElementById('modalEmail');
+        const modalPhone = document.getElementById('modalPhone');
+        const modalRole = document.getElementById('modalRole');
 
         document.querySelector('[data-target="#confirmModal"]').addEventListener('click', function() {
             modalName.textContent = nameInput.value;
-            modalRole.textContent = roleInput.options[roleInput.selectedIndex].text;
+            modalFirstSurname.textContent = firstSurnameInput.value;
+            modalSecondSurname.textContent = secondSurnameInput.value;
             modalEmail.textContent = emailInput.value;
+            modalPhone.textContent = phoneInput.value;
+            modalRole.textContent = roleInput.options[roleInput.selectedIndex].text;
         });
 
         // Enviar el formulario al confirmar

@@ -26,7 +26,7 @@
             </div>
             <nav class="mt-10">
                 @if(Auth::check())
-                    @if(Auth::user()->isVendedor() && Auth::user()->passwordUpdate == true)
+                    @if(Auth::user()->isOrganizador() && Auth::user()->passwordUpdate == true)
                         <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('dashboard') }}">
                             <i class="fas fa-tachometer-alt"></i>
                             <span class="mx-3">Dashboard</span>
@@ -61,7 +61,7 @@
                                 </div>
                             </div>
                         @endif
-                        @if(Auth::user()->isVendedor())
+                        @if(Auth::user()->isOrganizador())
                         
                             <div x-show="open" class="pl-6">
                             <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('dashboard') }}">
