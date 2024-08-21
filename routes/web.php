@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TypePointController;
 use App\Http\Controllers\CollectionPointController;
+use App\Http\Controllers\MessageController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
@@ -60,7 +61,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 
-// Rutas para los tipos de puntos
+//Tipos de puntos
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/type_points', [TypePointController::class, 'index'])->name('type_points.index');
     Route::get('/type_points/create', [TypePointController::class, 'create'])->name('type_points.create');
@@ -81,6 +82,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/collection_points/{collectionPoint}/toggleStatus', [CollectionPointController::class, 'toggleStatus'])->name('collection_points.toggleStatus');
 });
 
+Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
 
 
 require __DIR__.'/auth.php';

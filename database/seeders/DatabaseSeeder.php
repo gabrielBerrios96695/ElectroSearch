@@ -16,7 +16,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UsersTableSeeder::class,
             TypePointsTableSeeder::class,
-            CollectionPointTableSeeder::class
+            CollectionPointTableSeeder::class,
+            MessageTableSeeder::class
         ]);
     }
 }

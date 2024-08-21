@@ -36,7 +36,7 @@
                         @if(Auth::user()->isAdmin())
                             <a class="nav-link flex items-center mt-4 py-2 px-6 text-white hover:bg-gray-700" href="{{ route('dashboard') }}">
                                 <i class="fas fa-home"></i>
-                                <span class="mx-3">Dashboard</span>
+                                <span class="mx-3">Panel de Control</span>
                             </a>
                             <div x-data="{ open: false }" class="relative">
                                 <!-- Botón para abrir/cerrar el menú -->
@@ -60,6 +60,10 @@
                                         <i class="fas fa-trash"></i>
                                         <span class="mx-3">Puntos de Recolección</span>
                                     </a>
+                                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-600 text-white" href="{{ route('messages.index') }}">
+                                        <i class="fas fa-trash"></i>
+                                        <span class="mx-3">Puntos de Recolección</span>
+                                    </a>
                                 </div>
                             </div>
                         @endif
@@ -73,7 +77,18 @@
                                 </a>
                                 <!-- Menú desplegable -->
                                 <div x-show="open" class="pl-6">
-                                    
+                                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-600 text-white" href="{{ route('type_points.index') }}">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span class="mx-3">Tipos de Puntos</span>
+                                    </a>
+                                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-600 text-white" href="{{ route('collection_points.index') }}">
+                                        <i class="fas fa-trash"></i>
+                                        <span class="mx-3">Puntos de Recolección</span>
+                                    </a>
+                                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-600 text-white" href="{{ route('messages.index') }}">
+                                        <i class="fas fa-trash"></i>
+                                        <span class="mx-3">Puntos de Recolección</span>
+                                    </a>
                                 </div>
                             </div>
                         @endif
