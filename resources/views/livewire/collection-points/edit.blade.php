@@ -43,7 +43,7 @@
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
-                
+                <div id="map" style="height: 400px; margin-top: 20px;"></div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="latitude" class="form-label">Latitud</label>
@@ -61,24 +61,23 @@
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="opening_time" class="form-label">Hora de Apertura</label>
-                    <input type="time" id="opening_time" name="opening_time" class="form-control" value="{{ old('opening_time', $collectionPoint->opening_time) }}" required>
-                    @error('opening_time')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="opening_time" class="form-label">Hora de Apertura</label>
+                        <input type="time" id="opening_time" name="opening_time" class="form-control" value="{{ old('opening_time', $collectionPoint->opening_time) }}" required>
+                        @error('opening_time')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class=col-md-6">
+                        <label for="closing_time" class="form-label">Hora de Cierre</label>
+                        <input type="time" id="closing_time" name="closing_time" class="form-control" value="{{ old('closing_time', $collectionPoint->closing_time) }}" required>
+                        @error('closing_time')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
-
-                <div class="mb-3">
-                    <label for="closing_time" class="form-label">Hora de Cierre</label>
-                    <input type="time" id="closing_time" name="closing_time" class="form-control" value="{{ old('closing_time', $collectionPoint->closing_time) }}" required>
-                    @error('closing_time')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <!-- Map Container -->
-                <div id="map" style="height: 400px; margin-top: 20px;"></div>
+               
 
                 <div class="mt-3">
                     <button type="submit" class="btn btn-primary">

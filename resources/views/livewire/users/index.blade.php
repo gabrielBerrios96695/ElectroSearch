@@ -11,78 +11,78 @@
 
 <div class="container">
     <div class="d-flex justify-content-between align-items-center my-4">
-        <h1 class="h3 text-primary"><i class="fas fa-users"></i> Lista de Usuarios</h1>
-        <a href="{{ route('users.create') }}" class="btn btn-primary">
-            <i class="fas fa-user-plus"></i> Registrar Nuevo Usuario
+        <h1 class="h3 text-green-800">Lista de Usuarios</h1>
+        <a href="{{ route('users.create') }}" class="btn btn-success">
+            Registrar Nuevo Usuario
         </a>
     </div>
 
-    <div class="card">
-        <div class="card-header card-header-custom">
+    <div class="card border-success">
+        <div class="card-header bg-success text-white">
             <i class="fas fa-users"></i> Usuarios
         </div>
-        <div class="card-body">
+        <div class="card-body bg-light">
             <div class="table-responsive">
-                <table class="table table-custom">
-                    <thead>
+                <table class="table table-bordered table-striped table-hover">
+                    <thead >
                         <tr>
                             <th scope="col">
-                                <a href="{{ route('users.index', ['sort_field' => 'id', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}">
-                                    <i class="fas fa-hashtag"></i> Nro.
+                                <a href="{{ route('users.index', ['sort_field' => 'id', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}" ">
+                                    Nro.
                                     @if ($sortField == 'id')
                                         <i class="fas fa-sort-{{ $sortDirection }}"></i>
                                     @endif
                                 </a>
                             </th>
                             <th scope="col">
-                                <a href="{{ route('users.index', ['sort_field' => 'name', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}">
-                                    <i class="fas fa-user"></i> Nombre Completo
+                                <a href="{{ route('users.index', ['sort_field' => 'name', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}" >
+                                    Nombre Completo
                                     @if ($sortField == 'name')
                                         <i class="fas fa-sort-{{ $sortDirection }}"></i>
                                     @endif
                                 </a>
                             </th>
                             <th scope="col">
-                                <a href="{{ route('users.index', ['sort_field' => 'email', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}">
-                                    <i class="fas fa-envelope"></i> Correo Electrónico
+                                <a href="{{ route('users.index', ['sort_field' => 'email', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}" >
+                                    Correo Electrónico
                                     @if ($sortField == 'email')
                                         <i class="fas fa-sort-{{ $sortDirection }}"></i>
                                     @endif
                                 </a>
                             </th>
                             <th scope="col">
-                                <a href="{{ route('users.index', ['sort_field' => 'role', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}">
-                                    <i class="fas fa-user-tag"></i> Rol
+                                <a href="{{ route('users.index', ['sort_field' => 'role', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}" >
+                                    Rol
                                     @if ($sortField == 'role')
                                         <i class="fas fa-sort-{{ $sortDirection }}"></i>
                                     @endif
                                 </a>
                             </th>
                             <th scope="col">
-                                <a href="{{ route('users.index', ['sort_field' => 'phone', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}">
-                                    <i class="fas fa-cogs"></i> Teléfono
+                                <a href="{{ route('users.index', ['sort_field' => 'phone', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}" >
+                                    Teléfono
                                     @if ($sortField == 'phone')
                                         <i class="fas fa-sort-{{ $sortDirection }}"></i>
                                     @endif
                                 </a>
                             </th>
                             <th scope="col">
-                                <a href="{{ route('users.index', ['sort_field' => 'status', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}">
-                                    <i class="fas fa-cogs"></i> Estado
+                                <a href="{{ route('users.index', ['sort_field' => 'status', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}" >
+                                    Estado
                                     @if ($sortField == 'status')
                                         <i class="fas fa-sort-{{ $sortDirection }}"></i>
                                     @endif
                                 </a>
                             </th>
                             <th scope="col">
-                                <a href="{{ route('users.index', ['sort_field' => 'userid', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}">
-                                    <i class="fas fa-id-badge"></i> ID Usuario
+                                <a href="{{ route('users.index', ['sort_field' => 'userid', 'sort_direction' => $sortDirection == 'asc' ? 'desc' : 'asc']) }}" >
+                                    ID Usuario
                                     @if ($sortField == 'userid')
                                         <i class="fas fa-sort-{{ $sortDirection }}"></i>
                                     @endif
                                 </a>
                             </th>
-                            <th scope="col"><i class="fas fa-cogs"></i> Acciones</th>
+                            <th scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -93,11 +93,11 @@
                                 <td>{{ $user->email }}</td>
                                 <td>
                                     @if ($user->role == 1)
-                                        <i class="fas fa-user-shield"></i> Administrador
+                                        Administrador
                                     @elseif ($user->role == 2)
-                                        <i class="fas fa-user-tie"></i> Organizador
+                                        Organizador
                                     @elseif ($user->role == 3)
-                                        <i class="fas fa-user"></i> Usuario
+                                        Usuario
                                     @endif
                                 </td>
                                 <td>{{ $user->phone }}</td>
@@ -110,11 +110,12 @@
                                     {{ optional(User::find($user->userid))->name }}
                                 </td>
                                 <td>
-                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-secondary">
+                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-warning">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <button type="button" class="btn {{ $user->status ? 'btn-danger' : 'btn-success' }}" data-bs-toggle="modal" data-bs-target="#toggleStatusModal" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" data-user-status="{{ $user->status }}">
-                                        <i class="fas {{ $user->status ? 'fa-toggle-off' : 'fa-toggle-on' }}"></i> {{ $user->status ? '' : '' }}
+                                        <i class="fas {{ $user->status == 1 ? 'fa-toggle-off' : 'fa-toggle-on' }}"></i>
+                                        {{ $user->status == 1 ? 'Deshabilitar' : 'Habilitar' }}
                                     </button>
                                 </td>
                             </tr>
@@ -134,9 +135,9 @@
 <!-- Modal de Cambio de Estado -->
 <div class="modal fade" id="toggleStatusModal" tabindex="-1" aria-labelledby="toggleStatusModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header modal-header-custom">
-                <h5 class="modal-title" id="toggleStatusModalLabel"><i class="fas fa-exclamation-triangle"></i> Confirmar Cambio de Estado</h5>
+        <div class="modal-content border-success">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="toggleStatusModalLabel">Confirmar Cambio de Estado</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

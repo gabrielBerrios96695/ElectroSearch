@@ -5,6 +5,8 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TypePointController;
+use App\Http\Controllers\CollectionPointController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
@@ -47,7 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
 });
 
-// Grupo de rutas para la gestión de tiendas
+//tiendas
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/stores', [StoreController::class, 'index'])->name('store.index');
     Route::get('/stores/create', [StoreController::class, 'create'])->name('store.create');
@@ -56,5 +58,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/stores/{store}', [StoreController::class, 'update'])->name('store.update');
     Route::patch('/stores/{store}/toggleStatus', [StoreController::class, 'toggleStatus'])->name('store.toggleStatus');
 });
+
+
+// Rutas para los tipos de puntos
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/type_points', [TypePointController::class, 'index'])->name('type_points.index');
+    Route::get('/type_points/create', [TypePointController::class, 'create'])->name('type_points.create');
+    Route::post('/type_points', [TypePointController::class, 'store'])->name('type_points.store');
+    Route::get('/type_points/{typePoint}/edit', [TypePointController::class, 'edit'])->name('type_points.edit');
+    Route::put('/type_points/{typePoint}', [TypePointController::class, 'update'])->name('type_points.update');
+    Route::patch('/type_points/{typePoint}/toggleStatus', [TypePointController::class, 'toggleStatus'])->name('type_points.toggleStatus');
+});
+
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/collection_points', [CollectionPointController::class, 'index'])->name('collection_points.index');
+    Route::get('/collection_points/create', [CollectionPointController::class, 'create'])->name('collection_points.create');
+    Route::post('/collection_points', [CollectionPointController::class, 'store'])->name('collection_points.store');
+    Route::get('/collection_points/{collectionPoint}/edit', [CollectionPointController::class, 'edit'])->name('collection_points.edit');
+    Route::put('/collection_points/{collectionPoint}', [CollectionPointController::class, 'update'])->name('collection_points.update');
+    Route::delete('/collection_points/{collectionPoint}', [CollectionPointController::class, 'destroy'])->name('collection_points.destroy');
+    Route::patch('/collection_points/{collectionPoint}/toggleStatus', [CollectionPointController::class, 'toggleStatus'])->name('collection_points.toggleStatus');
+});
+
+
 
 require __DIR__.'/auth.php';

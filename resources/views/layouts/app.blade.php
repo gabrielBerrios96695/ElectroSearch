@@ -13,6 +13,7 @@
     @livewireStyles
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
 </head>
 <body class="font-sans antialiased">
     <div x-data="{ sidebarOpen: false }" class="flex h-screen bg-gray-100">
@@ -27,55 +28,53 @@
             <nav class="mt-10">
                 @if(Auth::check())
                     @if(Auth::user()->isOrganizador() && Auth::user()->passwordUpdate == true)
-                        <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('dashboard') }}">
-                            <i class="fas fa-tachometer-alt"></i>
+                        <a class="nav-link flex items-center mt-4 py-2 px-6 text-white hover:bg-gray-700" href="{{ route('dashboard') }}">
+                            <i class="fas fa-home"></i>
                             <span class="mx-3">Dashboard</span>
                         </a>
                     @else
                         @if(Auth::user()->isAdmin())
-                            <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('dashboard') }}">
-                                <i class="fas fa-tachometer-alt"></i>
+                            <a class="nav-link flex items-center mt-4 py-2 px-6 text-white hover:bg-gray-700" href="{{ route('dashboard') }}">
+                                <i class="fas fa-home"></i>
                                 <span class="mx-3">Dashboard</span>
                             </a>
                             <div x-data="{ open: false }" class="relative">
                                 <!-- Botón para abrir/cerrar el menú -->
-                                <a @click="open = !open" class="nav-link flex items-center mt-4 py-2 px-6 cursor-pointer">
+                                <a @click="open = !open" class="nav-link flex items-center mt-4 py-2 px-6 cursor-pointer text-white hover:bg-gray-700">
                                     <i class="fas fa-cogs"></i>
                                     <span class="mx-3">Administración</span>
                                     <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="ml-auto"></i>
                                 </a>
                                 <!-- Menú desplegable -->
                                 <div x-show="open" class="pl-6">
-                                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-100" href="{{ route('users.index') }}">
+                                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-600 text-white" href="{{ route('users.index') }}">
                                         <i class="fas fa-users"></i>
                                         <span class="mx-3">Usuarios</span>
                                     </a>
-                                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-100" href="{{ route('store.index') }}">
-                                        <i class="fas fa-store"></i>
-                                        <span class="mx-3">Tiendas</span>
+                                
+                                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-600 text-white" href="{{ route('type_points.index') }}">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span class="mx-3">Tipos de Puntos</span>
                                     </a>
-                                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-100" href="{{ route('products.index') }}">
-                                        <i class="fas fa-tags"></i>
-                                        <span class="mx-3">Productos</span>
+                                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-600 text-white" href="{{ route('collection_points.index') }}">
+                                        <i class="fas fa-trash"></i>
+                                        <span class="mx-3">Puntos de Recolección</span>
                                     </a>
                                 </div>
                             </div>
                         @endif
                         @if(Auth::user()->isOrganizador())
-                        
-                            <div x-show="open" class="pl-6">
-                            <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('dashboard') }}">
-                                <i class="fas fa-tachometer-alt"></i>
-                                <span class="mx-3">Dashboard</span>
-                            </a>
-                                <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('products.index') }}">
-                                    <i class="fas fa-users"></i>
-                                    <span class="mx-3">Productos</span>
+                            <div x-data="{ open: false }" class="relative">
+                                <!-- Botón para abrir/cerrar el menú -->
+                                <a @click="open = !open" class="nav-link flex items-center mt-4 py-2 px-6 cursor-pointer text-white hover:bg-gray-700">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    <span class="mx-3">Panel de Control</span>
+                                    <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="ml-auto"></i>
                                 </a>
-                                <a class="nav-link flex items-center mt-4 py-2 px-6" href="{{ route('store.index') }}">
-                                    <i class="fas fa-store"></i>
-                                    <span class="mx-3">Tiendas</span>
-                                </a>
+                                <!-- Menú desplegable -->
+                                <div x-show="open" class="pl-6">
+                                    
+                                </div>
                             </div>
                         @endif
                     @endif
@@ -85,7 +84,7 @@
 
         <div class="flex-1 flex flex-col overflow-hidden">
             <!-- Navbar -->
-            <header class="header flex justify-between items-center py-4 px-6">
+            <header class="header flex justify-between items-center py-4 px-6 bg-white shadow-md">
                 <div class="flex items-center space-x-4">
                     <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 focus:outline-none lg:hidden">
                         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -96,9 +95,17 @@
                         <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-gray-700">Menu</a>@yield('breadcrumbs')
                     </div>
                 </div>
+
                 <div x-data="{ open: false }" @click.away="open = false" class="relative user-menu">
-                    <button @click="open = !open" class="px-4 py-2 text-sm hover:bg-gray-200">
-                        {{ Auth::user()->name }}
+                    
+                    <button class="p-2 bg-green-500 text-white hover:bg-green-600 focus:outline-none rounded-md">
+                        <i class="fas fa-envelope"></i>
+                    </button>
+
+                    
+                    <button @click="open = !open" class="p-2 bg-green-500 text-white hover:bg-green-600 focus:outline-none rounded-md">
+                        <a class="text-white hover:text-gray-700">{{ Auth::user()->name }}</a>
+                            
                     </button>
                     <div x-show="open" class="absolute right-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10">
                         <a class="block px-4 py-2 text-sm hover:bg-gray-200 text-black">Perfil</a>
@@ -109,11 +116,18 @@
                             </button>
                         </form>
                     </div>
+                    
                 </div>
             </header>
 
             <!-- Main Content -->
             <main class="main-content flex-1 overflow-x-hidden overflow-y-auto">
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
                 <div class="container mx-auto px-6 py-8">
                     @yield('content')
                 </div>
