@@ -12,9 +12,14 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center my-4">
         <h1 class="h3 text-primary"><i class="fas fa-users"></i> Lista de Usuarios</h1>
-        <a href="{{ route('users.create') }}" class="btn btn-primary">
-            <i class="fas fa-user-plus"></i> Registrar Nuevo Usuario
-        </a>
+        <div>
+            <a href="{{ route('users.create') }}" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Registrar Nuevo Usuario
+            </a>
+            <a href="{{ route('users.export') }}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Exportar
+            </a>
+        </div>
     </div>
 
     <div class="card">
@@ -22,6 +27,15 @@
             <i class="fas fa-users"></i> Usuarios
         </div>
         <div class="card-body">
+            <form method="GET" action="{{ route('users.index') }}" class="mb-4">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Buscar usuarios..." value="{{ request('search') }}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+            
             <div class="table-responsive">
                 <table class="table table-custom">
                     <thead>
