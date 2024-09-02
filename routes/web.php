@@ -11,13 +11,31 @@ use App\Http\Controllers\MessageController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\TransferController;
 
 
 
+// Rutas de cuentas
+Route::get('/accounts', [AccountController::class, 'index'])->name('accounts.index');
+Route::get('/accounts/create', [AccountController::class, 'create'])->name('accounts.create');
+Route::post('/accounts', [AccountController::class, 'store'])->name('accounts.store');
+Route::get('/accounts/{id}/edit', [AccountController::class, 'edit'])->name('accounts.edit');
+Route::patch('/accounts/{id}', [AccountController::class, 'update'])->name('accounts.update');
+Route::get('/accounts/{id}/credit', [AccountController::class, 'creditForm'])->name('accounts.credit.form'); // Ruta para mostrar el formulario de abono
+Route::post('/accounts/{id}/credit', [AccountController::class, 'credit'])->name('accounts.credit'); // Ruta para procesar el abono
 
-Route::view('/', 'welcome');
+Route::prefix('transfers')->group(function () {
+    Route::get('/', [TransferController::class, 'index'])->name('transfers.index');
+    Route::get('/create', [TransferController::class, 'create'])->name('transfers.create');
+    Route::post('/', [TransferController::class, 'store'])->name('transfer.store');
+});
 
-// Ruta para el dashboard, protegida por autenticación y verificación de email
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
+
 
 Route::get('dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])

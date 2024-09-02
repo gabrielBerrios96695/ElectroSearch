@@ -62,7 +62,15 @@
                                     </a>
                                     <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-600 text-white" href="{{ route('messages.index') }}">
                                         <i class="fas fa-trash"></i>
-                                        <span class="mx-3">Puntos de Recolección</span>
+                                        <span class="mx-3">Comunidad</span>
+                                    </a>
+                                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-600 text-white" href="{{ route('transfers.index') }}">
+                                        <i class="fas fa-trash"></i>
+                                        <span class="mx-3">transferencia</span>
+                                    </a>
+                                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-gray-600 text-white" href="{{ route('accounts.index') }}">
+                                        <i class="fas fa-trash"></i>
+                                        <span class="mx-3">Cuentas</span>
                                     </a>
                                 </div>
                             </div>

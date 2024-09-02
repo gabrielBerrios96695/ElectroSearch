@@ -17,7 +17,9 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             TypePointsTableSeeder::class,
             CollectionPointTableSeeder::class,
-            MessageTableSeeder::class
+            MessageTableSeeder::class,
+            CuentasSeeder::class,
+           
         ]);
     }
 }
