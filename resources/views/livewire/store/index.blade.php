@@ -8,9 +8,14 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center my-4">
         <h1 class="h3"><i class="fas fa-store-alt"></i> Lista de Tiendas</h1>
-        <a href="{{ route('store.create') }}" class="btn btn-primary">
+        <div>
+            <a href="{{ route('store.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Registrar Nueva Tienda
-        </a>
+            </a>
+            <a href="{{ route('store.export') }}" class="btn btn-success">
+                    <i class="fas fa-file-excel"></i> Exportar
+                </a>
+        </div>
     </div>
 
     <div class="card shadow-custom border-custom">
@@ -54,7 +59,7 @@
                                     </a>
                                     @if (Auth::user()->isAdmin())
                                         <button type="button" class="btn {{ $store->status == 1 ? 'btn-danger btn-sm' : 'btn-success btn-sm' }}" data-bs-toggle="modal" data-bs-target="#toggleStatusModal" data-store-id="{{ $store->id }}" data-store-name="{{ $store->name }}" data-store-status="{{ $store->status }}">
-                                            <i class="fas {{ $store->status == 1 ? 'fa-toggle-off' : 'fa-toggle-on' }}"></i> {{ $store->status == 1 ? 'Deshabilitar' : 'Habilitar' }}
+                                            <i class="fas {{ $store->status == 1 ? 'fa-toggle-off' : 'fa-toggle-on' }}"></i> {{ $store->status == 1 ? '' : '' }}
                                         </button>
                                     @endif
                                 </td>

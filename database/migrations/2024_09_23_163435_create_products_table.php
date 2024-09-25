@@ -13,17 +13,16 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->string('descripcion');
-            $table->decimal('precio', 10, 2);
-            $table->string('imagen');
-            $table->string('categoria');
+            $table->string('name'); // Changed 'nombre' to 'name'
+            $table->string('description'); // Changed 'descripcion' to 'description'
+            $table->decimal('price', 10, 2); // Changed 'precio' to 'price'
+            $table->string('image'); // Changed 'imagen' to 'image'
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade'); // Changed 'categoria' to 'category_id'
             $table->tinyInteger('status')->default(1);
             $table->foreignId('store_id')->constrained('stores')->onDelete('cascade');
             $table->timestamps();
         });
     }
-
 
     /**
      * Reverse the migrations.

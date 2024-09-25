@@ -24,10 +24,18 @@ class Store extends Model
         return $query->where('status', 1);
     }
 
-        public function products()
-    {
-        return $this->hasMany(Product::class);
-    }
+     // Store.php
+public function products()
+{
+    return $this->hasMany(Product::class);
+}
+
+// Product.php
+public function category()
+{
+    return $this->belongsTo(Category::class);
+}
+
 
 }
 

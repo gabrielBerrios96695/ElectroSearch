@@ -22,9 +22,9 @@
         </div>
     </div>
 
-    <div class="card">
+    <div class="card shadow-custom border-custom">
         <div class="card-header card-header-custom">
-            <i class="fas fa-users"></i> Usuarios
+            <i class="fas fa-store-alt"></i> Usuarios Registradas
         </div>
         <div class="card-body">
             <form method="GET" action="{{ route('users.index') }}" class="mb-4">
@@ -36,10 +36,10 @@
                 </div>
             </form>
             
+            
             <div class="table-responsive">
                 <table class="table table-custom">
-                    <thead>
-                        <tr>
+                    <thead class="custom-bg-tertiary">
                             <th scope="col"><i class="fas fa-hashtag"></i> Nro.</th>
                             <th scope="col"><i class="fas fa-user"></i> Nombre</th>
                             <th scope="col"><i class="fas fa-envelope"></i> Correo Electrónico</th>
@@ -78,7 +78,7 @@
                                         <i class="fas fa-edit"></i> Editar
                                     </a>
                                     <button type="button" class="btn {{ $user->status ? 'btn-danger' : 'btn-success' }}" data-bs-toggle="modal" data-bs-target="#toggleStatusModal" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" data-user-status="{{ $user->status }}">
-                                        <i class="fas {{ $user->status ? 'fa-toggle-off' : 'fa-toggle-on' }}"></i> {{ $user->status ? 'Deshabilitar' : 'Habilitar' }}
+                                        <i class="fas {{ $user->status ? 'fa-toggle-off' : 'fa-toggle-on' }}"></i> {{ $user->status ? '' : '' }}
                                     </button>
                                 </td>
                             </tr>

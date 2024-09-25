@@ -1,5 +1,3 @@
-<!-- resources/views/livewire/products/create.blade.php -->
-
 @extends('layouts.app')
 
 @section('breadcrumbs')
@@ -21,48 +19,56 @@
                 @csrf
                 
                 <div class="mb-3">
-                    <label for="nombre" class="form-label">Nombre del Producto</label>
-                    <input type="text" id="nombre" name="nombre" class="form-control" value="{{ old('nombre') }}" required>
-                    @error('nombre')
+                    <label for="name" class="form-label">Nombre del Producto</label>
+                    <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required>
+                    @error('name')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label for="descripcion" class="form-label">Descripción</label>
-                    <textarea id="descripcion" name="descripcion" class="form-control" required>{{ old('descripcion') }}</textarea>
-                    @error('descripcion')
+                    <label for="description" class="form-label">Descripción</label>
+                    <textarea id="description" name="description" class="form-control" required>{{ old('description') }}</textarea>
+                    @error('description')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label for="precio" class="form-label">Precio</label>
-                    <input type="number" id="precio" name="precio" class="form-control" step="0.01" value="{{ old('precio') }}" required>
-                    @error('precio')
+                    <label for="price" class="form-label">Precio</label>
+                    <input type="number" id="price" name="price" class="form-control" step="0.01" value="{{ old('price') }}" required>
+                    @error('price')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label for="imagen" class="form-label">Imagen</label>
-                    <input type="file" id="imagen" name="imagen" class="form-control" required>
-                    @error('imagen')
+                    <label for="image" class="form-label">Imagen</label>
+                    <input type="file" id="image" name="image" class="form-control" required>
+                    @error('image')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Selección de categorías -->
+                <div class="mb-3">
+                    <label for="category_id" class="form-label">Categoría</label>
+                    <select id="category_id" name="category_id" class="form-control" required>
+                        <option value="">Seleccione una categoría</option>
+                        @foreach(App\Models\Category::all() as $category)
+                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('category_id')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label for="categoria" class="form-label">Categoría</label>
-                    <input type="text" id="categoria" name="categoria" class="form-control" value="{{ old('categoria') }}" required>
-                    @error('categoria')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
-                    <label for="store_id" class="form-label" >Tienda</label>
-                    <select id="store_id" name="store_id" class="form-control" required style="height: 45px;>
+                    <label for="store_id" class="form-label">Tienda</label>
+                    <select id="store_id" name="store_id" class="form-control" required style="height: 45px;">
                         <option value="">Seleccione una tienda</option>
                         @foreach(App\Models\Store::all() as $store)
                             <option value="{{ $store->id }}" {{ old('store_id') == $store->id ? 'selected' : '' }}>

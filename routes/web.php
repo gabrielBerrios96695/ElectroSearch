@@ -46,6 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+    Route::get('/products/export', [ProductController::class, 'exportToExcel'])->name('products.export');
 });
 
 // Grupo de rutas para la gestión de tiendas
@@ -56,6 +57,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/stores/{store}/edit', [StoreController::class, 'edit'])->name('store.edit');
     Route::put('/stores/{store}', [StoreController::class, 'update'])->name('store.update');
     Route::patch('/stores/{store}/toggleStatus', [StoreController::class, 'toggleStatus'])->name('store.toggleStatus');
+    Route::get('/stores/show', [StoreController::class, 'show'])->name('store.show');
+    Route::get('/stores/export', [StoreController::class, 'exportToExcel'])->name('store.export');
 });
 
 require __DIR__.'/auth.php';

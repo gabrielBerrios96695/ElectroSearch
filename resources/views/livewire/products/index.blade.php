@@ -5,13 +5,18 @@
 @endsection
 
 @section('content')
-
 <div class="container">
     <div class="d-flex justify-content-between align-items-center my-4">
         <h1 class="h3">Lista de Productos</h1>
+        
+        <div>
         <a href="{{ route('products.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Registrar Nuevo Producto
         </a>
+        <a href="{{ route('products.export') }}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Exportar
+            </a>
+        </div>
     </div>
 
     <div class="card">
@@ -19,6 +24,14 @@
             <i class="fas fa-box"></i> Productos
         </div>
         <div class="card-body">
+        <form method="GET" action="{{ route('products.index') }}" class="mb-4">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Buscar productos..." value="{{ request('search') }}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
             <table class="table table-custom">
                 <thead>
                     <tr>
@@ -36,18 +49,18 @@
                     @foreach ($products as $product)
                         <tr>
                             <th scope="row">{{ $product->id }}</th>
-                            <td>{{ $product->nombre }}</td>
-                            <td>{{ $product->descripcion }}</td>
-                            <td>{{ $product->precio }} Bs.</td>
+                            <td>{{ $product->name }}</td>
+                            <td>{{ $product->description }}</td>
+                            <td>{{ $product->price }} Bs.</td>
                             <td class="text-center">
-                                @if($product->imagen)
-                                    <img src="{{ asset('storage/images/' . $product->imagen) }}" alt="{{ $product->nombre }}" class="product-image" style="max-width: 150px;">
+                                @if($product->image)
+                                    <img src="{{ asset('storage/images/' . $product->image) }}" alt="{{ $product->name }}" class="product-image" style="max-width: 150px;">
                                 @else
                                     <span>No Image</span>
                                 @endif
                             </td>
-                            <td>{{ $product->categoria }}</td>
-                            <td>{{ $product->store_id }}</td>
+                            <td>{{ $product->category->name ?? 'Sin Categoría' }}</td>
+                            <td>{{ $product->store->name ?? 'Sin Tienda' }}</td>
                             <td>
                                 <a href="{{ route('products.edit', $product->id) }}" class="btn btn-secondary">
                                     <i class="fas fa-edit"></i> Editar

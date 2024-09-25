@@ -23,48 +23,54 @@
 
                 <!-- Nombre del Producto -->
                 <div class="mb-3">
-                    <label for="nombre" class="form-label">Nombre del Producto</label>
-                    <input type="text" id="nombre" name="nombre" class="form-control" value="{{ old('nombre', $product->nombre) }}" required>
-                    @error('nombre')
+                    <label for="name" class="form-label">Nombre del Producto</label>
+                    <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $product->name) }}" required>
+                    @error('name')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <!-- Descripción -->
                 <div class="mb-3">
-                    <label for="descripcion" class="form-label">Descripción</label>
-                    <textarea id="descripcion" name="descripcion" class="form-control" required>{{ old('descripcion', $product->descripcion) }}</textarea>
-                    @error('descripcion')
+                    <label for="description" class="form-label">Descripción</label>
+                    <textarea id="description" name="description" class="form-control" required>{{ old('description', $product->description) }}</textarea>
+                    @error('description')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <!-- Precio -->
                 <div class="mb-3">
-                    <label for="precio" class="form-label">Precio</label>
-                    <input type="number" id="precio" name="precio" class="form-control" value="{{ old('precio', $product->precio) }}" step="0.01" required>
-                    @error('precio')
+                    <label for="price" class="form-label">Precio</label>
+                    <input type="number" id="price" name="price" class="form-control" value="{{ old('price', $product->price) }}" step="0.01" required>
+                    @error('price')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <!-- Imagen -->
                 <div class="mb-3">
-                    <label for="imagen" class="form-label">Imagen</label>
-                    <input type="file" id="imagen" name="imagen" class="form-control">
-                    @if ($product->imagen)
-                        <img src="{{ asset('storage/images/' . $product->imagen) }}" alt="{{ $product->nombre }}" class="img-thumbnail mt-2" style="max-width: 200px;">
+                    <label for="image" class="form-label">Imagen</label>
+                    <input type="file" id="image" name="image" class="form-control">
+                    @if ($product->image)
+                        <img src="{{ asset('storage/images/' . $product->image) }}" alt="{{ $product->name }}" class="img-thumbnail mt-2" style="max-width: 200px;">
                     @endif
-                    @error('imagen')
+                    @error('image')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <!-- Categoría -->
                 <div class="mb-3">
-                    <label for="categoria" class="form-label">Categoría</label>
-                    <input type="text" id="categoria" name="categoria" class="form-control" value="{{ old('categoria', $product->categoria) }}" required>
-                    @error('categoria')
+                    <label for="category_id" class="form-label">Categoría</label>
+                    <select id="category_id" name="category_id" class="form-control" required>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ $product->category_id == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('category_id')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
