@@ -13,15 +13,19 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Changed 'nombre' to 'name'
-            $table->string('description'); // Changed 'descripcion' to 'description'
-            $table->decimal('price', 10, 2); // Changed 'precio' to 'price'
-            $table->string('image'); // Changed 'imagen' to 'image'
-            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade'); // Changed 'categoria' to 'category_id'
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->string('image')->nullable();
+            $table->integer('quantity');
+            $table->decimal('purchase_price', 10, 2)->default(0);
+            $table->decimal('price', 8, 2);
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade'); // Definición de clave foránea
             $table->tinyInteger('status')->default(1);
+            $table->tinyInteger('userId')->default(1);
             $table->foreignId('store_id')->constrained('stores')->onDelete('cascade');
             $table->timestamps();
         });
+        
     }
 
     /**

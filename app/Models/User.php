@@ -21,7 +21,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'role',
-        'userid'
+        'store_id',
+        'userid',
+        'status',
+        'passwordUpdate',
     ];
 
     /**
@@ -46,6 +49,10 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
+    }
 
     public function isAdmin()
     {
@@ -60,5 +67,17 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isCliente()
     {
         return $this->role === 3;
+    }
+
+    // Relación con el modelo Sale
+    public function sales()
+    {
+        return $this->hasMany(Sale::class, 'user_id');
+    }
+
+    // Relación con el modelo Sale (como vendedor)
+    public function salesAsSeller()
+    {
+        return $this->hasMany(Sale::class, 'seller_id');
     }
 }

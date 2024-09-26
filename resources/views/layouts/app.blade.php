@@ -47,11 +47,19 @@
                                 </a>
                                 <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-400" href="{{ route('store.show') }}">
                                     <i class="fas fa-store"></i>
-                                    <span class="mx-3">Tiendas</span>
+                                    <span class="mx-3">Buscar en tiendas</span>
                                 </a>
                                 <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-400" href="{{ route('products.index') }}">
                                     <i class="fas fa-tags"></i>
                                     <span class="mx-3">Productos</span>
+                                </a>
+                                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-400" href="{{ route('categories.index') }}">
+                                    <i class="fas fa-tags"></i>
+                                    <span class="mx-3">Categorias</span>
+                                </a>
+                                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-400" href="{{ route('sales.index') }}">
+                                    <i class="fas fa-tags"></i>
+                                    <span class="mx-3">Venta</span>
                                 </a>
                             </div>
                         </div>
@@ -89,6 +97,13 @@
 
             <!-- Main Content -->
             <main class="flex-1 overflow-auto p-6 bg-gray-100">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
                 @yield('content')
             </main>
         </div>

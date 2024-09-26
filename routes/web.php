@@ -3,7 +3,9 @@
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
@@ -60,5 +62,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/stores/show', [StoreController::class, 'show'])->name('store.show');
     Route::get('/stores/export', [StoreController::class, 'exportToExcel'])->name('store.export');
 });
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
+    Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+    Route::get('/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+    Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+    Route::get('sales', [SaleController::class, 'index'])->name('sales.index'); // Listar todas las ventas
+    Route::get('sales/create', [SaleController::class, 'create'])->name('sales.create'); // Mostrar formulario de creación
+    Route::post('sales', [SaleController::class, 'store'])->name('sales.store'); // Almacenar nueva venta
+    Route::get('sales/{id}/edit', [SaleController::class, 'edit'])->name('sales.edit'); // Mostrar formulario de edición
+    Route::put('sales/{id}', [SaleController::class, 'update'])->name('sales.update'); // Actualizar venta existente
+    Route::delete('sales/{id}', [SaleController::class, 'destroy'])->name('sales.destroy'); // Eliminar venta
+    Route::get('/sales/{id}', [SaleController::class, 'show'])->name('sales.show');
+    Route::post('/products/details', [ProductController::class, 'getDetails']);
+
+
+});
+
+
 
 require __DIR__.'/auth.php';

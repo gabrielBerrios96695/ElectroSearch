@@ -1,32 +1,29 @@
 @extends('layouts.app')
 
 @section('breadcrumbs')
-    / Productos
+    / Categorías
 @endsection
 
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between align-items-center my-4">
-        <h1 class="h3">Lista de Productos</h1>
+        <h1 class="h3">Lista de Categorías</h1>
         
         <div>
-        <a href="{{ route('products.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Registrar Nuevo Producto
-        </a>
-        <a href="{{ route('products.export') }}" class="btn btn-success">
-                <i class="fas fa-file-excel"></i> Exportar
+            <a href="{{ route('categories.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Registrar Nueva Categoría
             </a>
         </div>
     </div>
 
     <div class="card">
         <div class="card-header">
-            <i class="fas fa-box"></i> Productos
+            <i class="fas fa-tags"></i> Categorías
         </div>
         <div class="card-body">
-        <form method="GET" action="{{ route('products.index') }}" class="mb-4">
+            <form method="GET" action="{{ route('categories.index') }}" class="mb-4">
                 <div class="input-group">
-                    <input type="text" name="search" class="form-control" placeholder="Buscar productos..." value="{{ request('search') }}">
+                    <input type="text" name="search" class="form-control" placeholder="Buscar categorías..." value="{{ request('search') }}">
                     <button class="btn btn-primary" type="submit">
                         <i class="fas fa-search"></i> Buscar
                     </button>
@@ -38,36 +35,20 @@
                         <th scope="col">#</th>
                         <th scope="col">Nombre</th>
                         <th scope="col">Descripción</th>
-                        <th scope="col">Cantidad</th>
-                        <th scope="col">Precio </th>
-                        <th scope="col">Imagen</th>
-                        <th scope="col">Categoría</th>
-                        <th scope="col">Tienda</th>
                         <th scope="col">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($products as $product)
+                    @foreach ($categories as $category)
                         <tr>
-                            <th scope="row">{{ $product->id }}</th>
-                            <td>{{ $product->name }}</td>
-                            <td>{{ $product->description }}</td>
-                            <td>{{ $product->quantity}}</td>
-                            <td>{{ $product->price }} Bs.</td>
-                            <td class="text-center">
-                                @if($product->image)
-                                    <img src="{{ asset('storage/images/' . $product->image) }}" alt="{{ $product->name }}" class="product-image" style="max-width: 150px;">
-                                @else
-                                    <span>No Image</span>
-                                @endif
-                            </td>
-                            <td>{{ $product->category->name ?? 'Sin Categoría' }}</td>
-                            <td>{{ $product->store->name ?? 'Sin Tienda' }}</td>
+                            <th scope="row">{{ $category->id }}</th>
+                            <td>{{ $category->name }}</td>
+                            <td>{{ $category->description }}</td>
                             <td>
-                                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-secondary">
+                                <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-secondary">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-product-id="{{ $product->id }}">
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-category-id="{{ $category->id }}">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </td>
@@ -84,11 +65,11 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Eliminar Producto</h5>
+                <h5 class="modal-title" id="deleteModalLabel">Eliminar Categoría</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas eliminar este producto?
+                ¿Estás seguro de que deseas eliminar esta categoría?
             </div>
             <div class="modal-footer">
                 <form id="deleteForm" action="" method="POST">
@@ -107,9 +88,9 @@
         var deleteModal = document.getElementById('deleteModal');
         deleteModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
-            var productId = button.getAttribute('data-product-id');
+            var categoryId = button.getAttribute('data-category-id');
             var form = document.getElementById('deleteForm');
-            form.action = '/products/' + productId;
+            form.action = '/categories/' + categoryId;
         });
     });
 </script>
