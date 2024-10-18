@@ -187,29 +187,140 @@ class ReportsController extends Controller
     }
     public function reportTopSellers(Request $request)
 {
-    // Obtener la fecha de inicio y fin opcionales
-    $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : null;
-    $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
+// Obtener la fecha de inicio (obligatoria) y la fecha de fin (opcional)
+$startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : now()->startOfMonth();
+$endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
+$limit = $request->input('limit', 5); // Límite de vendedores a mostrar
 
-    // Iniciar la consulta base filtrando por el estado 'completed'
-    $query = DB::table('sales')
+// Iniciar la consulta base
+$query = DB::table('sales')
+    ->join('users', 'sales.user_id', '=', 'users.id')
+    ->select('users.name', DB::raw('SUM(sales.total_amount) as total_sales'))
+    ->where('sales.status', 'completed') // Solo ventas con estado 'completed'
+    ->whereIn('users.role', [1, 2]) // Filtrar usuarios con roles 1 o 2
+    ->groupBy('users.name')
+    ->orderBy('total_sales', 'desc');
+
+// Si hay fecha de fin, aplicar whereBetween para el rango de fechas
+if ($endDate) {
+    $query->whereBetween('sales.created_at', [$startDate, $endDate]);
+} else {
+    // Si no hay fecha de fin, solo filtrar por la fecha exacta de inicio
+    $query->whereDate('sales.created_at', '=', $startDate);
+}
+
+// Obtener los datos con el límite
+$topSellers = $query->limit($limit)->get();
+
+// Total de vendedores para ajustar el límite
+$totalSellers = DB::table('users')->whereIn('role', [1, 2])->count();
+
+return view('livewire.reports.top_sellers', compact('topSellers', 'startDate', 'endDate', 'totalSellers'));
+
+}
+public function exportExcelTopSellers(Request $request)
+{
+    // Obtener las fechas de inicio y fin
+    $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : now()->startOfMonth();
+    $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
+    $limit = $request->input('limit', 5); // Límite de vendedores a mostrar
+    
+    // Aplicar los filtros de fecha y límite
+    $salesQuery = DB::table('sales')
         ->join('users', 'sales.user_id', '=', 'users.id')
         ->select('users.name', DB::raw('SUM(sales.total_amount) as total_sales'))
-        ->where('sales.status', 'completed')
+        ->where('sales.status', 'completed') // Solo ventas con estado 'completed'
+        ->whereIn('users.role', [1, 2]) // Filtrar usuarios con roles 1 o 2
         ->groupBy('users.name')
         ->orderBy('total_sales', 'desc');
-
-    // Si hay fechas, filtrar las ventas entre las fechas de inicio y fin
-    if ($startDate) {
-        $query->where('sales.created_at', '>=', $startDate);
+    
+    // Si se aplicaron fechas, filtrar por fecha
+    if ($startDate && $endDate) {
+        $salesQuery->whereBetween('sales.created_at', [$startDate, $endDate]);
     }
+
+    // Aplicar el límite de vendedores
+    $topSellers = $salesQuery->limit($limit)->get();
+
+    // Crear un nuevo objeto de hoja de cálculo
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    // Título del reporte basado en las fechas
+    $reportTitle = "Reporte de los vendedores con más ventas acumuladas";
     if ($endDate) {
-        $query->where('sales.created_at', '<=', $endDate);
+        $reportTitle .= " del " . $startDate->format('d/m/Y') . " al " . $endDate->format('d/m/Y');
+    } else {
+        $reportTitle .= " del " . $startDate->format('d/m/Y');
     }
 
-    // Obtener los resultados
-    $topSellers = $query->get();
+    // Colocar el título del reporte
+    $sheet->setCellValue('A1', $reportTitle);
+    $sheet->mergeCells('A1:B1');
+    $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
 
-    return view('reports.top_sellers', compact('topSellers', 'startDate', 'endDate'));
+    // Subtítulo de la fecha de creación
+    $sheet->setCellValue('A2', 'Fecha de creación: ' . now()->format('d/m/Y'));
+    $sheet->mergeCells('A2:B2');
+    $sheet->getStyle('A2')->getFont()->setBold(true);
+
+    // Encabezados de las columnas
+    $sheet->setCellValue('A4', 'Vendedor');
+    $sheet->setCellValue('B4', 'Total Ventas');
+    
+    // Agregar los datos de vendedores
+    $row = 5;
+    foreach ($topSellers as $seller) {
+        $sheet->setCellValue('A' . $row, $seller->name);
+        $sheet->setCellValue('B' . $row, $seller->total_sales);
+        $row++;
+    }
+
+    // Autoajustar las columnas
+    foreach (range('A', 'B') as $column) {
+        $sheet->getColumnDimension($column)->setAutoSize(true);
+    }
+
+    // Crear el gráfico de torta
+    $dataSeriesLabels = [new DataSeriesValues('String', 'Worksheet!$B$4', null, 1)];
+    $xAxisTickValues = [new DataSeriesValues('String', 'Worksheet!$A$5:$A$' . ($row - 1), null, $row - 5)];
+    $dataSeriesValues = [new DataSeriesValues('Number', 'Worksheet!$B$5:$B$' . ($row - 1), null, $row - 5)];
+
+    $series = new DataSeries(
+        DataSeries::TYPE_PIECHART, // Gráfico de torta
+        null,
+        range(0, count($dataSeriesValues) - 1),
+        $dataSeriesLabels,
+        $xAxisTickValues,
+        $dataSeriesValues
+    );
+
+    // Configurar el área de gráfico y leyenda
+    $plotArea = new PlotArea(null, [$series]);
+    $chart = new Chart(
+        'chart1', 
+        new Title('Vendedores con más ventas'), 
+        new Legend(Legend::POSITION_RIGHT, null, false), 
+        $plotArera
+    );
+
+    // Posición del gráfico en la hoja
+    $chart->setTopLeftPosition('D5');
+    $chart->setBottomRightPosition('K20');
+    
+    // Agregar el gráfico a la hoja
+    $sheet->addChart($chart);
+
+    // Guardar el archivo Excel con el gráfico
+    $fileName = 'reporte_top_vendedores.xlsx';
+    $filePath = storage_path('app/public/' . $fileName);
+    
+    $writer = new Xlsx($spreadsheet);
+    $writer->setIncludeCharts(true);
+    $writer->save($filePath);
+    
+    // Retornar el archivo para descarga
+    return response()->download($filePath)->deleteFileAfterSend(true);
 }
+
 }
