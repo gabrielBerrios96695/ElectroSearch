@@ -61,7 +61,13 @@
                                     <i class="fas fa-tags"></i>
                                     <span class="mx-3">Venta</span>
                                 </a>
+                                
                             </div>
+                            <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-400 transition-colors duration-200 ease-in-out rounded-md text-white-700 hover:text-white" href="{{ route('reports.index') }}">
+    <i class="fas fa-tags"></i>
+    <span class="mx-3">Reporte</span>
+</a>
+
                         </div>
                     @endif
                 @endif

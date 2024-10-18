@@ -15,13 +15,12 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-
         // Crear usuarios de ejemplo
         DB::table('users')->insert([
             [
-                'name' => 'Administrador',
-                'email' => 'admin@admin.com',
-                'role' => '1',
+                'name' => 'Juan Pérez',
+                'email' => 'juan.perez@example.com',
+                'role' => '1', // Administrador
                 'userid' => 1,
                 'status' => 1,
                 'password' => Hash::make('12345678'),
@@ -31,9 +30,9 @@ class UsersTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Vendedor Uno',
-                'email' => 'vendedor1@example.com',
-                'role' => '2',
+                'name' => 'María López',
+                'email' => 'maria.lopez@example.com',
+                'role' => '2', // Vendedor
                 'userid' => 2,
                 'status' => 1,
                 'password' => Hash::make('password123'),
@@ -43,9 +42,9 @@ class UsersTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Cliente Uno',
-                'email' => 'cliente1@example.com',
-                'role' => '3',
+                'name' => 'Carlos García',
+                'email' => 'carlos.garcia@example.com',
+                'role' => '3', // Cliente
                 'userid' => 3,
                 'status' => 1,
                 'password' => Hash::make('password123'),
@@ -55,9 +54,9 @@ class UsersTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Vendedor Dos',
-                'email' => 'vendedor2@example.com',
-                'role' => '2',
+                'name' => 'Ana Torres',
+                'email' => 'ana.torres@example.com',
+                'role' => '2', // Vendedor
                 'userid' => 4,
                 'status' => 1,
                 'password' => Hash::make('password123'),
@@ -67,10 +66,70 @@ class UsersTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Cliente Dos',
-                'email' => 'cliente2@example.com',
-                'role' => '3',
+                'name' => 'Luis Fernández',
+                'email' => 'luis.fernandez@example.com',
+                'role' => '3', // Cliente
                 'userid' => 5,
+                'status' => 1,
+                'password' => Hash::make('password123'),
+                'passwordUpdate'=> true,
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Laura Martínez',
+                'email' => 'laura.martinez@example.com',
+                'role' => '2', // Vendedor
+                'userid' => 6,
+                'status' => 1,
+                'password' => Hash::make('password123'),
+                'passwordUpdate'=> true,
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'José Rodríguez',
+                'email' => 'jose.rodriguez@example.com',
+                'role' => '3', // Cliente
+                'userid' => 7,
+                'status' => 1,
+                'password' => Hash::make('password123'),
+                'passwordUpdate'=> true,
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Sofía González',
+                'email' => 'sofia.gonzalez@example.com',
+                'role' => '2', // Vendedor
+                'userid' => 8,
+                'status' => 1,
+                'password' => Hash::make('password123'),
+                'passwordUpdate'=> true,
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Andrés Herrera',
+                'email' => 'andres.herrera@example.com',
+                'role' => '3', // Cliente
+                'userid' => 9,
+                'status' => 1,
+                'password' => Hash::make('password123'),
+                'passwordUpdate'=> true,
+                'email_verified_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Valentina Ruiz',
+                'email' => 'valentina.ruiz@example.com',
+                'role' => '2', // Vendedor
+                'userid' => 10,
                 'status' => 1,
                 'password' => Hash::make('password123'),
                 'passwordUpdate'=> true,

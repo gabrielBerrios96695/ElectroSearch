@@ -10,9 +10,7 @@ use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
-
-
-
+use App\Http\Controllers\ReportsController;
 
 Route::view('/', 'welcome');
 
@@ -79,7 +77,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/sales/{id}', [SaleController::class, 'show'])->name('sales.show');
     Route::post('/products/details', [ProductController::class, 'getDetails']);
 
+    Route::get('/reports', [ReportsController::class, 'index'])->name('reports.index');
+    Route::get('/reports/export-excel', [ReportsController::class, 'exportExcel'])->name('reports.exportExcel');
 
+    
 });
 
 

@@ -56,7 +56,7 @@ class SaleController extends Controller
                 'user_id' => auth()->id(),
                 'customer_id' => $request->input('customer_id'),
                 'total_amount' => 0,
-                'status' => 'pending',
+                'status' => 'completed',
             ]);
     
             $totalAmount = 0;
@@ -88,21 +88,6 @@ class SaleController extends Controller
             $sale->update(['total_amount' => $totalAmount]);
     
             DB::commit();
-    
-            // Generar el PDF de la nota de venta
-            $pdf = $pdfService->generatePdf('livewire.sales.receipt', ['sale' => $sale]);
-    
-            // Devolver el PDF para su descarga
-            return response()->stream(
-                function () use ($pdf) {
-                    echo $pdf;
-                },
-                200,
-                [
-                    'Content-Type' => 'application/pdf',
-                    'Content-Disposition' => 'attachment; filename="nota_de_venta_' . $sale->id . '.pdf"',
-                ]
-            );
             return redirect()->route('sales.index')->with('success', 'Venta realizada con exito.');
     
         } catch (\Exception $e) {

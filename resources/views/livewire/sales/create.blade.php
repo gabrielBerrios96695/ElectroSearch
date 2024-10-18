@@ -8,21 +8,29 @@
         @csrf
 
         <!-- Selección del cliente -->
-        <div class="mb-3">
+        <div class="mb-3 row">
             <label for="customer_id" class="form-label">Cliente</label>
-            <select id="customer_id" name="customer_id" class="form-select" required>
-                <option value="">Selecciona un cliente</option>
-                @foreach ($customers as $customer)
-                    <option value="{{ $customer->id }}">{{ $customer->name }}</option>
-                @endforeach
-            </select>
+            <div class="col-md-8">
+                <select id="customer_id" name="customer_id" class="form-select" required>
+                    <option value="">Selecciona un cliente</option>
+                    @foreach ($customers as $customer)
+                        <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" id="customer_filter" class="form-control" placeholder="Escribe para filtrar" oninput="filterCustomers()">
+                </div>
+            </div>
         </div>
 
         <!-- Selección del producto -->
-        <div class="mb-4">
+        <div class="mb-4 row">
             <label for="product-select" class="form-label"><i class="fas fa-box"></i> Agregar Producto</label>
-            <div class="d-flex">
-                <select id="product-select" class="form-select me-3">
+            <div class="col-md-8">
+                <select id="product-select" class="form-select" required>
                     <option value="">Selecciona un producto</option>
                     @foreach ($products as $product)
                         @if ($product->quantity > 0)
@@ -34,10 +42,19 @@
                         @endif
                     @endforeach
                 </select>
-                <button type="button" id="add-product-btn" class="btn btn-secondary">
-                    <i class="fas fa-plus"></i> Agregar Producto
-                </button>
             </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" id="product_filter" class="form-control" placeholder="Escribe para filtrar" oninput="filterProducts()">
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <button type="button" id="add-product-btn" class="btn btn-secondary">
+                <i class="fas fa-plus"></i> Agregar Producto
+            </button>
         </div>
 
         <!-- Tabla de productos -->
@@ -47,6 +64,7 @@
                     <th>Producto</th>
                     <th>Cantidad</th>
                     <th>Precio</th>
+                    <th>Subtotal</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -104,12 +122,62 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitSaleBtn = document.getElementById('submit-sale-btn');
     const saleForm = document.getElementById('sale-form');
 
+    // Función para filtrar clientes
+    window.filterCustomers = function() {
+        const input = document.getElementById('customer_filter').value.toLowerCase();
+        const select = document.getElementById('customer_id');
+        const options = select.options;
+
+        for (let i = 1; i < options.length; i++) { // Comienza desde 1 para omitir la opción predeterminada
+            const option = options[i];
+            const text = option.text.toLowerCase();
+
+            option.style.display = text.includes(input) ? 'block' : 'none'; // Muestra u oculta opciones
+        }
+
+        // Seleccionar el primer cliente que coincida si hay resultados
+        for (let i = 1; i < options.length; i++) {
+            if (options[i].style.display === 'block') {
+                select.selectedIndex = i; // Selecciona la primera opción visible
+                return;
+            }
+        }
+
+        // Si no hay coincidencias, limpia el select
+        select.selectedIndex = 0;
+    };
+
+    // Función para filtrar productos
+    window.filterProducts = function() {
+        const input = document.getElementById('product_filter').value.toLowerCase();
+        const select = document.getElementById('product-select');
+        const options = select.options;
+
+        for (let i = 1; i < options.length; i++) { // Comienza desde 1 para omitir la opción predeterminada
+            const option = options[i];
+            const text = option.text.toLowerCase();
+
+            option.style.display = text.includes(input) ? 'block' : 'none'; // Muestra u oculta opciones
+        }
+
+        // Seleccionar el primer producto que coincida si hay resultados
+        for (let i = 1; i < options.length; i++) {
+            if (options[i].style.display === 'block') {
+                select.selectedIndex = i; // Selecciona la primera opción visible
+                return;
+            }
+        }
+
+        // Si no hay coincidencias, limpia el select
+        select.selectedIndex = 0;
+    };
+
     // Función para agregar productos a la tabla
     addProductBtn.addEventListener('click', function() {
         const selectedOption = productSelect.options[productSelect.selectedIndex];
         const productId = selectedOption.value;
         const productName = selectedOption.text;
-        const productPrice = selectedOption.getAttribute('data-price');
+        const productPrice = parseFloat(selectedOption.getAttribute('data-price'));
         const productQuantity = selectedOption.getAttribute('data-quantity');
 
         if (!productId) return;
@@ -122,6 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (newQuantity <= productQuantity) {
                 quantityInput.value = newQuantity;
+                updateSubtotal(existingRow); // Actualizar subtotal
             } else {
                 alert('No puedes agregar más de la cantidad disponible');
             }
@@ -132,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Crear una nueva fila en la tabla de productos
         const row = document.createElement('tr');
         row.dataset.productId = productId;
-        row.innerHTML = `
+        row.innerHTML = `    
             <td>${productName}</td>
             <td>
                 <input type="number" name="products[${productsTableBody.rows.length}][quantity]" 
@@ -140,7 +209,8 @@ document.addEventListener('DOMContentLoaded', function() {
                        class="form-control" required>
                 <input type="hidden" name="products[${productsTableBody.rows.length}][id]" value="${productId}">
             </td>
-            <td>${productPrice} Bs</td>
+            <td>${productPrice.toFixed(2)} Bs</td>
+            <td class="subtotal">0.00 Bs</td> <!-- Columna de subtotal -->
             <td>
                 <button type="button" class="btn btn-danger btn-sm remove-product-btn">
                     <i class="fas fa-trash"></i> Eliminar
@@ -149,10 +219,20 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
 
         productsTableBody.appendChild(row);
+        updateSubtotal(row); // Calcular subtotal al agregar producto
 
         // Limpiar selección
         productSelect.selectedIndex = 0;
     });
+
+    // Función para actualizar el subtotal
+    function updateSubtotal(row) {
+        const quantityInput = row.querySelector('input[name*="[quantity]"]');
+        const price = parseFloat(row.cells[2].textContent.replace(' Bs', ''));
+        const quantity = parseInt(quantityInput.value);
+        const subtotal = price * quantity;
+        row.querySelector('.subtotal').textContent = subtotal.toFixed(2) + ' Bs'; // Actualizar columna de subtotal
+    }
 
     // Eliminar productos de la tabla
     productsTableBody.addEventListener('click', function(event) {
@@ -195,6 +275,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Confirmar la venta y enviar el formulario
     submitSaleBtn.addEventListener('click', function() {
         saleForm.submit();
+    });
+
+    // Actualizar el subtotal cuando cambie la cantidad
+    productsTableBody.addEventListener('input', function(event) {
+        if (event.target.name.includes('quantity')) {
+            const row = event.target.closest('tr');
+            updateSubtotal(row); // Actualiza el subtotal cuando se cambia la cantidad
+        }
     });
 });
 </script>
