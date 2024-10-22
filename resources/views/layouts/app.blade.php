@@ -4,13 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Laravel') }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9j2qPeW8dCM7mAn5I6jEcW/Tc0VgtHkh5DHEALvU5/DoVqM+AWpVtu8ka6Rll9c" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9j2qPeW8dCM7mAn5I6jEcW/Tc0VgtHkh5DHEALvU5/DoVqM+AWpVtu8ka6Rll9c" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DyZv9I7tF3dFReYI+YxZK2MPCw0Ws6stUKS5E8OZDh3+UfxO+0jsOV5tpNH9FHKH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="{{ asset('leaflet/leaflet.css') }}" rel="stylesheet">
-    <!-- En la sección <head> -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -30,50 +31,42 @@
                         <span class="mx-3">Dashboard</span>
                     </a>
                     @if(Auth::user()->isAdmin())
-                        <div x-data="{ open: false }" class="relative">
-                            <a @click="open = !open" class="nav-link flex items-center mt-4 py-2 px-6 cursor-pointer hover:bg-blue-500">
-                                <i class="fas fa-cogs"></i>
-                                <span class="mx-3">Administración</span>
-                                <i :class="open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="ml-auto"></i>
-                            </a>
-                            <div x-show="open" class="pl-6">
-                                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-400" href="{{ route('users.index') }}">
-                                    <i class="fas fa-users"></i>
-                                    <span class="mx-3">Usuarios</span>
-                                </a>
-                                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-400" href="{{ route('store.index') }}">
-                                    <i class="fas fa-store"></i>
-                                    <span class="mx-3">Tiendas</span>
-                                </a>
-                                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-400" href="{{ route('store.show') }}">
-                                    <i class="fas fa-store"></i>
-                                    <span class="mx-3">Buscar en tiendas</span>
-                                </a>
-                                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-400" href="{{ route('products.index') }}">
-                                    <i class="fas fa-tags"></i>
-                                    <span class="mx-3">Productos</span>
-                                </a>
-                                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-400" href="{{ route('categories.index') }}">
-                                    <i class="fas fa-tags"></i>
-                                    <span class="mx-3">Categorias</span>
-                                </a>
-                                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-400" href="{{ route('sales.index') }}">
-                                    <i class="fas fa-tags"></i>
-                                    <span class="mx-3">Venta</span>
-                                </a>
-                                
-                            </div>
-                            <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-400" href="{{ route('reports.top_sellers') }}">
-                                    <i class="fas fa-tags"></i>
-                                    <span class="mx-3">top vendedores</span>
-                                </a>
-                            <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-400 transition-colors duration-200 ease-in-out rounded-md text-white-700 hover:text-white" href="{{ route('reports.index') }}">
-                            
-    <i class="fas fa-tags"></i>
-    <span class="mx-3">Reporte</span>
-</a>
-
-                        </div>
+                    <br>
+                    <span class="text-white font-semibold px-6 mt-4">Administración</span><br>
+                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('users.index') }}">
+                            <i class="fas fa-users"></i>
+                            <span class="mx-3">Usuarios</span>
+                        </a>
+                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('store.index') }}">
+                            <i class="fas fa-store"></i>
+                            <span class="mx-3">Tiendas</span>
+                        </a>
+                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('store.show') }}">
+                            <i class="fas fa-search"></i>
+                            <span class="mx-3">Buscar en tiendas</span>
+                        </a>
+                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('products.index') }}">
+                            <i class="fas fa-box"></i>
+                            <span class="mx-3">Productos</span>
+                        </a>
+                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('categories.index') }}">
+                            <i class="fas fa-th-list"></i>
+                            <span class="mx-3">Categorías</span>
+                        </a>
+                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('sales.index') }}">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="mx-3">Ventas</span>
+                        </a>
+                        <br>
+                        <span class="text-white font-semibold px-6 mt-4">Reportes</span>
+                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('reports.top_sellers') }}">
+                            <i class="fas fa-chart-line"></i>
+                            <span class="mx-3">Top Vendedores</span>
+                        </a>
+                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('reports.index') }}">
+                            <i class="fas fa-file-alt"></i>
+                            <span class="mx-3">Reportes</span>
+                        </a>
                     @endif
                 @endif
             </nav>
@@ -108,12 +101,12 @@
 
             <!-- Main Content -->
             <main class="flex-1 overflow-auto p-6 bg-gray-100">
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
 
                 @yield('content')
             </main>
@@ -123,7 +116,12 @@
     @livewireScripts
     @stack('scripts')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/6g1b5f6daJ2Q9s8E4h4U8A4gJ7ctw5PeD8I04U" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/6g1b5f6daJ2Q9s8E4h4U8A4gJ7ctw5PeD8I04U" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-wyQcgjQzXIzI/IqHLWEl64A9Lp8yd/s0U3uLz/3lTjInqMnAho16+KTtFeKxIXE6" crossorigin="anonymous"></script>
     <script src="{{ asset('leaflet/leaflet.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </body>
 </html>

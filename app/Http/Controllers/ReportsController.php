@@ -21,12 +21,10 @@ class ReportsController extends Controller
 {
     public function index(Request $request)
     {
-        // Obtener la fecha de inicio (obligatoria) y la fecha de fin (opcional)
         $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : now()->startOfMonth();
         $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
-        $limit = $request->input('limit', 5); // Límite de productos a mostrar
+        $limit = $request->input('limit', 5);
     
-        // Iniciar la consulta base
         $query = DB::table('sale_details')
             ->join('products', 'sale_details.product_id', '=', 'products.id')
             ->join('sales', 'sale_details.sale_id', '=', 'sales.id')
@@ -34,18 +32,15 @@ class ReportsController extends Controller
             ->groupBy('products.name')
             ->orderBy('quantity', 'desc');
     
-        // Si hay fecha de fin, se utiliza whereBetween para el rango de fechas
         if ($endDate) {
             $query->whereBetween('sales.created_at', [$startDate, $endDate]);
         } else {
-            // Si no hay fecha de fin, solo filtrar por la fecha exacta de inicio
+
             $query->whereDate('sales.created_at', '=', $startDate);
         }
     
-        // Obtener los datos con el límite
+
         $salesData = $query->limit($limit)->get();
-    
-        // Total de productos en venta para ajustar el límite
         $totalProducts = DB::table('products')->count();
     
         return view('livewire.reports.index', compact('salesData', 'startDate', 'endDate', 'totalProducts'));
@@ -187,12 +182,11 @@ class ReportsController extends Controller
     }
     public function reportTopSellers(Request $request)
 {
-// Obtener la fecha de inicio (obligatoria) y la fecha de fin (opcional)
 $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : now()->startOfMonth();
 $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
-$limit = $request->input('limit', 5); // Límite de vendedores a mostrar
+$limit = $request->input('limit', 5); 
 
-// Iniciar la consulta base
+
 $query = DB::table('sales')
     ->join('users', 'sales.user_id', '=', 'users.id')
     ->select('users.name', DB::raw('SUM(sales.total_amount) as total_sales'))
