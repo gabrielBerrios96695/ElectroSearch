@@ -24,6 +24,12 @@
                     <input type="text" id="customer_filter" class="form-control" placeholder="Escribe para filtrar" oninput="filterCustomers()">
                 </div>
             </div>
+            <div class="col-md-4 mt-2">
+                <!-- Botón para abrir el modal de nuevo usuario -->
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createUserModal">
+                    Crear Nuevo Usuario
+                </button>
+            </div>
         </div>
 
         <!-- Selección del producto -->
@@ -77,7 +83,7 @@
     </form>
 </div>
 
-<!-- Modal de confirmación -->
+<!-- Modal de confirmación de venta -->
 <div class="modal fade" id="confirmSaleModal" tabindex="-1" aria-labelledby="confirmSaleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -110,6 +116,48 @@
     </div>
 </div>
 
+<!-- Modal para crear un nuevo usuario con rol 3 -->
+<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('sales.createUser') }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createUserModalLabel">Crear Nuevo Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="last_name" class="form-label">Apellido</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="second_last_name" class="form-label">Segundo Apellido</label>
+                        <input type="text" class="form-control" id="second_last_name" name="second_last_name" value="nilo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <input type="hidden" name="role" value="3">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Crear Usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -128,22 +176,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const select = document.getElementById('customer_id');
         const options = select.options;
 
-        for (let i = 1; i < options.length; i++) { // Comienza desde 1 para omitir la opción predeterminada
+        for (let i = 1; i < options.length; i++) {
             const option = options[i];
             const text = option.text.toLowerCase();
-
-            option.style.display = text.includes(input) ? 'block' : 'none'; // Muestra u oculta opciones
+            option.style.display = text.includes(input) ? 'block' : 'none';
         }
 
-        // Seleccionar el primer cliente que coincida si hay resultados
         for (let i = 1; i < options.length; i++) {
             if (options[i].style.display === 'block') {
-                select.selectedIndex = i; // Selecciona la primera opción visible
+                select.selectedIndex = i;
                 return;
             }
         }
 
-        // Si no hay coincidencias, limpia el select
         select.selectedIndex = 0;
     };
 
@@ -153,135 +198,79 @@ document.addEventListener('DOMContentLoaded', function() {
         const select = document.getElementById('product-select');
         const options = select.options;
 
-        for (let i = 1; i < options.length; i++) { // Comienza desde 1 para omitir la opción predeterminada
+        for (let i = 1; i < options.length; i++) {
             const option = options[i];
             const text = option.text.toLowerCase();
-
-            option.style.display = text.includes(input) ? 'block' : 'none'; // Muestra u oculta opciones
+            option.style.display = text.includes(input) ? 'block' : 'none';
         }
 
-        // Seleccionar el primer producto que coincida si hay resultados
         for (let i = 1; i < options.length; i++) {
             if (options[i].style.display === 'block') {
-                select.selectedIndex = i; // Selecciona la primera opción visible
+                select.selectedIndex = i;
                 return;
             }
         }
 
-        // Si no hay coincidencias, limpia el select
         select.selectedIndex = 0;
     };
 
-    // Función para agregar productos a la tabla
+    // Agregar producto a la tabla
     addProductBtn.addEventListener('click', function() {
         const selectedOption = productSelect.options[productSelect.selectedIndex];
         const productId = selectedOption.value;
         const productName = selectedOption.text;
-        const productPrice = parseFloat(selectedOption.getAttribute('data-price'));
+        const productPrice = selectedOption.getAttribute('data-price');
         const productQuantity = selectedOption.getAttribute('data-quantity');
 
-        if (!productId) return;
-
-        // Verificar si el producto ya está en la tabla
-        const existingRow = Array.from(productsTableBody.rows).find(row => row.dataset.productId === productId);
-        if (existingRow) {
-            const quantityInput = existingRow.querySelector('input[name*="[quantity]"]');
-            const newQuantity = parseInt(quantityInput.value) + 1;
-
-            if (newQuantity <= productQuantity) {
-                quantityInput.value = newQuantity;
-                updateSubtotal(existingRow); // Actualizar subtotal
-            } else {
-                alert('No puedes agregar más de la cantidad disponible');
-            }
-
-            return;
-        }
-
-        // Crear una nueva fila en la tabla de productos
-        const row = document.createElement('tr');
-        row.dataset.productId = productId;
-        row.innerHTML = `    
-            <td>${productName}</td>
-            <td>
-                <input type="number" name="products[${productsTableBody.rows.length}][quantity]" 
-                       value="1" min="1" max="${productQuantity}" 
-                       class="form-control" required>
-                <input type="hidden" name="products[${productsTableBody.rows.length}][id]" value="${productId}">
-            </td>
-            <td>${productPrice.toFixed(2)} Bs</td>
-            <td class="subtotal">0.00 Bs</td> <!-- Columna de subtotal -->
-            <td>
-                <button type="button" class="btn btn-danger btn-sm remove-product-btn">
-                    <i class="fas fa-trash"></i> Eliminar
-                </button>
-            </td>
+        const newRow = `
+            <tr>
+                <td>${productName}</td>
+                <td><input type="number" class="form-control" name="products[${productId}][quantity]" value="1" min="1" max="${productQuantity}" required></td>
+                <td>${productPrice}</td>
+                <td>${productPrice}</td>
+                <td><button type="button" class="btn btn-danger btn-sm remove-product-btn">Eliminar</button></td>
+            </tr>
         `;
 
-        productsTableBody.appendChild(row);
-        updateSubtotal(row); // Calcular subtotal al agregar producto
-
-        // Limpiar selección
-        productSelect.selectedIndex = 0;
+        productsTableBody.insertAdjacentHTML('beforeend', newRow);
     });
 
-    // Función para actualizar el subtotal
-    function updateSubtotal(row) {
-        const quantityInput = row.querySelector('input[name*="[quantity]"]');
-        const price = parseFloat(row.cells[2].textContent.replace(' Bs', ''));
-        const quantity = parseInt(quantityInput.value);
-        const subtotal = price * quantity;
-        row.querySelector('.subtotal').textContent = subtotal.toFixed(2) + ' Bs'; // Actualizar columna de subtotal
-    }
-
-    // Eliminar productos de la tabla
-    productsTableBody.addEventListener('click', function(event) {
-        if (event.target.classList.contains('remove-product-btn')) {
-            event.target.closest('tr').remove();
-        }
-    });
-
-    // Mostrar modal de confirmación con el resumen de la venta
+    // Confirmar venta
     confirmSaleBtn.addEventListener('click', function() {
-        saleSummary.innerHTML = '';
+        const rows = productsTableBody.querySelectorAll('tr');
         let total = 0;
+        saleSummary.innerHTML = '';
 
-        Array.from(productsTableBody.rows).forEach(row => {
-            const productName = row.cells[0].textContent;
-            const quantity = row.querySelector('input[name*="[quantity]"]').value;
-            const price = parseFloat(row.cells[2].textContent.replace(' Bs', ''));
-            const productTotal = price * quantity;
+        rows.forEach(function(row) {
+            const productName = row.children[0].textContent;
+            const quantity = row.children[1].children[0].value;
+            const price = row.children[2].textContent;
+            const subtotal = quantity * price;
+            total += subtotal;
 
-            total += productTotal;
-
-            // Agregar productos al resumen
-            saleSummary.innerHTML += `
+            saleSummary.insertAdjacentHTML('beforeend', `
                 <tr>
                     <td>${productName}</td>
                     <td>${quantity}</td>
-                    <td>${price.toFixed(2)} Bs</td>
-                    <td>${productTotal.toFixed(2)} Bs</td>
+                    <td>${price}</td>
+                    <td>${subtotal}</td>
                 </tr>
-            `;
+            `);
         });
 
-        // Mostrar total en el modal
-        totalSaleAmount.textContent = total.toFixed(2);
-
-        // Abrir el modal
-        new bootstrap.Modal(document.getElementById('confirmSaleModal')).show();
+        totalSaleAmount.textContent = total;
+        $('#confirmSaleModal').modal('show');
     });
 
-    // Confirmar la venta y enviar el formulario
+    // Enviar formulario de venta al confirmar en el modal
     submitSaleBtn.addEventListener('click', function() {
         saleForm.submit();
     });
 
-    // Actualizar el subtotal cuando cambie la cantidad
-    productsTableBody.addEventListener('input', function(event) {
-        if (event.target.name.includes('quantity')) {
-            const row = event.target.closest('tr');
-            updateSubtotal(row); // Actualiza el subtotal cuando se cambia la cantidad
+    // Eliminar producto de la tabla
+    document.addEventListener('click', function(event) {
+        if (event.target.classList.contains('remove-product-btn')) {
+            event.target.closest('tr').remove();
         }
     });
 });

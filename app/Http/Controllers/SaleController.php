@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sale;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -223,6 +224,31 @@ public function destroy($id)
         DB::rollBack();
         return redirect()->route('sales.index')->with('error', 'Hubo un error al eliminar la venta. ' . $e->getMessage());
     }
+}
+public function createUser(Request $request)
+{
+    // Validar los datos recibidos
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'last_name' => 'required|string|max:255',
+        'second_last_name' => 'nullable|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8',
+        'role' => 'required|integer',  // Validación del rol
+    ]);
+
+    // Crear el usuario
+    $user = User::create([
+        'name' => $request->name,
+        'last_name' => $request->last_name,
+        'second_last_name' => $request->second_last_name ?: 'nilo', // Si no se envía, por defecto 'nilo'
+        'email' => $request->email,
+        'password' => Hash::make($request->password), // Asegúrate de encriptar la contraseña
+        'role' => $request->role, // Asigna el rol que llega en la solicitud
+    ]);
+
+    // Redirigir o retornar la respuesta que necesites
+    return redirect()->back()->with('success', 'Usuario creado exitosamente.');
 }
 
 }

@@ -75,6 +75,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('sales/{id}', [SaleController::class, 'update'])->name('sales.update'); // Actualizar venta existente
     Route::delete('sales/{id}', [SaleController::class, 'destroy'])->name('sales.destroy'); // Eliminar venta
     Route::get('/sales/{id}', [SaleController::class, 'show'])->name('sales.show');
+    Route::post('/sales/create-user', [SaleController::class, 'createUser'])->name('sales.createUser');
     Route::post('/products/details', [ProductController::class, 'getDetails']);
 
     Route::get('/reports', [ReportsController::class, 'index'])->name('reports.index');
