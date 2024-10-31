@@ -37,14 +37,7 @@
                             <i class="fas fa-users"></i>
                             <span class="mx-3">Usuarios</span>
                         </a>
-                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('store.index') }}">
-                            <i class="fas fa-store"></i>
-                            <span class="mx-3">Tiendas</span>
-                        </a>
-                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('store.show') }}">
-                            <i class="fas fa-search"></i>
-                            <span class="mx-3">Buscar en tiendas</span>
-                        </a>
+                        
                         <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('products.index') }}">
                             <i class="fas fa-box"></i>
                             <span class="mx-3">Productos</span>

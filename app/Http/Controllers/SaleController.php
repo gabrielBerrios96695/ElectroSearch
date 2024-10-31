@@ -41,6 +41,7 @@ class SaleController extends Controller
 
     public function store(Request $request, PdfService $pdfService)
     {
+        
         // Validación de los datos de la venta
         $request->validate([
             'customer_id' => 'required|exists:users,id',

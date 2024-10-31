@@ -35,6 +35,14 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="quantity" class="form-label">Cantidad</label>
+                    <input type="number" id="quantity" name="quantity" class="form-control" value="{{ old('quantity') }}" required>
+                    @error('quantity')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-3">
                     <label for="price" class="form-label">Precio</label>
                     <input type="number" id="price" name="price" class="form-control" step="0.01" value="{{ old('price') }}" required>
                     @error('price')
@@ -44,7 +52,7 @@
 
                 <div class="mb-3">
                     <label for="image" class="form-label">Imagen</label>
-                    <input type="file" id="image" name="image" class="form-control" required>
+                    <input type="file" id="image" name="image" class="form-control">
                     @error('image')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
@@ -62,21 +70,6 @@
                         @endforeach
                     </select>
                     @error('category_id')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
-                    <label for="store_id" class="form-label">Tienda</label>
-                    <select id="store_id" name="store_id" class="form-control" required style="height: 45px;">
-                        <option value="">Seleccione una tienda</option>
-                        @foreach(App\Models\Store::all() as $store)
-                            <option value="{{ $store->id }}" {{ old('store_id') == $store->id ? 'selected' : '' }}>
-                                {{ $store->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('store_id')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>

@@ -61,7 +61,7 @@ public function store(Request $request)
         'price' => 'required|numeric|min:0',
         'image' => 'required|image',
         'category_id' => 'required|exists:categories,id',
-        'store_id' => 'required|exists:stores,id',
+        'quantity' => 'required|integer|min:0', // Added quantity validation
     ], [
         'name.required' => 'El nombre es obligatorio.',
         'name.regex' => 'El nombre solo puede contener letras, números y espacios.',
@@ -74,15 +74,14 @@ public function store(Request $request)
         'image.image' => 'El archivo debe ser una imagen.',
         'category_id.required' => 'La categoría es obligatoria.',
         'category_id.exists' => 'La categoría debe existir en la base de datos.',
-        'store_id.required' => 'El ID de la tienda es obligatorio.',
-        'store_id.exists' => 'El ID de la tienda debe existir en la base de datos.',
+        'quantity.required' => 'La cantidad es obligatoria.',
+        'quantity.integer' => 'La cantidad debe ser un número entero.',
+        'quantity.min' => 'La cantidad debe ser mayor o igual a 0.',
     ]);
-
-    $productCount = Product::where('store_id', $request->store_id)->count() + 1;
 
     if ($request->hasFile('image')) {
         $extension = $request->image->extension();
-        $imageName = 't' . $request->store_id . '-p' . $productCount . '.' . $extension;
+        $imageName = 'p' . time() . '.' . $extension;  // Updated to a time-based naming scheme
         $path = $request->image->storeAs('public/images', $imageName);
     }
 
@@ -90,14 +89,13 @@ public function store(Request $request)
         'name' => $request->name,
         'description' => $request->description,
         'price' => $request->price,
+        'quantity' => $request->quantity,
         'image' => $imageName ?? null,
         'category_id' => $request->category_id,
-        'store_id' => $request->store_id,
     ]);
 
     return redirect()->route('products.index')->with('success', 'Producto creado exitosamente.');
 }
-
 
     public function edit(Product $product)
     {
@@ -123,7 +121,7 @@ public function store(Request $request)
         'price' => 'required|numeric|min:0',
         'image' => 'nullable|image',
         'category_id' => 'required|exists:categories,id',
-        'store_id' => 'required|exists:stores,id',
+
     ], [
         'name.required' => 'El nombre es obligatorio.',
         'name.regex' => 'El nombre solo puede contener letras, números y espacios.',
@@ -136,8 +134,7 @@ public function store(Request $request)
         'image.image' => 'El archivo debe ser una imagen.',
         'category_id.required' => 'La categoría es obligatoria.',
         'category_id.exists' => 'La categoría debe existir en la base de datos.',
-        'store_id.required' => 'El ID de la tienda es obligatorio.',
-        'store_id.exists' => 'El ID de la tienda debe existir en la base de datos.',
+
     ]);
 
     // Manejo de la imagen
@@ -161,7 +158,7 @@ public function store(Request $request)
         'price' => $request->price,
         'image' => $product->image,
         'category_id' => $request->category_id,
-        'store_id' => $request->store_id,
+
     ]);
 
     return redirect()->route('products.index')->with('success', 'Producto actualizado correctamente.');

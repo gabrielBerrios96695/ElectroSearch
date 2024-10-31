@@ -1,0 +1,14 @@
+array:3 [▼ // app/Http/Controllers/SaleController.php:44
+  "_token" => "KxZ7VaPnH2a569YldyEZTAcR3MYXSb3ji0k73gsm"
+  "customer_id" => "3"
+  "products" => array:2 [▼
+    0 => array:2 [▼
+      "quantity" => "1"
+      "id" => "7"
+    ]
+    1 => array:2 [▼
+      "quantity" => "10"
+      "id" => "6"
+    ]
+  ]
+]

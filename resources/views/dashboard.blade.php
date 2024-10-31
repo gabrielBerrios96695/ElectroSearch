@@ -63,7 +63,7 @@
                             <i class="fas fa-store"></i>
                         </div>
                         <div class="mr-5">Tiendas Registradas</div>
-                        <div class="display-4">{{ $storeCount }}</div>
+                       
                     </div>
                 </div>
             </div>
@@ -74,7 +74,7 @@
                             <i class="fas fa-store-slash"></i>
                         </div>
                         <div class="mr-5">Tiendas Deshabilitadas</div>
-                        <div class="display-4">{{ $storeCount1 }}</div>
+                        
                     </div>
                 </div>
             </div>

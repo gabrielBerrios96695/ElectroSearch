@@ -9,17 +9,14 @@
 
         <!-- Selección del cliente -->
         <div class="mb-3 row">
-            <label for="customer_name" class="form-label">Cliente</label>
+            <label for="customer_id" class="form-label">Cliente</label>
             <div class="col-md-8">
-                <input list="customer-list" id="customer_name" class="form-control" placeholder="Selecciona un cliente" required>
-                <datalist id="customer-list">
+                <select id="customer_id" name="customer_id" class="form-control" required>
+                    <option value="">Selecciona un cliente</option>
                     @foreach ($customers as $customer)
-                        <option value="{{ $customer->name }}" data-id="{{ $customer->id }}">
-                            {{ $customer->name }}
-                        </option>
+                        <option value="{{ $customer->id }}">{{ $customer->name }}</option>
                     @endforeach
-                </datalist>
-                <input type="hidden" id="customer_id" name="customer_id" required>
+                </select>
             </div>
         </div>
 
@@ -230,15 +227,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.target.matches('input[name*="[quantity]"]')) {
             const row = event.target.closest('tr');
             updateSubtotal(row);
-        }
-    });
-
-    // Capturar el ID del cliente seleccionado
-    document.getElementById('customer_name').addEventListener('input', function() {
-        const selectedOption = Array.from(document.getElementById('customer-list').options)
-            .find(option => option.value === this.value);
-        if (selectedOption) {
-            document.getElementById('customer_id').value = selectedOption.getAttribute('data-id');
         }
     });
 });

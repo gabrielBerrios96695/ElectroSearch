@@ -22,7 +22,6 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade'); // Definición de clave foránea
             $table->tinyInteger('status')->default(1);
             $table->tinyInteger('userId')->default(1);
-            $table->foreignId('store_id')->constrained('stores')->onDelete('cascade');
             $table->timestamps();
         });
         
