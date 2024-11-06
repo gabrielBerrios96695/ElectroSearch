@@ -33,11 +33,12 @@ class ProductController extends Controller
               });
     }
 
-    // Ordenar los productos y obtener los resultados
-    $products = $query->orderBy($sortField, $sortDirection)->get();
+    // Ordenar los productos y aplicar paginación de 5 elementos por página
+    $products = $query->orderBy($sortField, $sortDirection)->paginate(5);
 
     return view('livewire.products.index', compact('products', 'sortField', 'sortDirection', 'search'));
 }
+
 
 
 
@@ -110,31 +111,11 @@ public function store(Request $request)
     public function update(Request $request, Product $product)
 {
     $request->validate([
-        'name' => [
-            'required',
-            'regex:/^[a-zA-Z0-9\s]+$/'
-        ],
-        'description' => [
-            'required',
-            'regex:/^[a-zA-Z0-9\s]+$/'
-        ],
+        'name' => 'required|regex:/^[a-zA-Z0-9\s]+$/',
+        'description' => 'required|regex:/^[a-zA-Z0-9\s]+$/',
         'price' => 'required|numeric|min:0',
         'image' => 'nullable|image',
         'category_id' => 'required|exists:categories,id',
-
-    ], [
-        'name.required' => 'El nombre es obligatorio.',
-        'name.regex' => 'El nombre solo puede contener letras, números y espacios.',
-        'description.required' => 'La descripción es obligatoria.',
-        'description.regex' => 'La descripción solo puede contener letras, números y espacios.',
-        'price.required' => 'El precio es obligatorio.',
-        'price.numeric' => 'El precio debe ser un número.',
-        'price.min' => 'El precio debe ser mayor o igual a 0.',
-        'image.nullable' => 'La imagen es opcional.',
-        'image.image' => 'El archivo debe ser una imagen.',
-        'category_id.required' => 'La categoría es obligatoria.',
-        'category_id.exists' => 'La categoría debe existir en la base de datos.',
-
     ]);
 
     // Manejo de la imagen
@@ -146,7 +127,7 @@ public function store(Request $request)
 
         // Almacenar la nueva imagen
         $extension = $request->image->extension();
-        $imageName = 't' . $request->store_id . '-p' . $product->id . '.' . $extension;
+        $imageName = 'p' . time() . '.' . $extension;
         $path = $request->image->storeAs('public/images', $imageName);
         $product->image = $imageName;
     }
@@ -156,30 +137,28 @@ public function store(Request $request)
         'name' => $request->name,
         'description' => $request->description,
         'price' => $request->price,
-        'image' => $product->image,
+        'image' => $product->image,  // La imagen puede haber sido actualizada
         'category_id' => $request->category_id,
-
     ]);
 
     return redirect()->route('products.index')->with('success', 'Producto actualizado correctamente.');
 }
 
 
-    public function destroy(Product $product)
-    {
-        
-            try {
-                if ($product->imagen) {
-                    Storage::delete('public/images/' . $product->imagen);
-                }
-        
-                $product->delete();
-                return redirect()->route('products.index')->with('success', 'Producto eliminado correctamente.');
-            } catch (\Exception $e) {
-                return redirect()->route('products.index')->with('error', 'Ocurrió un error al intentar eliminar el producto.');
-            }
-        
+
+public function destroy(Product $product)
+{
+    try {
+        // Cambiar el status del producto
+        $product->status = $product->status === 1 ? 0 : 1;
+        $product->save();
+
+        return redirect()->route('products.index')->with('success', 'El estado del producto ha sido actualizado correctamente.');
+    } catch (\Exception $e) {
+        return redirect()->route('products.index')->with('error', 'Ocurrió un error al intentar actualizar el estado del producto.');
     }
+}
+
     public function updateStock(Request $request, $id)
 {
     $product = Product::findOrFail($id);

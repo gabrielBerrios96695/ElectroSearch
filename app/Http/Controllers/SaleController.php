@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Sale;
 use App\Models\User;
+use App\Models\Category;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Mail\UserRegistered;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,10 +20,14 @@ class SaleController extends Controller
 {
     public function index(Request $request)
     {
-        // Cargar ventas con detalles
-        $sales = Sale::with('user', 'customer', 'details.product')->get();
+        // Cargar ventas con detalles, pero solo aquellas cuyo type_of_sale sea igual a 1
+        $sales = Sale::with('user', 'customer', 'details.product')
+                    ->where('type_of_sale', 1) // Filtra las ventas con type_of_sale igual a 1
+                    ->get();
+                    
         return view('livewire.sales.index', compact('sales'));
     }
+
 
     public function show($id)
     {
@@ -29,13 +37,17 @@ class SaleController extends Controller
     }
 
     public function create()
-    {
-        // Obtener productos y clientes para la vista de creación
-        $products = Product::all();
-        $customers = User::where('role', 3)->get(); // Clientes tienen el role 3
+{
+    // Obtener solo productos con status 1
+    $products = Product::where('status', 1)->get();
+    $customers = User::where('role', 3)->get(); // Clientes tienen el role 3
+    $categories = Category::all(); // Obtener todas las categorías
 
-        return view('livewire/sales.create', compact('products', 'customers'));
-    }
+    return view('livewire/sales.create', compact('products', 'customers', 'categories'));
+}
+
+    
+
 
 
 
@@ -194,6 +206,20 @@ public function update(Request $request, $id)
 }
 
 
+public function receipt($id)
+{
+    // Obtener la venta con los detalles necesarios
+    $sale = Sale::with('details.product', 'user', 'customer')->findOrFail($id);
+
+    // Renderizar la vista `receipt` y pasarle los datos de la venta
+    $pdf = Pdf::loadView('livewire.sales.receipt', compact('sale'));
+
+    // Generar y descargar el PDF
+    return $pdf->download('receipt_' . $sale->id . '.pdf');
+}
+
+
+
 public function destroy($id)
 {
     $sale = Sale::find($id);
@@ -226,31 +252,72 @@ public function destroy($id)
         return redirect()->route('sales.index')->with('error', 'Hubo un error al eliminar la venta. ' . $e->getMessage());
     }
 }
+
+
 public function createUser(Request $request)
 {
     // Validar los datos recibidos
     $request->validate([
-        'name' => 'required|string|max:255',
-        'last_name' => 'required|string|max:255',
-        'second_last_name' => 'nullable|string|max:255',
+        'name' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[A-Za-záéíóúÁÉÍÓÚ\s]+$/', // Permitir solo letras y un espacio
+        ],
+        'last_name' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[A-Za-záéíóúÁÉÍÓÚ\s]+$/', // Permitir solo letras y un espacio
+        ],
+        'second_last_name' => 'nullable|string|max:255|regex:/^[A-Za-záéíóúÁÉÍÓÚ\s]+$/', // Permitir solo letras y un espacio
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
-
+        'phone' => 'required|string|regex:/^[0-9]{1,12}$/', // Teléfono obligatorio con 10 a 12 caracteres numéricos
     ]);
 
     // Crear el usuario
+    $password = $request->password; // Guardar la contraseña antes de encriptarla
     $user = User::create([
         'name' => $request->name,
         'last_name' => $request->last_name,
-        'second_last_name' => $request->second_last_name, // Si no se envía, por defecto 'nilo'
+        'second_last_name' => $request->second_last_name, // Si no se envía, por defecto 'nulo'
         'email' => $request->email,
-        'password' => Hash::make($request->password), // Asegúrate de encriptar la contraseña
+        'password' => Hash::make($password), // Asegúrate de encriptar la contraseña
+        'phone' => $request->phone, // Asegurarse de guardar el teléfono
         'role' => 3, // Asigna el rol que llega en la solicitud
     ]);
 
+    // Enviar correo electrónico al usuario
+    Mail::to($user->email)->send(new \App\Mail\UserRegistered($user, $password));
+
     // Redirigir o retornar la respuesta que necesites
-    return redirect()->back()->with('success', 'Usuario creado exitosamente.');
+    return redirect()->back()->with('success', 'Usuario creado exitosamente y se ha enviado un correo de confirmación.');
 }
+
+
+public function confirm($saleId, Request $request)
+{
+    // Validar que el usuario está autenticado
+    $user = auth()->user();
+
+    // Obtener la venta a partir del ID
+    $sale = Sale::findOrFail($saleId);
+
+    // Verificar si la venta no está ya confirmada
+    if ($sale->status == 'completed') {
+        return redirect()->route('sales.show', $sale->id)->with('error', 'La compra ya ha sido confirmada.');
+    }
+
+    // Actualizar la venta, asignando el vendedor (usuario autenticado)
+    $sale->user_id = $request->user_id; // Establecer el usuario autenticado como vendedor
+    $sale->status = 'completed'; // Marcar la venta como completada
+    $sale->save(); // Guardar los cambios
+
+    // Redirigir de vuelta a la vista de detalles de la venta con un mensaje de éxito
+    return redirect()->route('sales.show', $sale->id)->with('success', 'La compra ha sido confirmada.');
+}
+
 
 }
 

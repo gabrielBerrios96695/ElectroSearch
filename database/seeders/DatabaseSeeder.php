@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             ProductsSeeder::class,
             SalesTableSeeder::class,
+            RatingSeeder::class,
         ]);
     }
 }

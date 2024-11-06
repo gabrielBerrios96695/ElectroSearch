@@ -8,7 +8,7 @@
         </div>
     @endif
 
-    @if (Auth::user()->role == 2 && Auth::user()->passwordUpdate)
+    @if (Auth::user()->id != 1 && Auth::user()->passwordUpdate)
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">

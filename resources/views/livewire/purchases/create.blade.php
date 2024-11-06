@@ -4,92 +4,32 @@
 <div class="container">
     <h1 class="mb-4">Crear Venta</h1>
 
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createUserModal">
-        Crear Usuario
-    </button>
-    <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="createUserModalLabel">Crear Usuario</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-      <form id="createUserForm" action="{{ route('sales.createUser') }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="last_name" class="form-label">Apellido</label>
-                            <input type="text" class="form-control" id="last_name" name="last_name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="second_last_name" class="form-label">Segundo Apellido</label>
-                            <input type="text" class="form-control" id="second_last_name" name="second_last_name">
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Teléfono</label>
-                            <input type="text" class="form-control" id="phone" name="phone">
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password_confirmation" class="form-label">Confirmar Contraseña</label>
-                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
-                        </div>
-                        <button type="submit" class="btn btn-success">Crear Usuario</button>
-                    </form>
-      </div>
-    </div>
-  </div>
-</div>
-    <form id="sale-form" action="{{ route('sales.store') }}" method="POST">
+    <form id="sale-form" action="{{ route('purchases.store') }}" method="POST">
         @csrf
 
-        <!-- Selección del cliente -->
-        <div class="mb-3 row">
-            <label for="customer_name" class="form-label">Cliente</label>
-            <div class="col-md-8">
-                <input list="customer-list" id="customer_name" class="form-control" placeholder="Selecciona un cliente" required>
-                <datalist id="customer-list">
-                    @foreach ($customers as $customer)
-                        <option value="{{ $customer->name }} {{ $customer->last_name }} {{ $customer->second_last_name }}" data-id="{{ $customer->id }}">
-                            {{ $customer->name }} {{ $customer->last_name }} {{ $customer->second_last_name }}
-                        </option>
-                    @endforeach
-                </datalist>
-                <input type="hidden" id="customer_id" name="customer_id" required>
-            </div>
-        </div>
-
-        <!-- Selección del producto -->
         <div class="mb-4 row">
-            <label for="product_id" class="form-label"><i class="fas fa-box"></i> Agregar Producto</label>
-            <div class="col-md-8">
+
+            <div class="col-md-6">
+                <label for="product_name" class="form-label"><i class="fas fa-box"></i> Agregar Producto</label>
                 <input list="product-list" id="product_name" class="form-control" placeholder="Selecciona un producto" required>
                 <datalist id="product-list">
-                    @foreach ($products as $product)
-                        @if ($product->quantity > 0)
-                            <option value="{{ $product->name }}" 
-                                    data-id="{{ $product->id }}" 
-                                    data-price="{{ $product->price }}" 
-                                    data-quantity="{{ $product->quantity }}">
-                                {{ $product->name }} -{{ $product->quantity }} - {{ $product->price }}Bs
-                            </option>
-                        @endif
-                    @endforeach
+
                 </datalist>
                 <input type="hidden" id="product_id" name="product_id" required>
             </div>
-        </div>
+
+            <div class="col-md-6">
+                <label for="category_id" class="form-label"><i class="fas fa-filter"></i> Filtrar por Categoría</label>
+                <select id="category_id" class="form-control">
+                    <option value="">Seleccionar categoría</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+    </div>
+    
+
 
         <div class="mb-4">
             <button type="button" id="add-product-btn" class="btn btn-secondary">
@@ -101,6 +41,7 @@
         <table id="products-table" class="table">
             <thead>
                 <tr>
+                    <th>Imagen</th>
                     <th>Producto</th>
                     <th>Cantidad</th>
                     <th>Adquirir</th>
@@ -154,6 +95,7 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('category_id');
     const addProductBtn = document.getElementById('add-product-btn');
     const productsTableBody = document.querySelector('#products-table tbody');
     const confirmSaleBtn = document.getElementById('confirm-sale-btn');
@@ -161,18 +103,42 @@ document.addEventListener('DOMContentLoaded', function() {
     const totalSaleAmount = document.getElementById('total-sale-amount');
     const submitSaleBtn = document.getElementById('submit-sale-btn');
     const saleForm = document.getElementById('sale-form');
+    const productInput = document.getElementById('product_name');
+    const productList = document.getElementById('product-list');
+
+    // Función para filtrar productos por categoría
+    categorySelect.addEventListener('change', function() {
+        const categoryId = categorySelect.value;
+        filterProductsByCategory(categoryId);
+    });
+
+    // Función para cargar los productos filtrados por categoría
+    function filterProductsByCategory(categoryId) {
+        const options = [...productList.options];
+        options.forEach(option => option.remove()); // Limpiar la lista de opciones
+        @foreach ($products as $product)
+            if (!categoryId || {{ $product->category_id }} == categoryId) {
+                const option = document.createElement('option');
+                option.value = '{{ $product->name }}';
+                option.setAttribute('data-id', '{{ $product->id }}');
+                option.setAttribute('data-price', '{{ $product->price }}');
+                option.setAttribute('data-quantity', '{{ $product->quantity }}');
+                option.setAttribute('data-image', '{{ $product->image }}');
+                productList.appendChild(option);
+            }
+        @endforeach
+    }
 
     // Función para agregar productos a la tabla
     addProductBtn.addEventListener('click', function() {
-        const productInput = document.getElementById('product_name');
-        const selectedOption = Array.from(document.getElementById('product-list').options)
-            .find(option => option.value === productInput.value);
+        const selectedOption = Array.from(productList.options).find(option => option.value === productInput.value);
         if (!selectedOption) return;
 
         const productId = selectedOption.getAttribute('data-id');
         const productName = selectedOption.value;
         const productPrice = parseFloat(selectedOption.getAttribute('data-price'));
         const productQuantity = parseInt(selectedOption.getAttribute('data-quantity'));
+        const productImage = selectedOption.getAttribute('data-image');
 
         // Verificar si el producto ya está en la tabla
         const existingRow = Array.from(productsTableBody.rows).find(row => row.dataset.productId === productId);
@@ -192,7 +158,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Crear una nueva fila en la tabla de productos
         const row = document.createElement('tr');
         row.dataset.productId = productId;
-        row.innerHTML = `    
+        row.innerHTML = `
+            <td>
+                <img src="/storage/images/${productImage}" 
+                     alt="${productName}" 
+                     class="product-image img-thumbnail" 
+                     style="max-width: 150px; max-height: 120px;">
+            </td>
             <td>${productName}</td>
             <td>${productQuantity}</td>
             <td>
@@ -219,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función para actualizar el subtotal
     function updateSubtotal(row) {
         const quantityInput = row.querySelector('input[name*="[quantity]"]');
-        const price = parseFloat(row.cells[3].textContent.replace(' Bs', ''));
+        const price = parseFloat(row.cells[4].textContent.replace(' Bs', ''));
         const quantity = parseInt(quantityInput.value);
         const subtotal = price * quantity;
         row.querySelector('.subtotal').textContent = subtotal.toFixed(2) + ' Bs';
@@ -239,9 +211,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Recorrer filas de la tabla de productos y llenar el resumen
         Array.from(productsTableBody.rows).forEach(row => {
-            const productName = row.cells[0].textContent;
+            const productName = row.cells[1].textContent;
             const quantity = row.querySelector('input[name*="[quantity]"]').value;
-            const price = parseFloat(row.cells[2].textContent.replace(' Bs', ''));
+            const price = parseFloat(row.cells[4].textContent.replace(' Bs', ''));
             const productTotal = price * quantity;
 
             total += productTotal;
@@ -281,23 +253,6 @@ document.addEventListener('DOMContentLoaded', function() {
             updateSubtotal(row);
         }
     });
-
-    // Capturar el ID del cliente seleccionado
-    document.getElementById('customer_name').addEventListener('input', function() {
-        const selectedOption = Array.from(document.getElementById('customer-list').options)
-            .find(option => option.value === this.value);
-        if (selectedOption) {
-            document.getElementById('customer_id').value = selectedOption.getAttribute('data-id');
-        }
-    });
-    document.getElementById('createUserForm').addEventListener('submit', function(event) {
-    const password = document.getElementById('password').value;
-    const passwordConfirmation = document.getElementById('password_confirmation').value;
-    if (password !== passwordConfirmation) {
-      event.preventDefault(); // Evita que el formulario se envíe
-      alert('Las contraseñas no coinciden. Por favor, verifica e intenta nuevamente.');
-    }
-  });
 });
 </script>
 @endpush

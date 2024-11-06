@@ -51,7 +51,7 @@ class UserController extends Controller
                   ->orWhere('email', 'like', "%{$search}%");
         }
     
-        // Filtrar por rol 0 y 3 (Clientes)
+        // Filtrar por rol 1 (Administrador) o 2 (Vendedor)
         $query->whereIn('role', [0, 3]);
     
         $users = $query->orderBy($sortField, $sortDirection)->get();
@@ -67,9 +67,6 @@ class UserController extends Controller
     // Método para almacenar un nuevo cliente en la base de datos
     public function storeClient(Request $request)
 {
-   
-    
-    // Validación de los datos
     $request->validate([
         'name' => [
             'required',
@@ -93,57 +90,51 @@ class UserController extends Controller
         'email' => 'required|string|email|max:255|unique:users',
         'phone' => 'nullable|regex:/^[0-9]{1,10}$/', // Permitimos hasta 10 dígitos, solo números
         'password' => 'required|string|min:8|confirmed',
+
     ], [
-        // Mensajes personalizados de validación
+        'name.required' => 'El nombre es obligatorio.',
+        'name.string' => 'El nombre debe ser una cadena de texto.',
+        'name.max' => 'El nombre no puede tener más de 255 caracteres.',
+        'name.regex' => 'El nombre solo puede contener letras y espacios.',
+        'name.regex.regex' => 'El nombre solo puede contener un único espacio entre nombres.',
+        'last_name.required' => 'El apellido es obligatorio.',
+        'last_name.string' => 'El apellido debe ser una cadena de texto.',
+        'last_name.max' => 'El apellido no puede tener más de 255 caracteres.',
+        'last_name.regex' => 'El apellido no puede contener caracteres especiales ni números.',
+        'second_last_name.string' => 'El segundo apellido debe ser una cadena de texto.',
+        'second_last_name.max' => 'El segundo apellido no puede tener más de 255 caracteres.',
+        'second_last_name.regex' => 'El segundo apellido no puede contener caracteres especiales ni números.',
+        'email.required' => 'El correo electrónico es obligatorio.',
+        'email.string' => 'El correo electrónico debe ser una cadena de texto.',
+        'email.email' => 'El correo electrónico debe ser una dirección de correo válida.',
+        'email.max' => 'El correo electrónico no puede tener más de 255 caracteres.',
+        'email.unique' => 'El correo electrónico ya está en uso.',
+        'phone.regex' => 'El teléfono debe contener solo números y puede tener hasta 10 dígitos.',
+        'password.required' => 'La contraseña es obligatoria.',
+        'password.string' => 'La contraseña debe ser una cadena de texto.',
+        'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+        'password.confirmed' => 'La confirmación de la contraseña no coincide.',
+
     ]);
 
+    // Definir la contraseña antes de crear el usuario
+    $password = $request->password;
+    $phone = $request->phone;
     // Crear el usuario
     $user = User::create([
         'name' => $request->name,
         'last_name' => $request->last_name,
         'second_last_name' => $request->second_last_name,
         'email' => $request->email,
-        'phone' => $request->phone ?: null, // Si no se pasa teléfono, asignamos NULL
-        'password' => Hash::make($request->password),
-        'role' => 3, // Asumiendo que 3 es el rol para el cliente
+        'phone' => $request->$phone, // Guardar el teléfono
+        'password' => Hash::make($password),
+        'role' => 3
     ]);
-    
-    // Enviar correo al usuario
-    \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\UserRegistered($user, $request->password));
-    
+
+    // Enviar el correo electrónico al usuario con la contraseña generada
+    \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\UserRegistered($user, $password));
+
     return redirect()->route('clients.index')->with('success', 'Usuario creado exitosamente.');
-}
-
-    
-
-    // Método para mostrar el formulario de edición de un cliente
-    public function editClient($id)
-    {
-        $user = User::findOrFail($id);
-        return view('livewire.clients.edit', compact('user'));
-    }
-
-    // Método para actualizar la información de un cliente
-    public function updateClient(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'second_last_name' => 'nullable|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'phone' => 'required|string|max:15',
-        ]);
-
-        $user = User::findOrFail($id);
-        $user->update([
-            'name' => $request->name,
-            'last_name' => $request->last_name,
-            'second_last_name' => $request->second_last_name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-        ]);
-
-        return redirect()->route('clients.index')->with('success', 'Cliente actualizado correctamente.');
     }
 
     // Método para cambiar el estado de un cliente (habilitar/deshabilitar)
@@ -179,7 +170,9 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
 {
-    //dd($request->all());
+    // dd($request->all()); // Descomenta esto si necesitas depurar los datos
+
+    // Validación de los datos recibidos
     $request->validate([
         'name' => [
             'required',
@@ -200,7 +193,7 @@ class UserController extends Controller
             'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/', // Permitimos que esté vacío o tenga letras y espacios
         ],
         'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-        'role' => 'required|string|in:1,2,3', // Asegurando que el rol esté dentro de los valores válidos
+        'role' => 'nullable|string|in:1,2,3', // Aseguramos que el rol esté dentro de los valores válidos
         'phone' => [
             'nullable', // Hacemos que el teléfono sea opcional
             'regex:/^[0-9]+$/', // Solo números
@@ -227,30 +220,26 @@ class UserController extends Controller
         'email.max' => 'El correo electrónico no puede tener más de 255 caracteres.',
         'email.unique' => 'El correo electrónico ya está en uso.',
         
-        'role.required' => 'El rol es obligatorio.',
-        'role.string' => 'El rol debe ser una cadena de texto.',
-        'role.in' => 'El rol seleccionado no es válido.',
-
         'phone.regex' => 'El teléfono debe contener solo números.',
         'phone.min' => 'El teléfono debe tener al menos 1 dígito.',
         'phone.max' => 'El teléfono no puede tener más de 14 dígitos.',
     ]);
 
-    $phone=$request->phone;
- 
+    // Si el teléfono está vacío, lo dejamos como NULL
+    $phone = $request->phone ?: null;
+
     // Actualización de los datos del usuario
     $user->update([
         'name' => $request->name,
         'last_name' => $request->last_name,
         'second_last_name' => $request->second_last_name,
         'email' => $request->email,
-        'role' => $request->role,
-        'phone' => $request->$phone, // Actualizamos el teléfono
+        'role' => $request->role ?? 3, // Asignamos el rol 3 (Cliente) por defecto si no se proporciona
+        'phone' => $phone, // Si el teléfono es vacío, se asigna null
     ]);
 
-
     // Redirigir a la lista de usuarios con un mensaje de éxito
-    return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente.');
+    return back()->with('success', 'Usuario actualizado correctamente.');
 }
 
 
@@ -268,7 +257,6 @@ class UserController extends Controller
     public function store(Request $request)
 {
    
-
     $request->validate([
         'name' => [
             'required',
@@ -292,7 +280,7 @@ class UserController extends Controller
         'email' => 'required|string|email|max:255|unique:users',
         'phone' => 'nullable|regex:/^[0-9]{1,10}$/', // Permitimos hasta 10 dígitos, solo números
         'password' => 'required|string|min:8|confirmed',
-        'role' => 'required|string',
+        'role' => 'nullable|string',
     ], [
         'name.required' => 'El nombre es obligatorio.',
         'name.string' => 'El nombre debe ser una cadena de texto.',
@@ -329,7 +317,8 @@ class UserController extends Controller
         'last_name' => $request->last_name,
         'second_last_name' => $request->second_last_name,
         'email' => $request->email,
-        'phone' => $request->$phone, // Guardar el teléfono
+        'phone' => (string)$request->phone, 
+
         'password' => Hash::make($password),
         'role' => $request->role,
     ]);
@@ -348,7 +337,7 @@ class UserController extends Controller
         $user->status = !$user->status; // Alternar el estado
         $user->save();
 
-        return redirect()->route('users.index')->with('success', 'Estado del usuario actualizado.');
+        return back()->with('success', 'Estado Acualizado');
     }
 
     public function exportToExcel()

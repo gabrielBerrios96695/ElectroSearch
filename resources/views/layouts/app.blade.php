@@ -25,48 +25,105 @@
                 <span class="text-2xl font-semibold">ElectroSearch</span>
             </div>
             <nav class="mt-10">
-                @if(Auth::check())
-                    <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('dashboard') }}">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span class="mx-3">Dashboard</span>
-                    </a>
-                    @if(Auth::user()->isAdmin())
-                    <br>
-                    <span class="text-white font-semibold px-6 mt-4">Administración</span><br>
-                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('users.index') }}">
-                            <i class="fas fa-users"></i>
-                            <span class="mx-3">Usuarios</span>
-                        </a>
-                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('clients.index') }}">
-                            <i class="fas fa-users"></i>
-                            <span class="mx-3">Clientes</span>
-                        </a>
-                        
-                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('products.index') }}">
-                            <i class="fas fa-box"></i>
-                            <span class="mx-3">Productos</span>
-                        </a>
-                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('categories.index') }}">
-                            <i class="fas fa-th-list"></i>
-                            <span class="mx-3">Categorías</span>
-                        </a>
-                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('sales.index') }}">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="mx-3">Ventas</span>
-                        </a>
-                        <br>
-                        <span class="text-white font-semibold px-6 mt-4">Reportes</span>
-                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('reports.top_sellers') }}">
-                            <i class="fas fa-chart-line"></i>
-                            <span class="mx-3">Top Vendedores</span>
-                        </a>
-                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('reports.index') }}">
-                            <i class="fas fa-file-alt"></i>
-                            <span class="mx-3">Reportes</span>
-                        </a>
-                    @endif
-                @endif
-            </nav>
+    @if(Auth::check())
+        @php
+            $user = Auth::user();
+        @endphp
+
+        <!-- Mostrar Dashboard a todos -->
+        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('dashboard') }}">
+            <i class="fas fa-tachometer-alt text-lg"></i>
+            <span class="mx-3 text-lg">Dashboard</span>
+        </a>
+
+        <!-- Mostrar otras opciones solo si `password_update` es `false` -->
+        @if(!$user->password_update)
+            @if($user->role == 1) <!-- Rol de Administrador -->
+                <br>
+                <span class="text-white font-semibold px-6 mt-4">Administración</span><br>
+
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('users.index') }}">
+                    <i class="fas fa-users-cog text-lg"></i>
+                    <span class="mx-3 text-lg">Usuarios</span>
+                </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('clients.index') }}">
+                    <i class="fas fa-user-friends text-lg"></i>
+                    <span class="mx-3 text-lg">Clientes</span>
+                </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('products.index') }}">
+                    <i class="fas fa-box-open text-lg"></i>
+                    <span class="mx-3 text-lg">Productos</span>
+                </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('categories.index') }}">
+                    <i class="fas fa-th text-lg"></i>
+                    <span class="mx-3 text-lg">Categorías</span>
+                </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('sales.index') }}">
+                    <i class="fas fa-chart-bar text-lg"></i>
+                    <span class="mx-3 text-lg">Ventas</span>
+                </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('purchases.index') }}">
+                    <i class="fas fa-credit-card text-lg"></i>
+                    <span class="mx-3 text-lg">Compras</span>
+                </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('ratings.index') }}">
+                    <i class="fas fa-star text-lg"></i>
+                    <span class="mx-3 text-lg">Comentarios y Valoraciones</span>
+                </a>
+                <br>
+                <span class="text-white font-semibold px-6 mt-4">Reportes</span>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('reports.top_sellers') }}">
+                    <i class="fas fa-trophy text-lg"></i>
+                    <span class="mx-3 text-lg">Top Vendedores</span>
+                </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('reports.index') }}">
+                    <i class="fas fa-file-alt text-lg"></i>
+                    <span class="mx-3 text-lg">Reportes</span>
+                </a>
+            @elseif($user->role == 2) <!-- Rol de Vendedor -->
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('users.index') }}">
+                    <i class="fas fa-users-cog text-lg"></i>
+                    <span class="mx-3 text-lg">Usuarios</span>
+                </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('clients.index') }}">
+                    <i class="fas fa-user-friends text-lg"></i>
+                    <span class="mx-3 text-lg">Clientes</span>
+                </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('products.index') }}">
+                    <i class="fas fa-box-open text-lg"></i>
+                    <span class="mx-3 text-lg">Productos</span>
+                </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('sales.index') }}">
+                    <i class="fas fa-chart-bar text-lg"></i>
+                    <span class="mx-3 text-lg">Ventas</span>
+                </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('purchases.index') }}">
+                    <i class="fas fa-credit-card text-lg"></i>
+                    <span class="mx-3 text-lg">Compras</span>
+                </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('reports.index') }}">
+                    <i class="fas fa-file-alt text-lg"></i>
+                    <span class="mx-3 text-lg">Reportes</span>
+                </a>
+            @elseif($user->role == 3) <!-- Rol de Cliente -->
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('purchases.index') }}">
+                    <i class="fas fa-shopping-cart text-lg"></i>
+                    <span class="mx-3 text-lg">Compras</span>
+                </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('ratings.index') }}">
+                    <i class="fas fa-star text-lg"></i>
+                    <span class="mx-3 text-lg">Comentarios y Valoraciones</span>
+                </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('products.index') }}">
+                    <i class="fas fa-box-open text-lg"></i>
+                    <span class="mx-3 text-lg">Productos</span>
+                </a>
+            @endif
+        @endif
+    @endif
+</nav>
+
+
         </aside>
 
         <div class="flex-1 flex flex-col overflow-hidden">

@@ -13,7 +13,8 @@ class SalesTableSeeder extends Seeder
     public function run()
     {
         // Seleccionar algunos usuarios
-        $users = User::limit(5)->get();
+        $users = User::where('role', 3)->limit(5)->get();
+
         $products = Product::limit(10)->get();
 
         foreach ($users as $user) {
@@ -28,7 +29,7 @@ class SalesTableSeeder extends Seeder
             $totalAmount = 0;
 
             // Agregar detalles de venta
-            foreach ($products->random(3) as $product) {
+            foreach ($products->random(4) as $product) {
                 $quantity = rand(1, 5);
                 $price = $product->price;
                 $total = $price * $quantity;

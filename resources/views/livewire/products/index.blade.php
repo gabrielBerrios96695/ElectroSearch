@@ -10,10 +10,10 @@
         <h1 class="h3">Lista de Productos</h1>
         
         <div>
-        <a href="{{ route('products.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Registrar Nuevo Producto
-        </a>
-        <a href="{{ route('products.export') }}" class="btn btn-success">
+            <a href="{{ route('products.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Registrar Nuevo Producto
+            </a>
+            <a href="{{ route('products.export') }}" class="btn btn-success">
                 <i class="fas fa-file-excel"></i> Exportar
             </a>
         </div>
@@ -24,7 +24,7 @@
             <i class="fas fa-box"></i> Productos
         </div>
         <div class="card-body">
-        <form method="GET" action="{{ route('products.index') }}" class="mb-4">
+            <form method="GET" action="{{ route('products.index') }}" class="mb-4">
                 <div class="input-group">
                     <input type="text" name="search" class="form-control" placeholder="Buscar productos..." value="{{ request('search') }}">
                     <button class="btn btn-primary" type="submit">
@@ -41,6 +41,7 @@
                         <th scope="col">Cantidad</th>
                         <th scope="col">Precio </th>
                         <th scope="col">Imagen</th>
+                        <th scope="col">Estado</th>
                         <th scope="col">Categoría</th>
                         <th scope="col">Acciones</th>
                     </tr>
@@ -51,16 +52,17 @@
                             <th scope="row">{{ $product->id }}</th>
                             <td>{{ $product->name }}</td>
                             <td>{{ $product->description }}</td>
-                            <td>{{ $product->quantity}}</td>
+                            <td>{{ $product->quantity }}</td>
                             <td>{{ $product->price }} Bs.</td>
                             <td class="text-center">
                                 @if($product->image)
-                                <img src="{{ asset('storage/images/' . $product->image) }}" alt="{{ $product->name }}" class="product-image" style="max-width: 150px; max-height: 120px;">
-
+                                    <img src="{{ asset('storage/images/' . $product->image) }}" alt="{{ $product->name }}" class="product-image" style="max-width: 150px; max-height: 120px;">
                                 @else
                                     <span>No Image</span>
                                 @endif
                             </td>
+                            <td>{{ $product->status === 1 ? 'Habilitado' : 'Deshabilitado' }}</td>
+
                             <td>{{ $product->category->name ?? 'Sin Categoría' }}</td>
                             <td>
                                 <a href="{{ route('products.edit', $product->id) }}" class="btn btn-secondary">
@@ -74,16 +76,20 @@
                                     <i class="fas fa-cogs"></i>
                                 </button>
                             </td>
-                            
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+
+            <!-- Agregar enlaces de paginación -->
+            <div class="d-flex justify-content-center">
+                {{ $products->links() }}
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Modales y scripts -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -105,7 +111,7 @@
         </div>
     </div>
 </div>
-<!-- Modal de Modificar Stock -->
+
 <div class="modal fade" id="modifyStockModal" tabindex="-1" aria-labelledby="modifyStockModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -134,8 +140,6 @@
     </div>
 </div>
 
-
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var deleteModal = document.getElementById('deleteModal');
@@ -145,8 +149,8 @@
             var form = document.getElementById('deleteForm');
             form.action = '/products/' + productId;
         });
+        
         var modifyStockModal = document.getElementById('modifyStockModal');
-    
         modifyStockModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
             var productId = button.getAttribute('data-product-id');
@@ -158,9 +162,8 @@
             
             // Actualizar la acción del formulario para enviar la solicitud al producto correcto
             var form = document.getElementById('modifyStockForm');
-            form.action = '/products/' + productId + '/updateStock'; // Ruta para actualizar stock
+            form.action = '/products/' + productId + '/updateStock';
         });
     });
 </script>
-
 @endsection

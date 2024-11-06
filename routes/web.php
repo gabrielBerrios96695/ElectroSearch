@@ -6,6 +6,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\RatingController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
@@ -89,12 +91,56 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/sales/{id}', [SaleController::class, 'show'])->name('sales.show');
     Route::post('/sales/create-user', [SaleController::class, 'createUser'])->name('sales.createUser');
     Route::post('/products/details', [ProductController::class, 'getDetails']);
+    Route::get('/sales/{id}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt');
+
+
+    Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+    Route::get('/purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
+    Route::post('/purchases', [PurchaseController::class, 'store'])->name('purchases.store');
+    Route::get('purchases/cancel/{id}', [PurchaseController::class, 'cancel'])->name('purchases.cancel');
+    Route::post('/sales/{saleId}/confirm', [SaleController::class, 'confirm'])->name('sales.confirm');
 
     Route::get('/reports', [ReportsController::class, 'index'])->name('reports.index');
     Route::get('/reports/export-excel', [ReportsController::class, 'exportExcel'])->name('reports.exportExcel');
     Route::get('/reports/top-sellers', [ReportsController::class, 'reportTopSellers'])->name('reports.top_sellers');
     Route::get('/reports/top-sellers/export-excel', [ReportsController::class, 'exportExcelTopSellers'])->name('reports.exportExcelTopSellers');
 
+
+
+
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/ratings', [RatingController::class, 'index'])->name('ratings.index');
+    Route::get('/ratings/create', [RatingController::class, 'create'])->name('ratings.create');
+    Route::post('/ratings', [RatingController::class, 'store'])->name('ratings.store');
+
+    // Ruta para obtener los detalles de una venta y sus productos
+    Route::get('/sale/{sale}/details', function ($saleId) {
+        $sale = \App\Models\Sale::findOrFail($saleId);
+        return response()->json($sale->details->map(function ($detail) {
+            return [
+                'id' => $detail->id,
+                'product_name' => $detail->product->name,
+            ];
+        }));
+    });
+
+// Ruta para aprobar un comentario
+Route::put('ratings/{rating}/approve', [RatingController::class, 'approve'])->name('ratings.approve');
+
+// Ruta para rechazar un comentario
+Route::put('ratings/{rating}/reject', [RatingController::class, 'reject'])->name('ratings.reject');
+// Ruta para la vista de aprobar calificaciones
+// Ruta para ver todas las calificaciones por aprobar o bloquear
+Route::get('ratings/approve', [RatingController::class, 'approveComments'])->name('ratings.approve');
+// Ruta para aprobar un comentario
+Route::get('ratings/{rating}/approve', [RatingController::class, 'approve'])->name('ratings.approve.comment');
+
+// Ruta para bloquear un comentario
+Route::get('ratings/{rating}/block', [RatingController::class, 'block'])->name('ratings.block.comment');
+
+});
 
 
     

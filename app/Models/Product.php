@@ -39,4 +39,8 @@ class Product extends Model
     {
         return $this->hasMany(SaleDetail::class);
     }
+    public function ratings()
+    {
+        return $this->hasManyThrough(Rating::class, SaleDetail::class);
+    }
 }

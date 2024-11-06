@@ -17,8 +17,10 @@ return new class extends Migration
             $table->foreignId('customer_id')->constrained('users')->onDelete('cascade'); // Cliente que recibe la venta
             $table->decimal('total_amount', 10, 2); // Monto total de la venta
             $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending'); // Estado de la venta
+            $table->integer('type_of_sale')->default(1); // Tipo de venta, por defecto 1
             $table->timestamps(); // Timestamps
         });
+        
         
     }
 

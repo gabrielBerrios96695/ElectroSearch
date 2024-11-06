@@ -295,7 +295,7 @@ public function exportExcelTopSellers(Request $request)
         'chart1', 
         new Title('Vendedores con más ventas'), 
         new Legend(Legend::POSITION_RIGHT, null, false), 
-        $plotArera
+        $plotArea
     );
 
     // Posición del gráfico en la hoja
