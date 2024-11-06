@@ -180,6 +180,42 @@ public function store(Request $request)
             }
         
     }
+    public function updateStock(Request $request, $id)
+{
+    $product = Product::findOrFail($id);
+
+    // Validar la nueva cantidad
+    $request->validate([
+        'new_stock' => 'required|integer|min:0',
+    ]);
+
+    // Obtener la cantidad anterior
+    $previousStock = $product->quantity;
+
+    // Actualizar el stock
+    $product->quantity = $request->input('new_stock');
+    $product->save();
+
+    // Generar el mensaje según la comparación
+    if ($product->quantity > $previousStock) {
+        $message = 'El stock ha sido incrementado de: ' . $previousStock . ' a ' . $product->quantity;
+        $alertClass = 'alert-success';
+    } elseif ($product->quantity < $previousStock) {
+        $message = 'El stock ha sido disminuido de: ' . $previousStock . ' a ' . $product->quantity;
+        $alertClass = 'alert-danger';
+    } else {
+        $message = 'No se ha realizado ningún cambio en el stock.';
+        $alertClass = 'alert-info';
+    }
+
+    // Redirigir con el mensaje y la clase de alerta
+    return redirect()->route('products.index')->with([
+        'success' => $message,
+        'alertClass' => $alertClass
+    ]);
+}
+
+
 
     public function exportToExcel()
 {

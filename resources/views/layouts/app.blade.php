@@ -37,6 +37,10 @@
                             <i class="fas fa-users"></i>
                             <span class="mx-3">Usuarios</span>
                         </a>
+                        <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('clients.index') }}">
+                            <i class="fas fa-users"></i>
+                            <span class="mx-3">Clientes</span>
+                        </a>
                         
                         <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500" href="{{ route('products.index') }}">
                             <i class="fas fa-box"></i>
@@ -100,6 +104,17 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+
 
                 @yield('content')
             </main>

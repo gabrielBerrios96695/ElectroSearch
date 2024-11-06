@@ -18,23 +18,153 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 class UserController extends Controller
 {
     public function index(Request $request)
-{
-    $sortField = $request->input('sort_field', 'id');
-    $sortDirection = $request->input('sort_direction', 'asc');
-    $search = $request->input('search'); // Obtener el término de búsqueda
-
-    // Filtrar usuarios por término de búsqueda si existe
-    $query = User::query();
+    {
+        $sortField = $request->input('sort_field', 'id');
+        $sortDirection = $request->input('sort_direction', 'asc');
+        $search = $request->input('search'); // Obtener el término de búsqueda
     
-    if ($search) {
-        $query->where('name', 'like', "%{$search}%")
-              ->orWhere('email', 'like', "%{$search}%");
+        // Filtrar usuarios por término de búsqueda si existe
+        $query = User::query();
+    
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+        }
+    
+        // Filtrar por rol 1 (Administrador) o 2 (Vendedor)
+        $query->whereIn('role', [1, 2]);
+    
+        $users = $query->orderBy($sortField, $sortDirection)->get();
+        return view('livewire.users.index', compact('users', 'sortField', 'sortDirection', 'search'));
+    }
+    public function indexClient(Request $request)
+    {
+        $sortField = $request->input('sort_field', 'id');
+        $sortDirection = $request->input('sort_direction', 'asc');
+        $search = $request->input('search'); // Obtener el término de búsqueda
+    
+        // Filtrar usuarios por término de búsqueda si existe
+        $query = User::query();
+    
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+        }
+    
+        // Filtrar por rol 0 y 3 (Clientes)
+        $query->whereIn('role', [0, 3]);
+    
+        $users = $query->orderBy($sortField, $sortDirection)->get();
+        return view('livewire.clients.index', compact('users', 'sortField', 'sortDirection', 'search'));
     }
 
-    $users = $query->orderBy($sortField, $sortDirection)->get();
+    // Método para mostrar el formulario de registro de un nuevo cliente
+    public function createClient()
+    {
+        return view('livewire.clients.create');
+    }
 
-    return view('livewire.users.index', compact('users', 'sortField', 'sortDirection', 'search'));
+    // Método para almacenar un nuevo cliente en la base de datos
+    public function storeClient(Request $request)
+{
+   
+    
+    // Validación de los datos
+    $request->validate([
+        'name' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/',
+            'regex:/^[^\s]+(\s[^\s]+)*$/', // Solo un espacio entre nombres
+        ],
+        'last_name' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', // Evita caracteres especiales y números
+        ],
+        'second_last_name' => [
+            'nullable',
+            'string',
+            'max:255',
+            'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', // Evita caracteres especiales y números
+        ],
+        'email' => 'required|string|email|max:255|unique:users',
+        'phone' => 'nullable|regex:/^[0-9]{1,10}$/', // Permitimos hasta 10 dígitos, solo números
+        'password' => 'required|string|min:8|confirmed',
+    ], [
+        // Mensajes personalizados de validación
+    ]);
+
+    // Crear el usuario
+    $user = User::create([
+        'name' => $request->name,
+        'last_name' => $request->last_name,
+        'second_last_name' => $request->second_last_name,
+        'email' => $request->email,
+        'phone' => $request->phone ?: null, // Si no se pasa teléfono, asignamos NULL
+        'password' => Hash::make($request->password),
+        'role' => 3, // Asumiendo que 3 es el rol para el cliente
+    ]);
+    
+    // Enviar correo al usuario
+    \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\UserRegistered($user, $request->password));
+    
+    return redirect()->route('clients.index')->with('success', 'Usuario creado exitosamente.');
 }
+
+    
+
+    // Método para mostrar el formulario de edición de un cliente
+    public function editClient($id)
+    {
+        $user = User::findOrFail($id);
+        return view('livewire.clients.edit', compact('user'));
+    }
+
+    // Método para actualizar la información de un cliente
+    public function updateClient(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'second_last_name' => 'nullable|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'phone' => 'required|string|max:15',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->update([
+            'name' => $request->name,
+            'last_name' => $request->last_name,
+            'second_last_name' => $request->second_last_name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+        ]);
+
+        return redirect()->route('clients.index')->with('success', 'Cliente actualizado correctamente.');
+    }
+
+    // Método para cambiar el estado de un cliente (habilitar/deshabilitar)
+    public function toggleStatusClient(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        $user->status = !$user->status; // Cambia entre 1 y 0
+        $user->save();
+
+        return redirect()->route('clients.index')->with('success', 'Estado del cliente actualizado.');
+    }
+
+    // Método para exportar los datos de los clientes
+    public function exportClients()
+    {
+        // Lógica para exportar a Excel, CSV, etc.
+        // Aquí puedes usar paquetes como Maatwebsite Excel para hacer la exportación.
+        return response()->download(storage_path('clients_export.xlsx'));
+    }
+
+    
 
 
     public function create()
@@ -48,37 +178,83 @@ class UserController extends Controller
     }
 
     public function update(Request $request, User $user)
-    {
-        $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'
-            ],
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'role' => 'required|string',
-        ], [
-            'name.required' => 'El nombre es obligatorio.',
-            'name.string' => 'El nombre debe ser una cadena de texto.',
-            'name.max' => 'El nombre no puede tener más de 255 caracteres.',
-            'name.regex' => 'El nombre solo puede contener letras y espacios.',
-            'email.required' => 'El correo electrónico es obligatorio.',
-            'email.email' => 'El correo electrónico debe ser una dirección de correo válida.',
-            'email.max' => 'El correo electrónico no puede tener más de 255 caracteres.',
-            'email.unique' => 'El correo electrónico ya está en uso.',
-            'role.required' => 'El rol es obligatorio.',
-            'role.string' => 'El rol debe ser una cadena de texto.',
-        ]);
+{
+    //dd($request->all());
+    $request->validate([
+        'name' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'
+        ],
+        'last_name' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'
+        ],
+        'second_last_name' => [
+            'nullable', // El segundo apellido es opcional
+            'string',
+            'max:255',
+            'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/', // Permitimos que esté vacío o tenga letras y espacios
+        ],
+        'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+        'role' => 'required|string|in:1,2,3', // Asegurando que el rol esté dentro de los valores válidos
+        'phone' => [
+            'nullable', // Hacemos que el teléfono sea opcional
+            'regex:/^[0-9]+$/', // Solo números
+            'min:1', // Mínimo 1 dígito
+            'max:14', // Máximo 14 dígitos
+        ],
+    ], [
+        'name.required' => 'El nombre es obligatorio.',
+        'name.string' => 'El nombre debe ser una cadena de texto.',
+        'name.max' => 'El nombre no puede tener más de 255 caracteres.',
+        'name.regex' => 'El nombre solo puede contener letras y espacios.',
+        
+        'last_name.required' => 'El apellido es obligatorio.',
+        'last_name.string' => 'El apellido debe ser una cadena de texto.',
+        'last_name.max' => 'El apellido no puede tener más de 255 caracteres.',
+        'last_name.regex' => 'El apellido solo puede contener letras y espacios.',
+        
+        'second_last_name.string' => 'El segundo apellido debe ser una cadena de texto.',
+        'second_last_name.max' => 'El segundo apellido no puede tener más de 255 caracteres.',
+        'second_last_name.regex' => 'El segundo apellido solo puede contener letras y espacios.',
+        
+        'email.required' => 'El correo electrónico es obligatorio.',
+        'email.email' => 'El correo electrónico debe ser una dirección de correo válida.',
+        'email.max' => 'El correo electrónico no puede tener más de 255 caracteres.',
+        'email.unique' => 'El correo electrónico ya está en uso.',
+        
+        'role.required' => 'El rol es obligatorio.',
+        'role.string' => 'El rol debe ser una cadena de texto.',
+        'role.in' => 'El rol seleccionado no es válido.',
 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => $request->role,
-        ]);
+        'phone.regex' => 'El teléfono debe contener solo números.',
+        'phone.min' => 'El teléfono debe tener al menos 1 dígito.',
+        'phone.max' => 'El teléfono no puede tener más de 14 dígitos.',
+    ]);
 
-        return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente.');
-    }
+    $phone=$request->phone;
+ 
+    // Actualización de los datos del usuario
+    $user->update([
+        'name' => $request->name,
+        'last_name' => $request->last_name,
+        'second_last_name' => $request->second_last_name,
+        'email' => $request->email,
+        'role' => $request->role,
+        'phone' => $request->$phone, // Actualizamos el teléfono
+    ]);
+
+
+    // Redirigir a la lista de usuarios con un mensaje de éxito
+    return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente.');
+}
+
+
+
 
     public function destroy(User $user)
     {
@@ -90,51 +266,81 @@ class UserController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'
-            ],
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string',
-        ], [
-            'name.required' => 'El nombre es obligatorio.',
-            'name.string' => 'El nombre debe ser una cadena de texto.',
-            'name.max' => 'El nombre no puede tener más de 255 caracteres.',
-            'name.regex' => 'El nombre solo puede contener letras y espacios.',
-            'email.required' => 'El correo electrónico es obligatorio.',
-            'email.string' => 'El correo electrónico debe ser una cadena de texto.',
-            'email.email' => 'El correo electrónico debe ser una dirección de correo válida.',
-            'email.max' => 'El correo electrónico no puede tener más de 255 caracteres.',
-            'email.unique' => 'El correo electrónico ya está en uso.',
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.string' => 'La contraseña debe ser una cadena de texto.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
-            'role.required' => 'El rol es obligatorio.',
-            'role.string' => 'El rol debe ser una cadena de texto.',
-        ]);
+{
+   
 
-        // Definir la contraseña antes de crear el usuario
-        $password = $request->password;
+    $request->validate([
+        'name' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/',
+            'regex:/^[^\s]+(\s[^\s]+)*$/', // Solo un espacio entre nombres
+        ],
+        'last_name' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', // Evita caracteres especiales y números
+        ],
+        'second_last_name' => [
+            'nullable',
+            'string',
+            'max:255',
+            'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', // Evita caracteres especiales y números
+        ],
+        'email' => 'required|string|email|max:255|unique:users',
+        'phone' => 'nullable|regex:/^[0-9]{1,10}$/', // Permitimos hasta 10 dígitos, solo números
+        'password' => 'required|string|min:8|confirmed',
+        'role' => 'required|string',
+    ], [
+        'name.required' => 'El nombre es obligatorio.',
+        'name.string' => 'El nombre debe ser una cadena de texto.',
+        'name.max' => 'El nombre no puede tener más de 255 caracteres.',
+        'name.regex' => 'El nombre solo puede contener letras y espacios.',
+        'name.regex.regex' => 'El nombre solo puede contener un único espacio entre nombres.',
+        'last_name.required' => 'El apellido es obligatorio.',
+        'last_name.string' => 'El apellido debe ser una cadena de texto.',
+        'last_name.max' => 'El apellido no puede tener más de 255 caracteres.',
+        'last_name.regex' => 'El apellido no puede contener caracteres especiales ni números.',
+        'second_last_name.string' => 'El segundo apellido debe ser una cadena de texto.',
+        'second_last_name.max' => 'El segundo apellido no puede tener más de 255 caracteres.',
+        'second_last_name.regex' => 'El segundo apellido no puede contener caracteres especiales ni números.',
+        'email.required' => 'El correo electrónico es obligatorio.',
+        'email.string' => 'El correo electrónico debe ser una cadena de texto.',
+        'email.email' => 'El correo electrónico debe ser una dirección de correo válida.',
+        'email.max' => 'El correo electrónico no puede tener más de 255 caracteres.',
+        'email.unique' => 'El correo electrónico ya está en uso.',
+        'phone.regex' => 'El teléfono debe contener solo números y puede tener hasta 10 dígitos.',
+        'password.required' => 'La contraseña es obligatoria.',
+        'password.string' => 'La contraseña debe ser una cadena de texto.',
+        'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+        'password.confirmed' => 'La confirmación de la contraseña no coincide.',
+        'role.required' => 'El rol es obligatorio.',
+        'role.string' => 'El rol debe ser una cadena de texto.',
+    ]);
 
-        // Crear el usuario
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($password),
-            'role' => $request->role,
-        ]);
+    // Definir la contraseña antes de crear el usuario
+    $password = $request->password;
+    $phone = $request->phone;
+    // Crear el usuario
+    $user = User::create([
+        'name' => $request->name,
+        'last_name' => $request->last_name,
+        'second_last_name' => $request->second_last_name,
+        'email' => $request->email,
+        'phone' => $request->$phone, // Guardar el teléfono
+        'password' => Hash::make($password),
+        'role' => $request->role,
+    ]);
 
-        // Enviar el correo electrónico al usuario con la contraseña generada
-        \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\UserRegistered($user, $password));
+    // Enviar el correo electrónico al usuario con la contraseña generada
+    \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\UserRegistered($user, $password));
 
-        return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
-    }
+    return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
+}
+
+
 
     public function toggleStatus($id)
     {

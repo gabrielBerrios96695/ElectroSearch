@@ -235,17 +235,17 @@ public function createUser(Request $request)
         'second_last_name' => 'nullable|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
-        'role' => 'required|integer',  // Validación del rol
+
     ]);
 
     // Crear el usuario
     $user = User::create([
         'name' => $request->name,
         'last_name' => $request->last_name,
-        'second_last_name' => $request->second_last_name ?: 'nilo', // Si no se envía, por defecto 'nilo'
+        'second_last_name' => $request->second_last_name, // Si no se envía, por defecto 'nilo'
         'email' => $request->email,
         'password' => Hash::make($request->password), // Asegúrate de encriptar la contraseña
-        'role' => $request->role, // Asigna el rol que llega en la solicitud
+        'role' => 3, // Asigna el rol que llega en la solicitud
     ]);
 
     // Redirigir o retornar la respuesta que necesites

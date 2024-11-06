@@ -75,14 +75,7 @@
                     @enderror
                 </div>
 
-                <!-- Store ID -->
-                <div class="mb-3">
-                    <label for="store_id" class="form-label">ID de la Tienda</label>
-                    <input type="number" id="store_id" name="store_id" class="form-control" value="{{ old('store_id', $product->store_id) }}" required>
-                    @error('store_id')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
+                
 
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i> Actualizar Producto

@@ -29,11 +29,31 @@
             <form id="userForm" action="{{ route('users.store') }}" method="POST">
                 @csrf
 
+                <!-- Campo de Nombre -->
                 <div class="form-group">
                     <label for="name">Nombre</label>
                     <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
                 </div>
 
+                <!-- Campo de Apellido -->
+                <div class="form-group">
+                    <label for="last_name">Apellido</label>
+                    <input type="text" name="last_name" id="last_name" class="form-control" value="{{ old('last_name') }}" required>
+                </div>
+
+                <!-- Campo de Segundo Apellido -->
+                <div class="form-group">
+                    <label for="second_last_name">Segundo Apellido</label>
+                    <input type="text" name="second_last_name" id="second_last_name" class="form-control" value="{{ old('second_last_name') }}">
+                </div>
+
+                <!-- Campo de Teléfono -->
+                <div class="form-group">
+                    <label for="phone">Teléfono</label>
+                    <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone') }}" required>
+                </div>
+
+                <!-- Campo de Rol -->
                 <div class="form-group">
                     <label for="role">Rol</label>
                     <select name="role" id="role" class="form-control" required style="height: 45px;">
@@ -44,16 +64,19 @@
                     </select>
                 </div>
 
+                <!-- Campo de Correo Electrónico -->
                 <div class="form-group">
                     <label for="email">Correo Electrónico</label>
                     <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
                 </div>
 
+                <!-- Campo de Contraseña -->
                 <div class="form-group">
                     <label for="password">Contraseña</label>
                     <input type="password" name="password" id="password" class="form-control" required>
                 </div>
 
+                <!-- Campo de Confirmar Contraseña -->
                 <div class="form-group">
                     <label for="password_confirmation">Confirmar Contraseña</label>
                     <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
@@ -81,6 +104,9 @@
                 <p>Estás a punto de registrar un nuevo usuario con los siguientes datos:</p>
                 <ul>
                     <li><strong>Nombre:</strong> <span id="modalName"></span></li>
+                    <li><strong>Apellido:</strong> <span id="modalLastName"></span></li>
+                    <li><strong>Segundo Apellido:</strong> <span id="modalSecondLastName"></span></li>
+                    <li><strong>Teléfono:</strong> <span id="modalPhone"></span></li>
                     <li><strong>Rol:</strong> <span id="modalRole"></span></li>
                     <li><strong>Correo Electrónico:</strong> <span id="modalEmail"></span></li>
                 </ul>
@@ -98,22 +124,31 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Cargar datos en el modal cuando se hace clic en "Registrar"
         const nameInput = document.getElementById('name');
+        const lastNameInput = document.getElementById('last_name');
+        const secondLastNameInput = document.getElementById('second_last_name');
+        const phoneInput = document.getElementById('phone');
         const roleInput = document.getElementById('role');
         const emailInput = document.getElementById('email');
 
         const modalName = document.getElementById('modalName');
+        const modalLastName = document.getElementById('modalLastName');
+        const modalSecondLastName = document.getElementById('modalSecondLastName');
+        const modalPhone = document.getElementById('modalPhone');
         const modalRole = document.getElementById('modalRole');
         const modalEmail = document.getElementById('modalEmail');
 
         document.querySelector('[data-target="#confirmModal"]').addEventListener('click', function() {
             modalName.textContent = nameInput.value;
+            modalLastName.textContent = lastNameInput.value;
+            modalSecondLastName.textContent = secondLastNameInput.value;
+            modalPhone.textContent = phoneInput.value;
             modalRole.textContent = roleInput.options[roleInput.selectedIndex].text;
             modalEmail.textContent = emailInput.value;
         });
 
         // Enviar el formulario al confirmar
         document.getElementById('confirmButton').addEventListener('click', function() {
-            document.getElementById('userForm').submit();
+            document.getElementById('userForm').submit(); // Enviar formulario
         });
     });
 </script>

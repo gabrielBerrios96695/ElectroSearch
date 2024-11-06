@@ -36,6 +36,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::patch('/users/{user}/toggleStatus', [UserController::class, 'toggleStatus'])->name('users.toggleStatus');
     Route::get('/users/export', [UserController::class, 'exportToExcel'])->name('users.export');
+
+    // Rutas de clientes
+    Route::get('/clients', [UserController::class, 'indexClient'])->name('clients.index');
+    Route::get('/clients/create', [UserController::class, 'createClient'])->name('clients.create');
+    Route::post('/clients', [UserController::class, 'storeClient'])->name('clients.store');
+    Route::get('/clients/{user}/edit', [UserController::class, 'editClient'])->name('clients.edit');
+    Route::put('/clients/{user}', [UserController::class, 'updateClient'])->name('clients.update');
+    Route::delete('/clients/{user}', [UserController::class, 'destroyClient'])->name('clients.destroy');
+    Route::get('/clients/export', [UserController::class, 'exportClientsToExcel'])->name('clients.export');
+
 });
 
 //Productos
@@ -47,6 +57,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::get('/products/export', [ProductController::class, 'exportToExcel'])->name('products.export');
+    Route::post('/products/{id}/updateStock', [ProductController::class, 'updateStock'])->name('products.updateStock');
+
 });
 
 // Grupo de rutas para la gestión de tiendas

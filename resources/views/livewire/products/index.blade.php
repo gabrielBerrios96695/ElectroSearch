@@ -42,7 +42,6 @@
                         <th scope="col">Precio </th>
                         <th scope="col">Imagen</th>
                         <th scope="col">Categoría</th>
-                        <th scope="col">Tienda</th>
                         <th scope="col">Acciones</th>
                     </tr>
                 </thead>
@@ -56,13 +55,13 @@
                             <td>{{ $product->price }} Bs.</td>
                             <td class="text-center">
                                 @if($product->image)
-                                    <img src="{{ asset('storage/images/' . $product->image) }}" alt="{{ $product->name }}" class="product-image" style="max-width: 150px;">
+                                <img src="{{ asset('storage/images/' . $product->image) }}" alt="{{ $product->name }}" class="product-image" style="max-width: 150px; max-height: 120px;">
+
                                 @else
                                     <span>No Image</span>
                                 @endif
                             </td>
                             <td>{{ $product->category->name ?? 'Sin Categoría' }}</td>
-                            <td>{{ $product->store->name ?? 'Sin Tienda' }}</td>
                             <td>
                                 <a href="{{ route('products.edit', $product->id) }}" class="btn btn-secondary">
                                     <i class="fas fa-edit"></i>
@@ -70,7 +69,12 @@
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-product-id="{{ $product->id }}">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
+                                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modifyStockModal" 
+                                    data-product-id="{{ $product->id }}" data-current-stock="{{ $product->quantity }}">
+                                    <i class="fas fa-cogs"></i>
+                                </button>
                             </td>
+                            
                         </tr>
                     @endforeach
                 </tbody>
@@ -101,6 +105,36 @@
         </div>
     </div>
 </div>
+<!-- Modal de Modificar Stock -->
+<div class="modal fade" id="modifyStockModal" tabindex="-1" aria-labelledby="modifyStockModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modifyStockModalLabel"><i class="fas fa-box"></i> Modificar Stock</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="modifyStockForm" method="POST" action="{{ route('products.updateStock', ['id' => $product->id]) }}">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="current_stock" class="form-label">Stock Actual</label>
+                        <input type="number" id="current_stock" class="form-control" value="0" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_stock" class="form-label">Nuevo Stock</label>
+                        <input type="number" id="new_stock" class="form-control" name="new_stock" value="0">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar Stock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -110,6 +144,21 @@
             var productId = button.getAttribute('data-product-id');
             var form = document.getElementById('deleteForm');
             form.action = '/products/' + productId;
+        });
+        var modifyStockModal = document.getElementById('modifyStockModal');
+    
+        modifyStockModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var productId = button.getAttribute('data-product-id');
+            var currentStock = button.getAttribute('data-current-stock');
+            
+            // Rellenar el formulario con la cantidad actual de stock
+            document.getElementById('current_stock').value = currentStock;
+            document.getElementById('new_stock').value = currentStock;
+            
+            // Actualizar la acción del formulario para enviar la solicitud al producto correcto
+            var form = document.getElementById('modifyStockForm');
+            form.action = '/products/' + productId + '/updateStock'; // Ruta para actualizar stock
         });
     });
 </script>
