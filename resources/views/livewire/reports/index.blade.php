@@ -42,6 +42,7 @@
             <div class="col-md-4 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary">Aplicar</button>
                 <a href="{{ route('reports.exportExcel', request()->query()) }}" class="btn btn-warning ms-2">Descargar Excel</a>
+                <a href="{{ route('reports.generatePdf', request()->query()) }}" class="btn btn-success ms-2">Generar PDF</a>
             </div>
         </div>
     </form>

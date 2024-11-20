@@ -50,7 +50,7 @@
             <p><strong>Estado:</strong> {{ ucfirst($sale->status) }}</p>
             <p><strong>Fecha de Creación:</strong> {{ $sale->created_at->format('d/m/Y H:i') }}</p>
 
-            @if($sale->type_of_sale == 0 && $sale->status != 'completed' && auth()->user()->role != 3)
+            @if($sale->type_of_sale == 0 && $sale->status != 'completed' && auth()->user()->role != 3 && $sale->status != 'cancelled')
                 <!-- Botón para abrir el modal de confirmación, solo si no está completada -->
                 <div class="position-relative">
                     <button class="btn btn-primary position-absolute" style="top: 10px; right: 10px;" data-toggle="modal" data-target="#confirmModal">

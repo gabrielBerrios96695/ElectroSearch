@@ -43,6 +43,9 @@
             <div class="col-md-2 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary">Aplicar</button>
                 <a href="{{ route('reports.exportExcelTopSellers', request()->query()) }}" class="btn btn-warning ms-2">Descargar Excel</a>
+                @if(request('start_date') || request('end_date') || request('limit'))
+                    <a href="{{ route('reports.exportPdfTopSellers', request()->query()) }}" class="btn btn-danger ms-2">Descargar PDF</a>
+                @endif
             </div>
         </div>
     </form>

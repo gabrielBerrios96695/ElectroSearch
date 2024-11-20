@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function() {
         Array.from(productsTableBody.rows).forEach(row => {
             const productName = row.cells[0].textContent;
             const quantity = row.querySelector('input[name*="[quantity]"]').value;
-            const price = parseFloat(row.cells[2].textContent.replace(' Bs', ''));
+            const price = parseFloat(row.cells[3].textContent.replace(' Bs', ''));
             const productTotal = price * quantity;
 
             total += productTotal;

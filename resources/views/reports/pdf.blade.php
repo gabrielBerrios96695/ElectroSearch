@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Recibo de Venta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Ventas</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -24,20 +25,14 @@
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: center;
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 2px solid #ddd;
         }
 
-        .header div {
-            text-align: right;
-        }
-
         .header h1 {
-            font-size: 22px;
+            font-size: 24px;
             margin: 0;
             color: #0073e6;
         }
@@ -65,18 +60,15 @@
             font-size: 14px;
         }
 
-        .table thead th {
-            background-color: #0073e6;
-            color: #fff;
+        .table th, .table td {
             padding: 12px 15px;
-            text-align: left;
             border: 1px solid #ddd;
+            text-align: left;
         }
 
-        .table tbody td {
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            text-align: left;
+        .table th {
+            background-color: #0073e6;
+            color: #fff;
         }
 
         .table tfoot td {
@@ -109,15 +101,8 @@
             margin-top: 15px;
         }
 
-        /* Sombra suave para las tablas */
         .table td, .table th {
             border-radius: 5px;
-        }
-
-        /* Fondo de la página */
-        .container {
-            background-color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
@@ -125,20 +110,8 @@
     <div class="container">
         <!-- Encabezado -->
         <div class="header">
-            <div>
-                <h1>Recibo de Venta #{{ $sale->id }}</h1>
-                <p>Fecha: {{ $sale->created_at->format('d/m/Y H:i') }}</p>
-            </div>
-        </div>
-
-        <!-- Información de Vendedor y Cliente -->
-        <div class="details">
-            <p><strong>Vendedor:</strong> 
-                {{ $sale->user ? $sale->user->name . ' ' . $sale->user->last_name . ' ' . ($sale->user->second_last_name ?? '') : 'Desconocido' }}
-            </p>
-            <p><strong>Cliente:</strong> 
-                {{ $sale->customer ? $sale->customer->name . ' ' . $sale->customer->last_name . ' ' . ($sale->customer->second_last_name ?? '') : 'Desconocido' }}
-            </p>
+            <h1>Reporte de Productos Más Vendidos</h1>
+            <p>Desde: {{ $startDate->format('d/m/Y') }} Hasta: {{ $endDate ? $endDate->format('d/m/Y') : 'Hoy' }}</p>
         </div>
 
         <!-- Detalles de Productos -->
@@ -147,36 +120,30 @@
             <thead>
                 <tr>
                     <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio Unitario</th>
-                    <th>Total</th>
+                    <th>Cantidad Vendida</th>
+                    <th>Total Recaudado</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($sale->details as $detail)
+                @foreach($salesData as $data)
                     <tr>
-                        <td>{{ $detail->product->name }}</td>
-                        <td>{{ $detail->quantity }}</td>
-                        <td>{{ number_format($detail->price, 2) }} Bs</td>
-                        <td>{{ number_format($detail->total, 2) }} Bs</td>
+                        <td>{{ $data->name }}</td>
+                        <td>{{ $data->quantity }}</td>
+                        <td>{{ number_format($data->total, 2) }} Bs</td>
                     </tr>
                 @endforeach
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="3">Total de la Venta:</td>
-                    <td>{{ number_format($sale->total_amount, 2) }} Bs</td>
+                    <td colspan="2">Total Acumulado:</td>
+                    <td>{{ number_format($salesData->sum('total'), 2) }} Bs</td>
                 </tr>
             </tfoot>
         </table>
 
-        <!-- Mensaje Final -->
-        <div class="footer">
-            <p>Gracias por tu compra. ¡Te esperamos nuevamente!</p>
-        </div>
 
         <div class="note">
-            <p>Este es un recibo digital, por favor guárdelo para futuras referencias.</p>
+            <p>Este es un reporte digital, por favor guárdalo para futuras referencias.</p>
         </div>
     </div>
 </body>

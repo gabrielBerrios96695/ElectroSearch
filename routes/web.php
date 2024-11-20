@@ -104,6 +104,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/reports/export-excel', [ReportsController::class, 'exportExcel'])->name('reports.exportExcel');
     Route::get('/reports/top-sellers', [ReportsController::class, 'reportTopSellers'])->name('reports.top_sellers');
     Route::get('/reports/top-sellers/export-excel', [ReportsController::class, 'exportExcelTopSellers'])->name('reports.exportExcelTopSellers');
+    Route::get('/reports/pdf', [ReportsController::class, 'generatePdf'])->name('reports.generatePdf');
+    Route::get('/reports/top-sellers/pdf', [ReportsController::class, 'exportPdfTopSellers'])->name('reports.exportPdfTopSellers');
 
 
 

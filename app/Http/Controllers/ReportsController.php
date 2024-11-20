@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SaleDetail;
 use Illuminate\Http\Request;
-
+use Barryvdh\DomPDF\PDF;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Chart\Chart;
@@ -16,6 +16,8 @@ use PhpOffice\PhpSpreadsheet\Chart\DataSeriesValues;
 use PhpOffice\PhpSpreadsheet\Chart\Layout;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class ReportsController extends Controller
 {
@@ -380,5 +382,142 @@ public function exportExcelTopSellers(Request $request)
     // Retornar el archivo para descarga
     return response()->download($filePath)->deleteFileAfterSend(true);
 }
+public function generatePdf(Request $request)
+{
+    // Obtener los filtros del formulario
+    $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : now()->startOfMonth();
+    $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
+    $limit = $request->input('limit', 5);
 
+    // Consultar las ventas según los filtros
+    $salesQuery = DB::table('sale_details')
+        ->join('products', 'sale_details.product_id', '=', 'products.id')
+        ->join('sales', 'sale_details.sale_id', '=', 'sales.id')
+        ->select('products.name', DB::raw('SUM(sale_details.quantity) as quantity'), DB::raw('SUM(sale_details.total) as total'))
+        ->groupBy('products.name')
+        ->orderBy('quantity', 'desc');
+
+    if ($endDate) {
+        $salesQuery->whereBetween('sales.created_at', [$startDate, $endDate]);
+    } else {
+        $salesQuery->whereDate('sales.created_at', '=', $startDate);
+    }
+
+    $salesData = $salesQuery->limit($limit)->get();
+
+    // Crear el contenido HTML para el PDF
+    $html = view('reports.pdf', compact('salesData', 'startDate', 'endDate'))->render();
+
+    // Crear el PDF
+    $dompdf = new Dompdf();
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    // Descargar el PDF generado
+    return $dompdf->stream('reporte_ventas.pdf');
+}
+protected $pdf;
+
+    public function __construct(PDF $pdf)
+    {
+        $this->pdf = $pdf;
+    }
+
+    public function exportPdfTopSellers(Request $request)
+    {
+        $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : now()->startOfMonth();
+        $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
+        $limit = $request->input('limit', 5);
+
+        // Consulta para obtener los vendedores con el total acumulado de ventas
+        $query = DB::table('sales')
+            ->join('users', 'sales.user_id', '=', 'users.id')
+            ->select(
+                'users.id as seller_id',
+                'users.name as seller_name',
+                DB::raw('SUM(sales.total_amount) as total_sales')
+            )
+            ->where('sales.status', 'completed') // Solo ventas completadas
+            ->whereIn('users.role', [1, 2]) // Filtrar roles 1 y 2
+            ->groupBy('users.id', 'users.name')
+            ->orderBy('total_sales', 'desc');
+
+        if ($endDate) {
+            $query->whereBetween('sales.created_at', [$startDate, $endDate]);
+        } else {
+            $query->whereDate('sales.created_at', '=', $startDate);
+        }
+
+        $topSellers = $query->limit($limit)->get();
+
+        // Obtener productos vendidos por cada vendedor y contar las ventas completadas
+        $sellersWithProducts = [];
+        foreach ($topSellers as $seller) {
+            if ($endDate) {
+                $completedSalesCount = DB::table('sales')
+                    ->where('sales.user_id', $seller->seller_id)
+                    ->where('sales.status', 'completed')
+                    ->whereBetween('sales.created_at', [$startDate, $endDate])
+                    ->count();
+                    
+                $completedSalesAmount = DB::table('sales')
+                    ->where('sales.user_id', $seller->seller_id)
+                    ->where('sales.status', 'completed')
+                    ->whereBetween('sales.created_at', [$startDate, $endDate])
+                    ->sum('total_amount');
+                    
+                $products = DB::table('sale_details')
+                    ->join('sales', 'sale_details.sale_id', '=', 'sales.id')
+                    ->join('products', 'sale_details.product_id', '=', 'products.id')
+                    ->where('sales.user_id', $seller->seller_id)
+                    ->whereBetween('sale_details.created_at', [$startDate, $endDate])
+                    ->select(
+                        'products.name as product_name',
+                        DB::raw('SUM(sale_details.quantity) as total_quantity'),
+                        DB::raw('SUM(sale_details.total) as total_sales')
+                    )
+                    ->groupBy('products.name')
+                    ->get();
+            } else {
+                $completedSalesCount = DB::table('sales')
+                    ->where('sales.user_id', $seller->seller_id)
+                    ->where('sales.status', 'completed')
+                    ->whereDate('sales.created_at', '=', $startDate)
+                    ->count();
+                    
+                $completedSalesAmount = DB::table('sales')
+                    ->where('sales.user_id', $seller->seller_id)
+                    ->where('sales.status', 'completed')
+                    ->whereDate('sales.created_at', '=', $startDate)
+                    ->sum('total_amount');
+                    
+                $products = DB::table('sale_details')
+                    ->join('sales', 'sale_details.sale_id', '=', 'sales.id')
+                    ->join('products', 'sale_details.product_id', '=', 'products.id')
+                    ->where('sales.user_id', $seller->seller_id)
+                    ->whereDate('sale_details.created_at', '=', $startDate)
+                    ->select(
+                        'products.name as product_name',
+                        DB::raw('SUM(sale_details.quantity) as total_quantity'),
+                        DB::raw('SUM(sale_details.total) as total_sales')
+                    )
+                    ->groupBy('products.name')
+                    ->get();
+            }   
+            $sellersWithProducts[] = [
+                'seller_name' => $seller->seller_name,
+                'total_sales' => $seller->total_sales,
+                'completed_sales_count' => $completedSalesCount, 
+                'completed_sales_amount' => $completedSalesAmount,
+                'products' => $products
+            ];
+        }
+
+        // Generar el PDF utilizando la instancia de PDF
+        $pdf = $this->pdf->loadView('reports.top_sellers_pdf', compact('sellersWithProducts', 'startDate', 'endDate'));
+
+        // Descargar el PDF
+        return $pdf->download('top_sellers_report.pdf');
+    }
 }
