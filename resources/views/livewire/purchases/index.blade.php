@@ -166,7 +166,7 @@
 
             // Configurar la acción del formulario de cancelación
             var form = cancelSaleModal.querySelector('#cancelSaleForm');
-            form.action = '/sales/cancel/' + saleId; // Asegúrate de que esta ruta esté configurada correctamente
+            form.action = '/purchases/cancel/' + saleId;
         });
 
         var deleteSaleModal = document.getElementById('deleteSaleModal');

@@ -8,17 +8,20 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center my-4">
         <h1 class="h3">Lista de Productos</h1>
-        
+<!-- Suggested code may be subject to a license. Learn more: ~LicenseLog:3622641181. -->
+    
         <div>
+        @if (Auth::user()->role != 3) 
             <a href="{{ route('products.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Registrar Nuevo Producto
             </a>
             <a href="{{ route('products.export') }}" class="btn btn-success">
                 <i class="fas fa-file-excel"></i> Exportar
             </a>
+        @endif
         </div>
     </div>
-
+  
     <div class="card">
         <div class="card-header">
             <i class="fas fa-box"></i> Productos
@@ -43,7 +46,10 @@
                         <th scope="col">Imagen</th>
                         <th scope="col">Estado</th>
                         <th scope="col">Categoría</th>
-                        <th scope="col">Acciones</th>
+                        @if (Auth::user()->role != 3) 
+                            <th scope="col">Acciones</th>
+                        @endif
+
                     </tr>
                 </thead>
                 <tbody>
@@ -64,6 +70,7 @@
                             <td>{{ $product->status === 1 ? 'Habilitado' : 'Deshabilitado' }}</td>
 
                             <td>{{ $product->category->name ?? 'Sin Categoría' }}</td>
+                            @if (Auth::user()->role != 3) 
                             <td>
                                 <a href="{{ route('products.edit', $product->id) }}" class="btn btn-secondary">
                                     <i class="fas fa-edit"></i>
@@ -76,6 +83,7 @@
                                     <i class="fas fa-cogs"></i>
                                 </button>
                             </td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>
@@ -128,7 +136,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="new_stock" class="form-label">Nuevo Stock</label>
-                        <input type="number" id="new_stock" class="form-control" name="new_stock" value="0">
+                        <input type="number" id="new_stock" class="form-control" name="new_stock" value="0" min="0">
                     </div>
                 </div>
                 <div class="modal-footer">

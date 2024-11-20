@@ -111,11 +111,28 @@ public function store(Request $request)
     public function update(Request $request, Product $product)
 {
     $request->validate([
-        'name' => 'required|regex:/^[a-zA-Z0-9\s]+$/',
-        'description' => 'required|regex:/^[a-zA-Z0-9\s]+$/',
+        'name' => [
+            'required',
+            'regex:/^[\pL\pN\s.\-áéíóúÁÉÍÓÚñÑ]+$/u' // Letras, números, puntos, guiones, espacios y acentos
+        ],
+        'description' => [
+            'required',
+            'regex:/^[\pL\pN\s.\-áéíóúÁÉÍÓÚñÑ]+$/u' // Letras, números, puntos, guiones, espacios y acentos
+        ],
         'price' => 'required|numeric|min:0',
         'image' => 'nullable|image',
         'category_id' => 'required|exists:categories,id',
+    ], [
+        'name.required' => 'El campo nombre es obligatorio.',
+        'name.regex' => 'El campo nombre solo puede contener letras, números, puntos, guiones, espacios y acentos.',
+        'description.required' => 'El campo descripción es obligatorio.',
+        'description.regex' => 'El campo descripción solo puede contener letras, números, puntos, guiones, espacios y acentos.',
+        'price.required' => 'El campo precio es obligatorio.',
+        'price.numeric' => 'El precio debe ser un número.',
+        'price.min' => 'El precio debe ser un valor positivo.',
+        'image.image' => 'La imagen debe ser un archivo válido de tipo imagen.',
+        'category_id.required' => 'El campo categoría es obligatorio.',
+        'category_id.exists' => 'La categoría seleccionada no es válida.',
     ]);
 
     // Manejo de la imagen

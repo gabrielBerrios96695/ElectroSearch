@@ -181,37 +181,101 @@ class ReportsController extends Controller
         return response()->download($filePath)->deleteFileAfterSend(true);
     }
     public function reportTopSellers(Request $request)
-{
-$startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : now()->startOfMonth();
-$endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
-$limit = $request->input('limit', 5); 
+    {
+        $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : now()->startOfMonth();
+        $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
+        $limit = $request->input('limit', 5);
+    
+        // Consulta para obtener los vendedores con el total acumulado de ventas
+        $query = DB::table('sales')
+            ->join('users', 'sales.user_id', '=', 'users.id')
+            ->select(
+                'users.id as seller_id',
+                'users.name as seller_name',
+                DB::raw('SUM(sales.total_amount) as total_sales')
+            )
+            ->where('sales.status', 'completed') // Solo ventas completadas
+            ->whereIn('users.role', [1, 2]) // Filtrar roles 1 y 2
+            ->groupBy('users.id', 'users.name')
+            ->orderBy('total_sales', 'desc');
+    
+        if ($endDate) {
+            $query->whereBetween('sales.created_at', [$startDate, $endDate]);
+        } else {
+
+            $query->whereDate('sales.created_at', '=', $startDate);
+        }
+    
+        $topSellers = $query->limit($limit)->get();
+    
+        // Obtener productos vendidos por cada vendedor y contar las ventas completadas
+        $sellersWithProducts = [];
+        foreach ($topSellers as $seller) {
+            if($endDate){
+                $completedSalesCount = DB::table('sales')
+                    ->where('sales.user_id', $seller->seller_id)
+                    ->where('sales.status', 'completed')
+                    ->whereBetween('sales.created_at', [$startDate, $endDate])
+                    ->count();
+                    
+                $completedSalesAmount = DB::table('sales')
+                    ->where('sales.user_id', $seller->seller_id)
+                    ->where('sales.status', 'completed')
+                    ->whereBetween('sales.created_at', [$startDate, $endDate])
+                    ->sum('total_amount');
+                $products = DB::table('sale_details')
+                    ->join('sales', 'sale_details.sale_id', '=', 'sales.id')
+                    ->join('products', 'sale_details.product_id', '=', 'products.id')
+                    ->where('sales.user_id', $seller->seller_id)
+                    ->whereBetween('sale_details.created_at', [$startDate, $endDate])
+                    ->select(
+                        'products.name as product_name',
+                        DB::raw('SUM(sale_details.quantity) as total_quantity'),
+                        DB::raw('SUM(sale_details.total) as total_sales')
+                    )
+                    ->groupBy('products.name')
+                    ->get();
+            }else {
+                $completedSalesCount = DB::table('sales')
+                ->where('sales.user_id', $seller->seller_id)
+                ->where('sales.status', 'completed')
+                ->whereDate('sales.created_at','=', $startDate)
+                ->count();
+                
+                $completedSalesAmount = DB::table('sales')
+                    ->where('sales.user_id', $seller->seller_id)
+                    ->where('sales.status', 'completed')
+                    ->whereDate('sales.created_at','=', $startDate)
+                    ->sum('total_amount');
+                $products = DB::table('sale_details')
+                    ->join('sales', 'sale_details.sale_id', '=', 'sales.id')
+                    ->join('products', 'sale_details.product_id', '=', 'products.id')
+                    ->where('sales.user_id', $seller->seller_id)
+                    ->whereDate('sale_details.created_at','=', $startDate)
+                    ->select(
+                        'products.name as product_name',
+                        DB::raw('SUM(sale_details.quantity) as total_quantity'),
+                        DB::raw('SUM(sale_details.total) as total_sales')
+                    )
+                    ->groupBy('products.name')
+                    ->get();
+                }   
+            $sellersWithProducts[] = [
+                'seller_name' => $seller->seller_name,
+                'total_sales' => $seller->total_sales,
+                'completed_sales_count' => $completedSalesCount, // Añadido contador de ventas completadas
+                'completed_sales_amount' => $completedSalesAmount,
+                'products' => $products
+            ];
+        }
+    
+        // Total de vendedores para el filtro de límite
+        $totalSellers = DB::table('users')->whereIn('role', [1, 2])->count();
+    
+        return view('livewire.reports.top_sellers', compact('sellersWithProducts', 'startDate', 'endDate', 'totalSellers'));
+    }
 
 
-$query = DB::table('sales')
-    ->join('users', 'sales.user_id', '=', 'users.id')
-    ->select('users.name', DB::raw('SUM(sales.total_amount) as total_sales'))
-    ->where('sales.status', 'completed') // Solo ventas con estado 'completed'
-    ->whereIn('users.role', [1, 2]) // Filtrar usuarios con roles 1 o 2
-    ->groupBy('users.name')
-    ->orderBy('total_sales', 'desc');
-
-// Si hay fecha de fin, aplicar whereBetween para el rango de fechas
-if ($endDate) {
-    $query->whereBetween('sales.created_at', [$startDate, $endDate]);
-} else {
-    // Si no hay fecha de fin, solo filtrar por la fecha exacta de inicio
-    $query->whereDate('sales.created_at', '=', $startDate);
-}
-
-// Obtener los datos con el límite
-$topSellers = $query->limit($limit)->get();
-
-// Total de vendedores para ajustar el límite
-$totalSellers = DB::table('users')->whereIn('role', [1, 2])->count();
-
-return view('livewire.reports.top_sellers', compact('topSellers', 'startDate', 'endDate', 'totalSellers'));
-
-}
 public function exportExcelTopSellers(Request $request)
 {
     // Obtener las fechas de inicio y fin

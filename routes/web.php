@@ -97,7 +97,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
     Route::get('/purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
     Route::post('/purchases', [PurchaseController::class, 'store'])->name('purchases.store');
-    Route::get('purchases/cancel/{id}', [PurchaseController::class, 'cancel'])->name('purchases.cancel');
+    Route::post('purchases/cancel/{id}', [PurchaseController::class, 'cancel'])->name('purchases.cancel');
     Route::post('/sales/{saleId}/confirm', [SaleController::class, 'confirm'])->name('sales.confirm');
 
     Route::get('/reports', [ReportsController::class, 'index'])->name('reports.index');

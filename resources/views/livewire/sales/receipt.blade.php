@@ -4,33 +4,63 @@
     <meta charset="UTF-8">
     <title>Recibo de Venta</title>
     <style>
-        body { font-family: Arial, sans-serif; color: #333; margin: 20px; }
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 20px;
+            position: relative;
+            background: url('/storage/images/fondoRecibo.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/storage/images/fondoReporte.png') no-repeat center;
+            background-size: contain;
         
+            z-index: -1;
+        }
+
         .header {
             text-align: center;
             margin-bottom: 30px;
             border-bottom: 2px solid #ddd;
             padding-bottom: 10px;
         }
-        
-        .header h1 { font-size: 24px; margin: 0; color: #0073e6; }
-        .header p { font-size: 14px; color: #666; margin: 0; }
-        
+
+        .header h1 {
+            font-size: 24px;
+            margin: 0;
+            color: #0073e6;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #666;
+            margin: 0;
+        }
+
         .details {
             margin-top: 20px;
             font-size: 14px;
             line-height: 1.5;
         }
-        
-        .details strong { color: #333; }
-        
+
+        .details strong {
+            color: #333;
+        }
+
         .table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
             font-size: 14px;
         }
-        
+
         .table thead th {
             background-color: #0073e6;
             color: #fff;
@@ -38,13 +68,13 @@
             text-align: left;
             border: 1px solid #ddd;
         }
-        
+
         .table tbody td {
             padding: 10px;
             border: 1px solid #ddd;
             text-align: left;
         }
-        
+
         .total {
             text-align: right;
             margin-top: 20px;
@@ -55,6 +85,9 @@
     </style>
 </head>
 <body>
+    <!-- Marca de agua -->
+    <div class="watermark"></div>
+
     <div class="header">
         <h1>Recibo de Venta #{{ $sale->id }}</h1>
         <p>Fecha: {{ $sale->created_at->format('d/m/Y H:i') }}</p>

@@ -20,11 +20,13 @@ class RatingController extends Controller
         // Calcular el promedio de calificación
         $ratings = $product->ratings;
         $averageRating = $ratings->avg('rating'); // Promedio de calificación
+        $ratingsCount = $ratings->count(); // Número de calificaciones
 
         return [
             'product' => $product,
             'averageRating' => round($averageRating, 1), // Redondea a 1 decimal
-            'ratings' => $ratings
+            'ratings' => $ratings,
+            'ratingsCount' => $ratingsCount // Agregar el conteo de calificaciones
         ];
     });
     
@@ -33,16 +35,17 @@ class RatingController extends Controller
 
 
 
-    // Mostrar el formulario para calificar productos
-    public function create()
+public function create()
 {
-    // Obtener todas las ventas del usuario logueado
+    // Obtener todas las ventas del usuario logueado con estado 'completed' y que no tienen productos calificados
     $sales = Sale::where('customer_id', auth()->id())
-        ->whereDoesntHave('saleDetails.ratings') // Filtrar ventas que no tienen productos calificados
+        ->where('status', 'completed') // Filtrar solo ventas con estado 'completed'
+        ->whereDoesntHave('saleDetails.rating') // Excluir ventas que ya tienen productos calificados
         ->get();
 
     return view('ratings.create', compact('sales'));
 }
+
 
 
     public function store(Request $request)

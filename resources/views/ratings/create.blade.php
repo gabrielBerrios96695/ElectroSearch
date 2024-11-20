@@ -37,7 +37,7 @@
 
 @push('scripts')
 <script>
-    // Función para cargar los productos relacionados a la venta seleccionada
+    // Cargar productos relacionados a la venta seleccionada
     document.getElementById('sale_id').addEventListener('change', function () {
         const saleId = this.value;
         const productRatingsDiv = document.getElementById('product-ratings');
@@ -81,9 +81,59 @@
             productRatingsDiv.innerHTML = '';
         }
     });
-</script>
 
-<!-- Estilos para las estrellas -->
+    // Función para manejar las estrellas dinámicamente
+    document.addEventListener('DOMContentLoaded', function () {
+        // Evento para cambiar el color de las estrellas al pasar el ratón
+        document.addEventListener('mouseover', function (e) {
+            if (e.target.classList.contains('rating-star')) {
+                const star = e.target;
+                const starsContainer = star.parentNode;
+                const stars = starsContainer.querySelectorAll('.rating-star');
+
+                let highlight = true;
+                stars.forEach(s => {
+                    s.style.color = highlight ? '#f39c12' : '#d3d3d3';
+                    if (s === star) highlight = false;
+                });
+            }
+        });
+
+        // Evento para restaurar el color de las estrellas al salir del área
+        document.addEventListener('mouseout', function (e) {
+            if (e.target.classList.contains('rating-star')) {
+                const starsContainer = e.target.parentNode;
+                const stars = starsContainer.querySelectorAll('.rating-star');
+                const selected = starsContainer.querySelector('input[type="radio"]:checked');
+
+                let highlight = true;
+                stars.forEach((s, index) => {
+                    s.style.color = selected && selected.value > index ? '#f39c12' : '#d3d3d3';
+                });
+            }
+        });
+
+        // Evento para fijar la selección al hacer clic
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('rating-star')) {
+                const star = e.target;
+                const starsContainer = star.parentNode;
+                const input = star.previousElementSibling;
+
+                if (input) {
+                    input.checked = true;
+
+                    const stars = starsContainer.querySelectorAll('.rating-star');
+                    stars.forEach((s, index) => {
+                        s.style.color = index < input.value ? '#f39c12' : '#d3d3d3';
+                    });
+                }
+            }
+        });
+    });
+</script>
+@endpush
+
 <style>
     .rating-input {
         display: none;
@@ -93,18 +143,11 @@
         font-size: 2rem;
         cursor: pointer;
         color: #d3d3d3;
-    }
-
-    /* Cambio para pintar de izquierda a derecha */
-    .rating-star:hover,
-    .rating-input:checked ~ .rating-star,
-    .rating-input:checked + .rating-star {
-        color: #f39c12;
+        transition: color 0.2s ease-in-out;
     }
 
     .stars {
         display: inline-block;
     }
 </style>
-@endpush
 @endsection

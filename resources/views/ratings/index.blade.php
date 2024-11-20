@@ -32,6 +32,7 @@
                         <th>Producto</th>
                         <th>Imagen</th>
                         <th>Promedio de Calificación</th>
+                        <th>Cantidad de Calificaciones</th>
                         <th>Ver Calificaciones</th>
                     </tr>
                 </thead>
@@ -55,7 +56,10 @@
                                 @for ($i = 1; $i <= 5; $i++)
                                     <i class="fas fa-star {{ $i <= $productData['averageRating'] ? 'text-warning' : 'text-muted' }}"></i>
                                 @endfor
-                                <span> {{ $productData['averageRating'] }} </span> <!-- Promedio numérico -->
+                                <span> {{ $productData['averageRating'] }}</span> <!-- Promedio numérico -->
+                            </td>
+                            <td>
+                                <span>{{ $productData['ratingsCount'] }} calificaciones</span>
                             </td>
                             <td>
                                 <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#ratingModal-{{ $productData['product']->id }}">
@@ -73,20 +77,24 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        @foreach($productData['ratings'] as $rating)
-                                            @if($rating->comment_status == 3) <!-- Solo mostrar comentarios aprobados -->
-                                                <div class="mb-4">
-                                                    <strong>{{ $rating->user->name }}</strong> <!-- Nombre del usuario -->
-                                                    <div>
-                                                        @for ($i = 1; $i <= 5; $i++)
-                                                            <i class="fas fa-star {{ $i <= $rating->rating ? 'text-warning' : 'text-muted' }}"></i>
-                                                        @endfor
+                                        @if($productData['ratings']->isEmpty())
+                                            <p>No hay calificaciones disponibles para este producto.</p>
+                                        @else
+                                            @foreach($productData['ratings'] as $rating)
+                                                @if($rating->comment_status == 3) <!-- Solo mostrar comentarios aprobados -->
+                                                    <div class="mb-4">
+                                                        <strong>{{ $rating->user->name }}</strong> <!-- Nombre del usuario -->
+                                                        <div>
+                                                            @for ($i = 1; $i <= 5; $i++)
+                                                                <i class="fas fa-star {{ $i <= $rating->rating ? 'text-warning' : 'text-muted' }}"></i>
+                                                            @endfor
+                                                        </div>
+                                                        <p>{{ $rating->comment }}</p> <!-- Comentario -->
+                                                        <hr> <!-- Línea de separación -->
                                                     </div>
-                                                    <p>{{ $rating->comment }}</p> <!-- Comentario -->
-                                                    <hr> <!-- Línea de separación -->
-                                                </div>
-                                            @endif
-                                        @endforeach
+                                                @endif
+                                            @endforeach
+                                        @endif
                                     </div>
                                 </div>
                             </div>
