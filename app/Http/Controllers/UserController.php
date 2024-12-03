@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\store;
+
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -18,45 +20,70 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 class UserController extends Controller
 {
     public function index(Request $request)
-    {
-        $sortField = $request->input('sort_field', 'id');
-        $sortDirection = $request->input('sort_direction', 'asc');
-        $search = $request->input('search'); // Obtener el término de búsqueda
+{
+    $sortField = $request->input('sort_field', 'id');
+    $sortDirection = $request->input('sort_direction', 'asc');
+    $search = $request->input('search'); // Obtener el término de búsqueda
     
-        // Filtrar usuarios por término de búsqueda si existe
-        $query = User::query();
-    
-        if ($search) {
-            $query->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
-        }
-    
-        // Filtrar por rol 1 (Administrador) o 2 (Vendedor)
-        $query->whereIn('role', [1, 2]);
-    
-        $users = $query->orderBy($sortField, $sortDirection)->get();
-        return view('livewire.users.index', compact('users', 'sortField', 'sortDirection', 'search'));
+    // Obtener el usuario actual
+    $currentUser = auth()->user();
+
+    // Filtrar usuarios por término de búsqueda si existe
+    $query = User::query();
+
+    if ($search) {
+        $query->where('name', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%");
     }
-    public function indexClient(Request $request)
-    {
-        $sortField = $request->input('sort_field', 'id');
-        $sortDirection = $request->input('sort_direction', 'asc');
-        $search = $request->input('search'); // Obtener el término de búsqueda
+
+    // Filtrar por rol 1 (Administrador) o 2 (Vendedor)
+    $query->whereIn('role', [1, 2]);
     
-        // Filtrar usuarios por término de búsqueda si existe
-        $query = User::query();
-    
-        if ($search) {
-            $query->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+    // Obtener usuarios con paginación de 5 elementos por página
+    $users = $query->orderBy($sortField, $sortDirection)->paginate(5);
+
+    // Filtrar las tiendas según el usuario actual
+    if ($currentUser->role == 1) {
+        if ($currentUser->id == 1) {
+            // Si es un administrador con ID = 1, pasar todas las tiendas
+            $stores = Store::all();
+        } else {
+            // Si es un administrador con ID diferente, solo pasar las tiendas registradas por él
+            $stores = Store::where('user_id', $currentUser->id)->get();
         }
-    
-        // Filtrar por rol 1 (Administrador) o 2 (Vendedor)
-        $query->whereIn('role', [0, 3]);
-    
-        $users = $query->orderBy($sortField, $sortDirection)->get();
-        return view('livewire.clients.index', compact('users', 'sortField', 'sortDirection', 'search'));
+    } else {
+        // Si no es un administrador (rol != 1), pasar todas las tiendas
+        $stores = Store::all();
     }
+
+    // Pasar los datos a la vista
+    return view('livewire.users.index', compact('users', 'sortField', 'sortDirection', 'search', 'stores'));
+}
+
+
+public function indexClient(Request $request)
+{
+    $sortField = $request->input('sort_field', 'id');
+    $sortDirection = $request->input('sort_direction', 'asc');
+    $search = $request->input('search'); // Obtener el término de búsqueda
+    
+    // Filtrar usuarios por término de búsqueda si existe
+    $query = User::query();
+
+    if ($search) {
+        $query->where('name', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%");
+    }
+
+    // Filtrar por rol 0 (Cliente) o 3 (otro tipo de cliente)
+    $query->whereIn('role', [0, 3]);
+
+    // Paginación con 5 resultados por página
+    $users = $query->orderBy($sortField, $sortDirection)->paginate(5);
+
+    return view('livewire.clients.index', compact('users', 'sortField', 'sortDirection', 'search'));
+}
+
 
     // Método para mostrar el formulario de registro de un nuevo cliente
     public function createClient()
@@ -223,6 +250,7 @@ class UserController extends Controller
         'phone.regex' => 'El teléfono debe contener solo números.',
         'phone.min' => 'El teléfono debe tener al menos 1 dígito.',
         'phone.max' => 'El teléfono no puede tener más de 14 dígitos.',
+        
     ]);
 
     // Si el teléfono está vacío, lo dejamos como NULL
@@ -236,6 +264,7 @@ class UserController extends Controller
         'email' => $request->email,
         'role' => $request->role ?? 3, // Asignamos el rol 3 (Cliente) por defecto si no se proporciona
         'phone' => $phone, // Si el teléfono es vacío, se asigna null
+        'store_id'=> $storeId,
     ]);
 
     // Redirigir a la lista de usuarios con un mensaje de éxito
@@ -255,80 +284,83 @@ class UserController extends Controller
     }
 
     public function store(Request $request)
-{
-   
-    $request->validate([
-        'name' => [
-            'required',
-            'string',
-            'max:255',
-            'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/',
-            'regex:/^[^\s]+(\s[^\s]+)*$/', // Solo un espacio entre nombres
-        ],
-        'last_name' => [
-            'required',
-            'string',
-            'max:255',
-            'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', // Evita caracteres especiales y números
-        ],
-        'second_last_name' => [
-            'nullable',
-            'string',
-            'max:255',
-            'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', // Evita caracteres especiales y números
-        ],
-        'email' => 'required|string|email|max:255|unique:users',
-        'phone' => 'nullable|regex:/^[0-9]{1,10}$/', // Permitimos hasta 10 dígitos, solo números
-        'password' => 'required|string|min:8|confirmed',
-        'role' => 'nullable|string',
-    ], [
-        'name.required' => 'El nombre es obligatorio.',
-        'name.string' => 'El nombre debe ser una cadena de texto.',
-        'name.max' => 'El nombre no puede tener más de 255 caracteres.',
-        'name.regex' => 'El nombre solo puede contener letras y espacios.',
-        'name.regex.regex' => 'El nombre solo puede contener un único espacio entre nombres.',
-        'last_name.required' => 'El apellido es obligatorio.',
-        'last_name.string' => 'El apellido debe ser una cadena de texto.',
-        'last_name.max' => 'El apellido no puede tener más de 255 caracteres.',
-        'last_name.regex' => 'El apellido no puede contener caracteres especiales ni números.',
-        'second_last_name.string' => 'El segundo apellido debe ser una cadena de texto.',
-        'second_last_name.max' => 'El segundo apellido no puede tener más de 255 caracteres.',
-        'second_last_name.regex' => 'El segundo apellido no puede contener caracteres especiales ni números.',
-        'email.required' => 'El correo electrónico es obligatorio.',
-        'email.string' => 'El correo electrónico debe ser una cadena de texto.',
-        'email.email' => 'El correo electrónico debe ser una dirección de correo válida.',
-        'email.max' => 'El correo electrónico no puede tener más de 255 caracteres.',
-        'email.unique' => 'El correo electrónico ya está en uso.',
-        'phone.regex' => 'El teléfono debe contener solo números y puede tener hasta 10 dígitos.',
-        'password.required' => 'La contraseña es obligatoria.',
-        'password.string' => 'La contraseña debe ser una cadena de texto.',
-        'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-        'password.confirmed' => 'La confirmación de la contraseña no coincide.',
-        'role.required' => 'El rol es obligatorio.',
-        'role.string' => 'El rol debe ser una cadena de texto.',
-    ]);
-
-    // Definir la contraseña antes de crear el usuario
-    $password = $request->password;
-    $phone = $request->phone;
-    // Crear el usuario
-    $user = User::create([
-        'name' => $request->name,
-        'last_name' => $request->last_name,
-        'second_last_name' => $request->second_last_name,
-        'email' => $request->email,
-        'phone' => (string)$request->phone, 
-
-        'password' => Hash::make($password),
-        'role' => $request->role,
-    ]);
-
-    // Enviar el correo electrónico al usuario con la contraseña generada
-    \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\UserRegistered($user, $password));
-
-    return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
-}
-
+    {
+        // Validación de los campos del formulario
+        $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', // Solo letras y espacios
+                'regex:/^[^\s]+(\s[^\s]+)*$/', // Solo un espacio entre nombres
+            ],
+            'last_name' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', // Evita caracteres especiales y números
+            ],
+            'second_last_name' => [
+                'nullable',
+                'string',
+                'max:255',
+                'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/', // Evita caracteres especiales y números
+            ],
+            'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'nullable|regex:/^[0-9]{1,10}$/', // Permitimos hasta 10 dígitos, solo números
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'nullable|string',
+            'store_id' => 'nullable|exists:stores,id', // Verifica que el store_id exista en la tabla stores
+        ], [
+            'name.required' => 'El nombre es obligatorio.',
+            'name.string' => 'El nombre debe ser una cadena de texto.',
+            'name.max' => 'El nombre no puede tener más de 255 caracteres.',
+            'name.regex' => 'El nombre solo puede contener letras y espacios.',
+            'name.regex.regex' => 'El nombre solo puede contener un único espacio entre nombres.',
+            'last_name.required' => 'El apellido es obligatorio.',
+            'last_name.string' => 'El apellido debe ser una cadena de texto.',
+            'last_name.max' => 'El apellido no puede tener más de 255 caracteres.',
+            'last_name.regex' => 'El apellido no puede contener caracteres especiales ni números.',
+            'second_last_name.string' => 'El segundo apellido debe ser una cadena de texto.',
+            'second_last_name.max' => 'El segundo apellido no puede tener más de 255 caracteres.',
+            'second_last_name.regex' => 'El segundo apellido no puede contener caracteres especiales ni números.',
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.string' => 'El correo electrónico debe ser una cadena de texto.',
+            'email.email' => 'El correo electrónico debe ser una dirección de correo válida.',
+            'email.max' => 'El correo electrónico no puede tener más de 255 caracteres.',
+            'email.unique' => 'El correo electrónico ya está en uso.',
+            'phone.regex' => 'El teléfono debe contener solo números y puede tener hasta 10 dígitos.',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.string' => 'La contraseña debe ser una cadena de texto.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
+            'role.required' => 'El rol es obligatorio.',
+            'role.string' => 'El rol debe ser una cadena de texto.',
+            'store_id.exists' => 'La tienda seleccionada no existe.',
+        ]);
+    
+        // Definir la contraseña antes de crear el usuario
+        $password = $request->password;
+        $phone = $request->phone;
+    
+        // Crear el usuario
+        $user = User::create([
+            'name' => $request->name,
+            'last_name' => $request->last_name,
+            'second_last_name' => $request->second_last_name,
+            'email' => $request->email,
+            'phone' => (string)$request->phone, 
+            'store_id' => $request->store_id, // Corregido a store_id
+            'password' => Hash::make($password),
+            'role' => $request->role,
+        ]);
+    
+        // Enviar el correo electrónico al usuario con la contraseña generada
+        \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\UserRegistered($user, $password));
+    
+        return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
+    }
+    
 
 
 public function toggleStatus(Request $request, User $user)

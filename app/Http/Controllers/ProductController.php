@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Store;
+use App\Models\User;
+
+
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -16,28 +20,48 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 class ProductController extends Controller
 {
     public function index(Request $request)
-{
-    $sortField = $request->input('sort_field', 'id'); // Campo de ordenamiento, por defecto 'id'
-    $sortDirection = $request->input('sort_direction', 'asc'); // Dirección de ordenamiento, por defecto 'asc'
-    $search = $request->input('search'); // Obtener el término de búsqueda
-
-    // Crear consulta base para productos
-    $query = Product::query();
-
-    // Filtrar productos por término de búsqueda si existe
-    if ($search) {
-        $query->where('name', 'like', "%{$search}%")
-              ->orWhere('description', 'like', "%{$search}%")
-              ->orWhereHas('category', function ($q) use ($search) {
-                  $q->where('name', 'like', "%{$search}%");
-              });
+    {
+        $sortField = $request->input('sort_field', 'id'); // Campo de ordenamiento, por defecto 'id'
+        $sortDirection = $request->input('sort_direction', 'asc'); // Dirección de ordenamiento, por defecto 'asc'
+        $search = $request->input('search'); // Obtener el término de búsqueda
+    
+        // Obtener el usuario autenticado
+        $user = auth()->user();
+    
+        // Crear consulta base para productos
+        $query = Product::query();
+    
+        // Filtrar productos por término de búsqueda si existe
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhereHas('category', function ($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  });
+        }
+    
+        // Filtrar productos según el rol del usuario
+        if ($user->role == 1) {
+            if ($user->id == 1) {
+                // Si el usuario es administrador con id 1, mostrar todos los productos
+                // Sin ningún filtro de tienda
+            } else {
+                // Si el administrador no es el id 1, mostrar productos solo de las tiendas que ha registrado
+                $storeIds = Store::where('admin_id', $user->id)->pluck('id');
+                $query->whereIn('store_id', $storeIds);
+            }
+        } elseif ($user->role == 2) {
+            // Si es vendedor, mostrar productos solo de la tienda a la que pertenece
+            $query->where('store_id', $user->store_id);
+        }
+    
+        // Ordenar los productos y aplicar paginación de 5 elementos por página
+        $products = $query->orderBy($sortField, $sortDirection)->paginate(5);
+    
+        return view('livewire.products.index', compact('products', 'sortField', 'sortDirection', 'search'));
     }
+    
 
-    // Ordenar los productos y aplicar paginación de 5 elementos por página
-    $products = $query->orderBy($sortField, $sortDirection)->paginate(5);
-
-    return view('livewire.products.index', compact('products', 'sortField', 'sortDirection', 'search'));
-}
 
 
 

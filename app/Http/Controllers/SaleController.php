@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sale;
 use App\Models\User;
+use App\Models\store;
 use App\Models\Category;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -38,13 +39,37 @@ class SaleController extends Controller
 
     public function create()
 {
-    // Obtener solo productos con status 1
-    $products = Product::where('status', 1)->get();
-    $customers = User::where('role', 3)->get(); // Usuarios tienen el role 3
-    $categories = Category::all(); // Obtener todas las categorías
+    // Obtener el usuario autenticado
+    $user = auth()->user();
 
+    // Si el usuario tiene el role 2 (vendedor)
+    if ($user->role == 2) {
+        // Obtener los productos que pertenecen a la tienda del vendedor
+        $products = Product::where('status', 1)
+                           ->where('store_id', $user->store_id) // Filtrar por store_id del vendedor
+                           ->get();
+    }
+    // Si el usuario tiene el role 1 (administrador)
+    elseif ($user->role == 1) {
+        // Obtener los productos de las tiendas registradas por el administrador
+        $products = Product::where('status', 1)
+                           ->whereIn('store_id', Store::where('admin_id', $user->id)->pluck('id'))
+                           ->get();
+    } else {
+        // Obtener todos los productos con status 1 para otros roles (como clientes)
+        $products = Product::where('status', 1)->get();
+    }
+
+    // Obtener clientes con role 3 (clientes)
+    $customers = User::where('role', 3)->get();
+
+    // Obtener todas las categorías
+    $categories = Category::all();
+
+    // Retornar la vista con los productos filtrados
     return view('livewire/sales.create', compact('products', 'customers', 'categories'));
 }
+
 
     
 

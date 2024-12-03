@@ -7,7 +7,8 @@
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between align-items-center my-4">
-        <h1 class="h3 text-primary"><i class="fas fa-receipt"></i> Detalles de la 
+        <h1 class="h3 text-primary">
+            <i class="fas fa-receipt"></i> Detalles de la 
             @if($sale->type_of_sale == 1)
                 Venta #{{ $sale->id }}
             @else
@@ -24,8 +25,8 @@
         </a>
     </div>
 
-    <div class="card">
-        <div class="card-header card-header-custom">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
             <i class="fas fa-receipt"></i> Información de la 
             @if($sale->type_of_sale == 1)
                 Venta
@@ -34,20 +35,39 @@
             @endif
         </div>
         <div class="card-body">
-        <p><strong>Vendedor:</strong> 
-    @if($sale->user && $sale->customer && $sale->user->id == $sale->customer->id)
-        Pendiente
-    @else
-        {{ $sale->user ? $sale->user->name . ' ' . $sale->user->last_name . ' ' . ($sale->user->second_last_name ?? '') : 'Desconocido' }}
-    @endif
+            <p><strong>Vendedor:</strong> 
+                @if($sale->user && $sale->customer && $sale->user->id == $sale->customer->id)
+                    Pendiente
+                @else
+                    {{ $sale->user ? $sale->user->name . ' ' . $sale->user->last_name . ' ' . ($sale->user->second_last_name ?? '') : 'Desconocido' }}
+                @endif
+            </p>
+
+            <p><strong>Cliente:</strong> 
+                {{ $sale->customer ? $sale->customer->name . ' ' . $sale->customer->last_name . ' ' . ($sale->customer->second_last_name ?? '') : 'Desconocido' }}
+            </p>
+
+            <p><strong>Monto Total:</strong> <span class="text-success">{{ $sale->total_amount }} Bs</span></p>
+            <p>
+    <strong>Estado:</strong> 
+    <span style="color: 
+        @if($sale->status == 'completed') green
+        @elseif($sale->status == 'pending') orange
+        @elseif($sale->status == 'cancelled') red
+        @else gray
+        @endif;">
+        @if($sale->status == 'completed')
+            Completado
+        @elseif($sale->status == 'pending')
+            Pendiente
+        @elseif($sale->status == 'cancelled')
+            Cancelado
+        @else
+            Desconocido
+        @endif
+    </span>
 </p>
 
-<p><strong>Cliente:</strong> 
-    {{ $sale->customer ? $sale->customer->name . ' ' . $sale->customer->last_name . ' ' . ($sale->customer->second_last_name ?? '') : 'Desconocido' }}
-</p>
-
-            <p><strong>Monto Total:</strong> {{ $sale->total_amount }} Bs</p>
-            <p><strong>Estado:</strong> {{ ucfirst($sale->status) }}</p>
             <p><strong>Fecha de Creación:</strong> {{ $sale->created_at->format('d/m/Y H:i') }}</p>
 
             @if($sale->type_of_sale == 0 && $sale->status != 'completed' && auth()->user()->role != 3 && $sale->status != 'cancelled')
@@ -59,12 +79,12 @@
                 </div>
             @endif
             <button class="btn btn-warning" onclick="window.location='{{ route('sales.receipt', $sale->id) }}'">
-    <i class="fas fa-file-pdf"></i> Generar Recibo PDF
-</button>
+                <i class="fas fa-file-pdf"></i> Generar Recibo PDF
+            </button>
 
             <h3 class="mt-4">Detalles de los Productos</h3>
             <div class="table-responsive">
-                <table class="table table-custom">
+                <table class="table table-striped table-hover">
                     <thead>
                         <tr>
                             <th scope="col"><i class="fas fa-box"></i> Producto</th>
@@ -93,14 +113,14 @@
 <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-info text-white">
                 <h5 class="modal-title" id="confirmModalLabel">Confirmar Pedido</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas confirmar esta Pedido? Se asignará tu nombre como vendedor, esta accion no se puede desahacer.
+                ¿Estás seguro de que deseas confirmar este Pedido? Se asignará tu nombre como vendedor, esta acción no se puede deshacer.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -110,7 +130,6 @@
                     <input type="hidden" name="sale_id" value="{{ $sale->id }}">
                     <button type="submit" class="btn btn-primary">Confirmar Pedido</button>
                 </form>
-
             </div>
         </div>
     </div>
@@ -120,7 +139,6 @@
 
 @push('scripts')
 <script>
-
 function printReceipt() {
     var printContent = document.getElementById("receiptContent").innerHTML;
     var originalContent = document.body.innerHTML;

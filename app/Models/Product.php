@@ -14,7 +14,7 @@ class Product extends Model
         'description',
         'price',
         'purchase_price',
-
+        'store_id',
         'quantity',
         'image',
         'category_id',

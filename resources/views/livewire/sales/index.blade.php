@@ -37,8 +37,8 @@
                         @foreach($sales as $sale)
                             <tr>
                                 <th scope="row">{{ $sale->id }}</th>
-                                <td>{{ $sale->user ? $sale->user->name : 'Desconocido' }}</td>
-                                <td>{{ $sale->customer ? $sale->customer->name : 'Desconocido' }}</td>
+                                <td>{{ $sale->user ? $sale->user->name : 'Desconocido' }} {{ $sale->user ? $sale->user->last_name : 'Desconocido' }} {{ $sale->user ? $sale->user->second_last_namelast_name : 'Desconocido' }}</td>
+                                <td>{{ $sale->customer ? $sale->customer->name : 'Desconocido' }} {{ $sale->user ? $sale->user->last_name : 'Desconocido' }} {{ $sale->user ? $sale->user->second_last_namelast_name : 'Desconocido' }}</td>
                                 <td>{{ $sale->total_amount }} Bs</td>
                                 <td>
                                     @if ($sale->status == 'completed')

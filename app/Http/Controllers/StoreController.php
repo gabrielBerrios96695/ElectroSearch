@@ -64,6 +64,44 @@ class StoreController extends Controller
         // Redirigir a la lista de tiendas con un mensaje de éxito
         return redirect()->route('store.index')->with('success', 'Tienda registrada correctamente.');
     }
-    
+    public function edit($id)
+{
+    // Obtener la tienda por su ID
+    $store = Store::findOrFail($id);
+
+    // Devolver la vista de edición con los datos de la tienda
+    return view('livewire.store.edit', compact('store'));
+}
+public function update(Request $request, Store $store)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+
+        $store->update([
+            'name' => $request->name,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+        ]);
+
+        return redirect()->route('store.index')->with('success', 'Tienda actualizada correctamente');
+    }
+    public function toggleStatus($id)
+{
+    // Obtener la tienda por su ID
+    $store = Store::findOrFail($id);
+
+    // Cambiar el estado de la tienda (1 -> 0 o 0 -> 1)
+    $store->status = !$store->status;
+
+    // Guardar el nuevo estado en la base de datos
+    $store->save();
+
+    // Redirigir a la lista de tiendas con un mensaje de éxito
+    return redirect()->route('store.index')->with('success', 'Estado de la tienda actualizado.');
+}
+
 
 }

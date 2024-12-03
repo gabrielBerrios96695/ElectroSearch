@@ -103,6 +103,10 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div>
+    {{ $users->links() }}
+</div>
+
             </div>
         </div>
     </div>
@@ -153,9 +157,17 @@
                         <select class="form-select" id="role" name="role" required>
                             <option value="1">Administrador</option>
                             <option value="2">Vendedor</option>
-                            <option value="3">Cliente</option>
                         </select>
                     </div>
+                    <div class="mb-3">
+    <label for="store_id" class="form-label">Tienda</label>
+    <select class="form-select" id="store_id" name="store_id">
+        @foreach ($stores as $store)
+            <option value="{{ $store->id }}">{{ $store->name }}</option>
+        @endforeach
+    </select>
+</div>
+
                     <div class="mb-3">
                         <label for="status" class="form-label">Estado</label>
                         <select class="form-select" id="status" name="status" required>
@@ -254,6 +266,29 @@
 
 @push('scripts')
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const roleSelect = document.getElementById('role');
+        const storeField = document.getElementById('store_id');
+        
+        // Función que muestra/oculta el campo de tienda basado en el rol
+        function toggleStoreField() {
+            if (roleSelect.value == 2) { // Si el rol es Vendedor
+                storeField.closest('.mb-3').style.display = 'block';
+            } else {
+                storeField.closest('.mb-3').style.display = 'none';
+            }
+        }
+
+        // Llamar a la función al cargar la página
+        toggleStoreField();
+
+        // Escuchar cambios en el rol
+        roleSelect.addEventListener('change', toggleStoreField);
+    });
+</script>
+
+<script>
+    
     document.addEventListener('DOMContentLoaded', function () {
         const statusButtons = document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#toggleStatusModal"]');
         

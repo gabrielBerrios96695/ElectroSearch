@@ -20,6 +20,7 @@ class Store extends Model
         'admin_id',
         'status',
     ];
+    
 
     public function scopeEnabled($query)
     {
