@@ -12,13 +12,11 @@ class StoreObserver
      */
     public function creating(Store $store)
     {
-        $store->userid = Auth::id(); 
     }
 
 
     public function updating(Store $store)
     {
-        $store->userid = Auth::id(); 
     }
 
     /**

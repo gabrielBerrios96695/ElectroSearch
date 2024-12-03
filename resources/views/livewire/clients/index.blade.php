@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('breadcrumbs')
-    / Clientes
+    / Usuarios
 @endsection
 
 @section('content')
@@ -46,6 +46,7 @@
                             <th scope="col"><i class="fas fa-hashtag"></i> Nro.</th>
                             <th scope="col"><i class="fas fa-user"></i> Nombre</th>
                             <th scope="col"><i class="fas fa-envelope"></i> Correo Electrónico</th>
+                            <th scope="col"><i class="fas fa-phone"></i> Telefono</th>
                             <th scope="col"><i class="fas fa-cogs"></i> Estado</th>
                             <th scope="col"><i class="fas fa-id-badge"></i> ID Usuario</th>
                             <th scope="col"><i class="fas fa-cogs"></i> Acciones</th>
@@ -59,7 +60,9 @@
                                 <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     {{ $user->email }}
                                 </td>
-
+                                <td >
+                                    {{ $user->phone }}
+                                </td>
                                 <td>
                                     <span class="badge {{ $user->status == 1 ? 'bg-success' : 'bg-danger' }}">
                                         {{ $user->status == 1 ? 'Habilitado' : 'Deshabilitado' }}
@@ -122,6 +125,10 @@
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
                     <div class="mb-3">
+                        <label for="phone" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Opcional - Hasta 10 dígitos">
+                    </div>
+                    <div class="mb-3">
                         <label for="password" class="form-label">Contraseña</label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
@@ -138,6 +145,7 @@
         </div>
     </div>
 </div>
+
 <!-- Modal de Editar Usuario -->
 <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -177,30 +185,32 @@
     </div>
 </div>
 
-
-<!-- Modal de Cambio de Estado -->
-<div class="modal fade" id="toggleStatusModal" tabindex="-1" aria-labelledby="toggleStatusModalLabel" aria-hidden="true">
+   <!-- Modal de Cambio de Estado -->
+   <div class="modal fade" id="toggleStatusModal" tabindex="-1" aria-labelledby="toggleStatusModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header modal-header-custom">
-                <h5 class="modal-title" id="toggleStatusModalLabel"><i class="fas fa-exclamation-triangle"></i> Confirmar Cambio de Estado</h5>
+            <div class="modal-header">
+                <h5 class="modal-title" id="toggleStatusModalLabel">Cambiar Estado del Usuario</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas <strong id="toggleStatusAction"></strong> al usuario <strong id="userName"></strong>? Esta acción cambiará el estado del usuario.
-            </div>
-            <div class="modal-footer">
-                <form id="toggleStatusForm" action="" method="POST">
+                <form method="POST" id="toggleStatusForm" action="{{ route('users.toggleStatus', ['user' => 'user_id']) }}">
                     @csrf
                     @method('PATCH')
+                    
+                    <p id="toggleStatusMessage">¿Estás seguro de que deseas cambiar el estado de este usuario?</p>
+                    
+                    <!-- Hidden inputs to store user info -->
+                    <input type="hidden" name="user_id" id="toggleStatusUserId">
+                    <input type="hidden" name="status" id="toggleStatusValue">
+
+                    <button type="submit" class="btn btn-primary" id="toggleStatusSubmit">Cambiar Estado</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-warning">Confirmar</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -229,24 +239,39 @@
 
         });
 
-        // Modal de Cambio de Estado
-        var toggleStatusModal = document.getElementById('toggleStatusModal');
-        toggleStatusModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget; 
-            var userId = button.getAttribute('data-user-id'); 
-            var userName = button.getAttribute('data-user-name'); 
-            var userStatus = button.getAttribute('data-user-status'); 
-            var form = toggleStatusModal.querySelector('#toggleStatusForm');
-            form.action = '/users/' + userId + '/toggleStatus';
+        const statusButtons = document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#toggleStatusModal"]');
+        
+        statusButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const userId = button.getAttribute('data-user-id');
+                const userName = button.getAttribute('data-user-name');
+                const userStatus = button.getAttribute('data-user-status');
 
-            var actionText = userStatus == 1 ? 'deshabilitar' : 'habilitar';
-            var toggleStatusActionElement = document.getElementById('toggleStatusAction');
-            toggleStatusActionElement.textContent = actionText;
+                // Cambiar el texto del mensaje según el estado del usuario
+                const statusMessage = document.getElementById('toggleStatusMessage');
+                const submitButton = document.getElementById('toggleStatusSubmit');
+                const statusValueField = document.getElementById('toggleStatusValue');
+                const userIdField = document.getElementById('toggleStatusUserId');
 
-            var userNameElement = document.getElementById('userName');
-            userNameElement.textContent = userName;
+                // Actualizar la URL del formulario para incluir el userId
+                const formAction = "{{ route('users.toggleStatus', ['user' => 'user_id']) }}".replace('user_id', userId);
+                document.getElementById('toggleStatusForm').action = formAction;
+
+                userIdField.value = userId;
+                
+                if (userStatus == 1) { // Si el usuario está habilitado
+                    statusMessage.textContent = `¿Estás seguro de que deseas deshabilitar a ${userName}?`;
+                    statusValueField.value = 0; // Deshabilitar
+                    submitButton.textContent = 'Deshabilitar Usuario';
+                } else { // Si el usuario está deshabilitado
+                    statusMessage.textContent = `¿Estás seguro de que deseas habilitar a ${userName}?`;
+                    statusValueField.value = 1; // Habilitar
+                    submitButton.textContent = 'Habilitar Usuario';
+                }
+            });
         });
     });
 </script>
+
 @endpush
 @endsection

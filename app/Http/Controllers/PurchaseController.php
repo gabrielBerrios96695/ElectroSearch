@@ -39,7 +39,7 @@ class PurchaseController extends Controller
 {
     // Obtener solo productos con status 1
     $products = Product::where('status', 1)->get();
-    $customers = User::where('role', 3)->get(); // Clientes tienen el role 3
+    $customers = User::where('role', 3)->get(); // Usuarios tienen el role 3
     $categories = Category::all(); // Obtener todas las categorías
 
     return view('livewire/purchases.create', compact('products', 'customers', 'categories'));
@@ -120,7 +120,7 @@ class PurchaseController extends Controller
 
         if ($hoursDifference > 24) {
             // Si han pasado más de 24 horas, no se puede cancelar
-            return back()->withErrors(['error' => 'No puedes cancelar esta compra porque han pasado más de 24 horas desde su realización.']);
+            return back()->withErrors(['error' => 'No puedes cancelar esta Pedido porque han pasado más de 24 horas desde su realización.']);
         }
 
         // Comenzar una transacción
@@ -139,12 +139,12 @@ class PurchaseController extends Controller
             // Commit de la transacción
             DB::commit();
 
-            return redirect()->route('purchases.index')->with('success', 'Compra cancelada y stock restaurado.');
+            return redirect()->route('purchases.index')->with('success', 'Pedido cancelada y stock restaurado.');
 
         } catch (\Exception $e) {
             // Rollback en caso de error
             DB::rollBack();
-            return back()->withErrors(['error' => 'Hubo un error al cancelar la compra. ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Hubo un error al cancelar la Pedido. ' . $e->getMessage()]);
         }
     }
 }

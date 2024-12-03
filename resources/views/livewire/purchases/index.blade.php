@@ -1,23 +1,25 @@
 @extends('layouts.app')
 
 @section('breadcrumbs')
-<h1 class="text-white">/ Compras</h1>
+<h1 class="text-white">/ Pedidos</h1>
 @endsection
 
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between align-items-center my-4">
-        <h1 class="h3 text-danger"><i class="fas fa-shopping-cart"></i> Lista de Compras</h1>
+        <h1 class="h3 text-danger"><i class="fas fa-shopping-cart"></i> Lista de Pedidos</h1>
         <div class="d-flex gap-2">
+        @if (auth()->user()->role == 3)
             <a href="{{ route('purchases.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Registrar Nueva Compra
+                <i class="fas fa-plus"></i> Registrar Nueva Pedido
             </a>
+        @endif
         </div>
     </div>
 
     <div class="card">
         <div class="card-header card-header-custom">
-            <i class="fas fa-shopping-cart"></i> Compras
+            <i class="fas fa-shopping-cart"></i> Pedidos
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -77,7 +79,7 @@
                                         <i class="fas fa-eye"></i>
                                     </a>
 
-                                    <!-- Solo mostrar Editar y Eliminar si la compra no está completada -->
+                                    <!-- Solo mostrar Editar y Eliminar si la Pedido no está completada -->
                                     @if($sale->status !== 'completed' && auth()->user()->role == 3)
                                         @php
                                             $hoursDifference = \Carbon\Carbon::now()->diffInHours($sale->created_at);
@@ -112,14 +114,14 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas cancelar la compra de <strong id="cancelSaleAmount"></strong> Bs con ID <strong id="cancelSaleId"></strong>? Esta acción no puede deshacerse.
+                ¿Estás seguro de que deseas cancelar la Pedido de <strong id="cancelSaleAmount"></strong> Bs con ID <strong id="cancelSaleId"></strong>? Esta acción no puede deshacerse.
             </div>
             <div class="modal-footer">
                 <form id="cancelSaleForm" action="" method="POST">
                     @csrf
                     @method('POST') <!-- Cambiar el método a POST si estás usando esta ruta para cancelar -->
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-danger">Cancelar Compra</button>
+                    <button type="submit" class="btn btn-danger">Cancelar Pedido</button>
                 </form>
             </div>
         </div>
@@ -135,7 +137,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas eliminar la compra de <strong id="saleAmount"></strong> Bs con ID <strong id="saleId"></strong>? Esta acción no puede deshacerse.
+                ¿Estás seguro de que deseas eliminar la Pedido de <strong id="saleAmount"></strong> Bs con ID <strong id="saleId"></strong>? Esta acción no puede deshacerse.
             </div>
             <div class="modal-footer">
                 <form id="deleteSaleForm" action="" method="POST">
@@ -155,8 +157,8 @@
         var cancelSaleModal = document.getElementById('cancelSaleModal');
         cancelSaleModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget; // Botón que abrió el modal
-            var saleId = button.getAttribute('data-sale-id'); // ID de la compra
-            var saleAmount = button.getAttribute('data-sale-amount'); // Monto total de la compra
+            var saleId = button.getAttribute('data-sale-id'); // ID de la Pedido
+            var saleAmount = button.getAttribute('data-sale-amount'); // Monto total de la Pedido
 
             // Actualizar el texto del modal
             var cancelSaleIdElement = document.getElementById('cancelSaleId');
@@ -172,8 +174,8 @@
         var deleteSaleModal = document.getElementById('deleteSaleModal');
         deleteSaleModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget; // Botón que abrió el modal
-            var saleId = button.getAttribute('data-sale-id'); // ID de la compra
-            var saleAmount = button.getAttribute('data-sale-amount'); // Monto total de la compra
+            var saleId = button.getAttribute('data-sale-id'); // ID de la Pedido
+            var saleAmount = button.getAttribute('data-sale-amount'); // Monto total de la Pedido
 
             // Actualizar el texto del modal
             var saleIdElement = document.getElementById('saleId');

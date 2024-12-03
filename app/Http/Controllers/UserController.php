@@ -126,7 +126,7 @@ class UserController extends Controller
         'last_name' => $request->last_name,
         'second_last_name' => $request->second_last_name,
         'email' => $request->email,
-        'phone' => $request->$phone, // Guardar el teléfono
+'phone' => $request->phone, // Guardar el teléfono
         'password' => Hash::make($password),
         'role' => 3
     ]);
@@ -147,7 +147,7 @@ class UserController extends Controller
         return redirect()->route('clients.index')->with('success', 'Estado del cliente actualizado.');
     }
 
-    // Método para exportar los datos de los clientes
+    // Método para exportar los datos de los Usuarios
     public function exportClients()
     {
         // Lógica para exportar a Excel, CSV, etc.
@@ -331,14 +331,23 @@ class UserController extends Controller
 
 
 
-    public function toggleStatus($id)
-    {
-        $user = User::findOrFail($id);
-        $user->status = !$user->status; // Alternar el estado
-        $user->save();
+public function toggleStatus(Request $request, User $user)
+{
+    // Validar la solicitud
+    $validated = $request->validate([
+        'status' => 'required|boolean',
+    ]);
 
-        return back()->with('success', 'Estado Acualizado');
-    }
+    // Cambiar el estado del usuario
+    $user->status = $validated['status'];
+    $user->save();
+
+    // Redirigir a la página anterior con un mensaje de éxito
+    return redirect()->back()->with('success', 'Estado del usuario actualizado exitosamente.');
+}
+
+
+
 
     public function exportToExcel()
     {

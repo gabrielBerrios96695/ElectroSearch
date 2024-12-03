@@ -12,11 +12,13 @@ class Store extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 
-        'latitude', 
-        'longitude', 
+        'name',
+        'latitude',
+        'longitude',
+        'opening_time',
+        'closing_time',
+        'admin_id',
         'status',
-        
     ];
 
     public function scopeEnabled($query)

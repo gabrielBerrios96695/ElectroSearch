@@ -11,7 +11,7 @@
             @if($sale->type_of_sale == 1)
                 Venta #{{ $sale->id }}
             @else
-                Compra #{{ $sale->id }}
+                Pedido #{{ $sale->id }}
             @endif
         </h1>
         <a href="{{ route('sales.index') }}" class="btn btn-secondary">
@@ -19,7 +19,7 @@
             @if($sale->type_of_sale == 1)
                 Ventas
             @else
-                Compras
+                Pedidos
             @endif
         </a>
     </div>
@@ -30,7 +30,7 @@
             @if($sale->type_of_sale == 1)
                 Venta
             @else
-                Compra
+                Pedido
             @endif
         </div>
         <div class="card-body">
@@ -54,7 +54,7 @@
                 <!-- Botón para abrir el modal de confirmación, solo si no está completada -->
                 <div class="position-relative">
                     <button class="btn btn-primary position-absolute" style="top: 10px; right: 10px;" data-toggle="modal" data-target="#confirmModal">
-                        Confirmar Compra
+                        Confirmar Pedido
                     </button>
                 </div>
             @endif
@@ -89,18 +89,18 @@
     </div>
 </div>
 
-<!-- Modal de Confirmación de Compra -->
+<!-- Modal de Confirmación de Pedido -->
 <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="confirmModalLabel">Confirmar Compra</h5>
+                <h5 class="modal-title" id="confirmModalLabel">Confirmar Pedido</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas confirmar esta compra? Se asignará tu nombre como vendedor, esta accion no se puede desahacer.
+                ¿Estás seguro de que deseas confirmar esta Pedido? Se asignará tu nombre como vendedor, esta accion no se puede desahacer.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -108,7 +108,7 @@
                     @csrf
                     <input type="hidden" name="user_id" value="{{ auth()->id() }}">
                     <input type="hidden" name="sale_id" value="{{ $sale->id }}">
-                    <button type="submit" class="btn btn-primary">Confirmar Compra</button>
+                    <button type="submit" class="btn btn-primary">Confirmar Pedido</button>
                 </form>
 
             </div>

@@ -40,7 +40,7 @@ class SaleController extends Controller
 {
     // Obtener solo productos con status 1
     $products = Product::where('status', 1)->get();
-    $customers = User::where('role', 3)->get(); // Clientes tienen el role 3
+    $customers = User::where('role', 3)->get(); // Usuarios tienen el role 3
     $categories = Category::all(); // Obtener todas las categorías
 
     return view('livewire/sales.create', compact('products', 'customers', 'categories'));
@@ -120,9 +120,9 @@ class SaleController extends Controller
             return redirect()->route('sales.index')->with('error', 'Venta no encontrada.');
         }
 
-        // Obtener productos y clientes
+        // Obtener productos y Usuarios
         $products = Product::all();
-        $customers = \App\Models\User::where('role', 3)->get(); // Obtener clientes (usuarios con role 3)
+        $customers = \App\Models\User::where('role', 3)->get(); // Obtener Usuarios (usuarios con role 3)
 
         return view('livewire/sales.edit', compact('sale', 'products', 'customers'));
     }
@@ -306,7 +306,7 @@ public function confirm($saleId, Request $request)
 
     // Verificar si la venta no está ya confirmada
     if ($sale->status == 'completed') {
-        return redirect()->route('sales.show', $sale->id)->with('error', 'La compra ya ha sido confirmada.');
+        return redirect()->route('sales.show', $sale->id)->with('error', 'La Pedido ya ha sido confirmada.');
     }
 
     // Actualizar la venta, asignando el vendedor (usuario autenticado)
@@ -315,7 +315,7 @@ public function confirm($saleId, Request $request)
     $sale->save(); // Guardar los cambios
 
     // Redirigir de vuelta a la vista de detalles de la venta con un mensaje de éxito
-    return redirect()->route('sales.show', $sale->id)->with('success', 'La compra ha sido confirmada.');
+    return redirect()->route('sales.show', $sale->id)->with('success', 'La Pedido ha sido confirmada.');
 }
 
 

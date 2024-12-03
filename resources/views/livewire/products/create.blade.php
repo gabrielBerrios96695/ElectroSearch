@@ -42,13 +42,25 @@
                     @enderror
                 </div>
 
-                <div class="mb-3">
-                    <label for="price" class="form-label">Precio</label>
-                    <input type="number" id="price" name="price" class="form-control" step="0.01" value="{{ old('price') }}" required>
-                    @error('price')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
+                <div class="mb-3 position-relative">
+    <label for="price" class="form-label">Precio</label>
+    <div class="input-group">
+        <input 
+            type="number" 
+            id="price" 
+            name="price" 
+            class="form-control" 
+            value="{{ old('price', $product->price) }}" 
+            step="0.01" 
+            required
+        >
+        <span class="input-group-text">Bs</span>
+    </div>
+    @error('price')
+        <div class="text-danger">{{ $message }}</div>
+    @enderror
+</div>
+
 
                 <div class="mb-3">
                     <label for="image" class="form-label">Imagen</label>

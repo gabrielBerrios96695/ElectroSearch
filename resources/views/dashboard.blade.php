@@ -70,7 +70,7 @@
                     <div class="card-body d-flex align-items-center">
                         <i class="fas fa-users fa-3x me-3"></i>
                         <div>
-                            <h4>Clientes</h4>
+                            <h4>Usuarios</h4>
                             <h2 class="display-5">{{ $clientsCount }}</h2>
                         </div>
                     </div>

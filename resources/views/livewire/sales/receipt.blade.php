@@ -172,7 +172,7 @@
 
         <!-- Mensaje Final -->
         <div class="footer">
-            <p>Gracias por tu compra. ¡Te esperamos nuevamente!</p>
+            <p>Gracias por tu Pedido. ¡Te esperamos nuevamente!</p>
         </div>
 
         <div class="note">

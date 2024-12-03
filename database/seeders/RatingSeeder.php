@@ -12,7 +12,7 @@ class RatingSeeder extends Seeder
     public function run(): void
     {
         // Obtén algunos usuarios y detalles de ventas existentes
-        $users = User::where('role', 3)->get(); // Asegurarse de que sean usuarios clientes
+        $users = User::where('role', 3)->get(); // Asegurarse de que sean usuarios Usuarios
         $saleDetails = SaleDetail::all(); // Obtener todos los detalles de venta
 
         // Si no hay detalles de ventas o usuarios, no insertes nada

@@ -45,12 +45,18 @@
 
                 <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('users.index') }}">
                     <i class="fas fa-users-cog text-lg"></i>
-                    <span class="mx-3 text-lg">Usuarios</span>
+                    <span class="mx-3 text-lg">Empleados</span>
                 </a>
                 <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('clients.index') }}">
                     <i class="fas fa-user-friends text-lg"></i>
-                    <span class="mx-3 text-lg">Clientes</span>
+                    <span class="mx-3 text-lg">Usuarios</span>
                 </a>
+                <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('store.index') }}">
+    <i class="fas fa-store text-lg"></i>
+    <span class="mx-3 text-lg">Tiendas</span>
+</a>
+
+
                 <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('products.index') }}">
                     <i class="fas fa-box-open text-lg"></i>
                     <span class="mx-3 text-lg">Productos</span>
@@ -88,7 +94,7 @@
                 </a>
                 <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('clients.index') }}">
                     <i class="fas fa-user-friends text-lg"></i>
-                    <span class="mx-3 text-lg">Clientes</span>
+                    <span class="mx-3 text-lg">Usuarios</span>
                 </a>
                 <a class="nav-link flex items-center mt-4 py-2 px-6 hover:bg-blue-500 transition-colors duration-300" href="{{ route('products.index') }}">
                     <i class="fas fa-box-open text-lg"></i>

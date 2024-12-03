@@ -14,7 +14,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // Contar vendedores y clientes
+        // Contar vendedores y Usuarios
         $sellersCount = User::where('role', '2')->count();
         $clientsCount = User::where('role', '3')->count();
 
@@ -60,13 +60,13 @@ class DashboardController extends Controller
             ->get();
 
             $monthlyEarnings = DB::table('sales')
-            ->select(DB::raw("strftime('%Y-%m', created_at) as month"), DB::raw('SUM(total_amount) as earnings'))
-            ->groupBy('month')
+            ->select(DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"), DB::raw('SUM(total_amount) as earnings'))
+            ->groupBy(DB::raw("DATE_FORMAT(created_at, '%Y-%m')"))
             ->orderBy('month', 'asc')
             ->get();
+
             $months = $monthlyEarnings->pluck('month');
             $earnings = $monthlyEarnings->pluck('earnings');
-
         return view('dashboard', compact(
             'sellersCount',
             'clientsCount',

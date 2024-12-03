@@ -39,7 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/users/{user}/toggleStatus', [UserController::class, 'toggleStatus'])->name('users.toggleStatus');
     Route::get('/users/export', [UserController::class, 'exportToExcel'])->name('users.export');
 
-    // Rutas de clientes
+    // Rutas de Usuarios
     Route::get('/clients', [UserController::class, 'indexClient'])->name('clients.index');
     Route::get('/clients/create', [UserController::class, 'createClient'])->name('clients.create');
     Route::post('/clients', [UserController::class, 'storeClient'])->name('clients.store');
